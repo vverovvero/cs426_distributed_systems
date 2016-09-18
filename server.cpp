@@ -28,6 +28,10 @@ int main(void) {
   graph.add_edge(5,5);
   graph.add_edge(4,6);
   graph.add_edge(1,2);
+  graph.remove_node(7);
+  graph.remove_node(4);
+  graph.remove_edge(1,2);
+  graph.remove_edge(1,3);
 
 ///////////SERVER CODE//////////////////////////
   // struct mg_mgr mgr;
