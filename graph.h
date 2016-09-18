@@ -26,6 +26,7 @@ class Graph
 		int get_edge(uint64_t node_a_id, uint64_t node_b_id);
 		pair<int, set<uint64_t> > get_neighbors(uint64_t node_id);
 		pair<int, uint64_t> shortest_path(uint64_t node_a_id, uint64_t node_b_id);
+		void print_set(set<uint64_t> neighbors);
 };
 
 #endif

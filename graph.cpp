@@ -25,6 +25,18 @@ const uint64_t NoDistance = 0;
 // 0 is fail
 // 2 is extra option
 
+//////////////////////////////////////////////////////////////////////
+//Helper functions
+
+//prints contents of a set
+void Graph::print_set(set<uint64_t> neighbors){
+	std::cout << "Printing set:" << std::endl;
+	for(set<uint64_t>::iterator i = neighbors.begin(); i != neighbors.end(); i++){
+		uint64_t neighbor = *i;
+		std::cout << neighbor << std::endl;
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////
 //return 1 if node is in the graph
 //return 0 if node is not in the graph
@@ -159,9 +171,21 @@ int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id){
 
 
 //return pair (success/fail, vector of neighbors)
-//return (1, vector of neighbors) if node exists
-//return (0, empty vector) if node doesn't exist
+//return (1, set of neighbors) if node exists
+//return (0, empty set) if node doesn't exist
 pair<int, set<uint64_t> > Graph::get_neighbors(uint64_t node_id){
+	std::cout << "Client would like to get neighbors of node: " << node_id << std::endl;
+	//first find node
+	int found_node = get_node(node_id);
+	if(found_node == 1){
+		//Node found.  Return the set of neighbors.
+		map<uint64_t, set<uint64_t> >::iterator it;
+		it = this->nodes.find(node_id);
+		set<uint64_t> neighbors = it->second;
+		print_set(neighbors);
+		return pair<int, set<uint64_t> > (1, neighbors);
+	}
+	std::cout << "Node doesn't exist.  No neighbors to fetch." << std::endl;
 	return pair<int, set<uint64_t> > (0, EmptySet); //is this correct?
 }
 
