@@ -27,6 +27,8 @@ class Graph
 		pair<int, set<uint64_t> > get_neighbors(uint64_t node_id);
 		pair<int, uint64_t> shortest_path(uint64_t node_a_id, uint64_t node_b_id);
 		void print_set(set<uint64_t> neighbors);
+		uint64_t Dijkstra_get_min_distance_unvisited_node(set<uint64_t> unvisited, map<uint64_t, uint64_t> distance);
+		set<uint64_t> Dijkstra_get_unvisited_neighbors(set<uint64_t> unvisited, uint64_t node);
 };
 
 #endif

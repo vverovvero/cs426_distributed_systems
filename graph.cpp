@@ -8,17 +8,19 @@
 #include "graph.h"
 
 #include <iostream>
+#include <stdlib.h> //has exit, EXIT_FAILURE
 #include <cstdint> //has type 'uint64_t'
 #include <utility> //has type 'pair'
 #include <map>
 #include <set>
+
 
 using std::pair; 
 using std::map;
 using std::set;
 
 const set<uint64_t> EmptySet;
-const uint64_t NoDistance = 0;
+const uint64_t Infinity = UINT64_MAX;
 
 //Be consistent on what means success
 // 1 is success
@@ -35,6 +37,47 @@ void Graph::print_set(set<uint64_t> neighbors){
 		uint64_t neighbor = *i;
 		std::cout << neighbor << std::endl;
 	}
+}
+
+uint64_t Graph::Dijkstra_get_min_distance_unvisited_node(set<uint64_t> unvisited, map<uint64_t, uint64_t> distance){
+	std::cout << "Dijkstra_get_min_distance_unvisited_node called!" << std::endl;
+	//dummy return
+	uint64_t min_dist_node;
+	uint64_t current_node_dist;
+	uint64_t current_min_dist = Infinity;
+
+	for(set<uint64_t>::iterator n = unvisited.begin(); n != unvisited.end(); n++){
+	//for(const auto &n : unvisited){
+		current_node_dist = distance[*n];
+		if(current_node_dist <= current_min_dist){
+			//set new minimum distance and node
+			current_min_dist = current_node_dist;
+			min_dist_node = *n;
+		}
+	}
+	std::cout << "Min distance node is: " << min_dist_node << std::endl;
+	return min_dist_node;
+}
+
+set<uint64_t> Graph::Dijkstra_get_unvisited_neighbors(set<uint64_t> unvisited, uint64_t node){
+	std::cout << "Dijkstra_get_unvisited_neighbors called!" << std::endl;
+
+	set<uint64_t> neighbors; //call get neighbors
+	set<uint64_t> unvisited_neighbors; //want to return the unvisited neighbors
+	set<uint64_t>::iterator it;
+
+	//fetch the neighbors of node
+	pair<int, set<uint64_t> > result = get_neighbors(node);
+	if(result.first == 1){
+		neighbors = result.second;
+	}
+	else{
+		exit(EXIT_FAILURE);
+	}
+
+	//unvisited_neighbors is the set_intersection between neighbors and unvisited
+	set_intersection(neighbors.begin(), neighbors.end(), unvisited.begin(),unvisited.end(), std::inserter(unvisited_neighbors, unvisited_neighbors.begin()));
+	return unvisited_neighbors;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -191,10 +234,71 @@ pair<int, set<uint64_t> > Graph::get_neighbors(uint64_t node_id){
 
 //return pair (success/fail, distance/NULL)
 //return (1, distance) if successful
-//return (0, NoDistance) if there is no path
-//return (2, NoDistance) if either node does not exist
+//return (0, Infinity) if there is no path
+//return (2, Infinity) if either node does not exist
+//node_a_id is the source, node_b_id is the destination
+//implementation based off wikipedia psuedocode: https://www.wikiwand.com/en/Dijkstra's_algorithm
 pair<int, uint64_t> Graph::shortest_path(uint64_t node_a_id, uint64_t node_b_id){
-	return pair<int, uint64_t> (2, NoDistance);
+	std::cout << "Client would like to get shortest path between nodes " << node_a_id << " and "<< node_b_id << std::endl;
+	//rename nodes
+	uint64_t &source = node_a_id;
+	uint64_t &dest = node_b_id;
+	uint64_t u, v, alt;
+
+	//if either node doesn't exist, don't look for path
+	if(get_node(source) == 0 || get_node(dest) == 0){
+		std::cout<< "One or both nodes don't exist.  No path." << std::endl;
+		return pair<int, uint64_t> (2, Infinity);
+	}
+	//Else, perform dijkstra's///////////////////////////
+	set<uint64_t> unvisited;  //Set of unvisited nodes
+	map<uint64_t, uint64_t> distance; //hash of (node, distance)
+	
+	
+	//Add all vertices to the unvisited set
+	for(map<uint64_t, set<uint64_t> >::iterator n = this->nodes.begin(); n != this->nodes.end(); n++){
+		uint64_t node = (*n).first;
+		unvisited.insert(node);
+		distance[node] = Infinity;
+	}
+	//std::cout << "Constructed initial unvisited set " << std::endl;
+	//print_set(unvisited);
+	//Adjust source vertex to have distance 0
+	distance[source] = 0;
+
+	while(!unvisited.empty()){
+		//set 'u' to be unvisited node with smallest distance
+		u = Dijkstra_get_min_distance_unvisited_node(unvisited, distance);
+		std::cout << "Node 'u' to examine is: " << u << std::endl;
+		//if 'u' is our destination, then return the distance
+		//is this check a hack?
+		if(u == dest && distance[dest] != Infinity){
+			std::cout << "Found destination node!  Distance is: " << distance[dest] << std::endl;
+			return pair<int, uint64_t> (1, distance[dest]); //is this valid fetch?
+		}
+
+		//remove 'u' from unvisited
+		unvisited.erase(u);
+
+		//construct set of unvisited neighbrs
+		set<uint64_t> unvisited_neighbors = Dijkstra_get_unvisited_neighbors(unvisited, u);
+
+		//loop through the neighbors
+		for(set<uint64_t>::iterator v = unvisited_neighbors.begin(); v != unvisited_neighbors.end(); v++){
+		//for(const auto &n : unvisited_neighbors){
+			alt = distance[u] + 1;
+			if(alt < distance[*v]){
+				distance[*v] = alt;
+			}
+		}
+
+		std::cout << "After one iteration, unvisited set is: " << std::endl;
+		print_set(unvisited);
+	}
+	//if no more unvisited, and we never returned the dest node,
+	//then there is no path
+	std::cout << "No path to destination node found." << std::endl;
+	return pair<int, uint64_t> (0, Infinity);
 }
 
 
