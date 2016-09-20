@@ -10,9 +10,15 @@
 #include "api.h"
 #include "graph.h"
 
+#include <stdarg.h>
 #include <iostream>
 #include <cstdint> //has type 'uint64_t'
 #include <stdlib.h> //has atoll
+#include <vector>
+#include <utility> //has type 'pair'
+
+using std::pair;
+using std::vector;
 
 static const char *s_http_port = "8000";
 static struct mg_serve_http_opts s_http_server_opts;
@@ -30,6 +36,7 @@ static const struct mg_str key_get_edge = MG_STR("/get_edge");
 static const struct mg_str key_get_neighbors = MG_STR("/get_neighbors");
 static const struct mg_str key_shortest_path = MG_STR("/shortest_path");
 
+static const vector<uint64_t> EmptyVector; //if no node id's found
 
 //////// my helper print functions////////////
 void print_flush(char * string){
@@ -37,7 +44,7 @@ void print_flush(char * string){
   fflush(stdout);
 }
 
-void print_mg_str(mg_str string){
+void print_mg_str(struct mg_str string){
   int i;
   for(i=0;i<string.len;i++){
     //print character with offset i
@@ -62,6 +69,45 @@ void print_json_token(struct json_token * token){
 uint64_t token_to_uint64(struct json_token * token){
   uint64_t value = atoll(token->ptr); //convert char to long long
   return value;
+}
+
+//given http request body, return (1, vector of node ids) on successful parse
+//return (0, empty vector) if no node ids found
+pair<int, vector<uint64_t> > parse_for_node_ids(struct mg_str body, int num, ...){
+  
+  int i;
+  vector<uint64_t> node_ids;
+  //set up for multiple node ids
+  va_list valist;
+  va_start(valist, num);
+
+
+  //Get json_tokens from body
+  struct json_token *tokens = parse_json2(body.p, body.len);
+  print_json_token(tokens);
+
+  //Find specified node ids
+  for(i=0;i<num;i++){
+    const char * node_id_path = va_arg(valist, const char *);
+    struct json_token *token = find_json_token(tokens, node_id_path);
+    print_json_token(token);
+    uint64_t node_id = token_to_uint64(token);
+    printf("Node_id found was: %llu\n", node_id);
+    fflush(stdout);
+
+    //push result into vector
+    node_ids.push_back(node_id);
+  }
+
+  //clean up valist
+  va_end(valist);
+
+  if(node_ids.size() > 0){
+    return pair<int, vector<uint64_t> > (1, node_ids);
+  }
+  else {
+    return pair<int, vector<uint64_t> > (0, EmptyVector);
+  }
 }
 
 /////////////////////////////////////////////
@@ -106,6 +152,9 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
         if (is_equal(&hm->method, &s_post_method)) {
           printf("POST request\n");
           fflush(stdout);
+
+          //Set up HTTP reply body to fill in from the if-statements
+
           //Parse the desired command by checking the key
           if(is_equal(&key, &key_add_node)){
             print_flush("KEY was add_node");
@@ -113,13 +162,16 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             //return a vector of node id's: vector[0] and/or vector[1]
             //sanity check the size of vector
             //call wrapper function
-            struct json_token *tokens = parse_json2(hm->body.p, hm->body.len);
-            print_json_token(tokens);
-            struct json_token *token = find_json_token(tokens, "node_id");
-            print_json_token(token);
-            uint64_t node_id = token_to_uint64(token);
-            printf("Node_id found was: %u\n", node_id);
-            fflush(stdout);
+
+            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
+
+            // struct json_token *tokens = parse_json2(hm->body.p, hm->body.len);
+            // print_json_token(tokens);
+            // struct json_token *token = find_json_token(tokens, "node_id");
+            // print_json_token(token);
+            // uint64_t node_id = token_to_uint64(token);
+            // printf("Node_id found was: %u\n", node_id);
+            // fflush(stdout);
           }
           else if(is_equal(&key, &key_add_edge)){
             print_flush("KEY was add_edge");
