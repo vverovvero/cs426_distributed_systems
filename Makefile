@@ -6,7 +6,7 @@ default: all
 
 all: server
 
-server: server.o mongoose.o api.o graph.o
+server: mongoose.o api.o graph.o server.o 
 	${CC} ${CFLAGS} -o $@ $^
 
 server.o: server.cpp

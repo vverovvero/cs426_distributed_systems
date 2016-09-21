@@ -65,6 +65,8 @@ void print_json_token(struct json_token * token){
   fflush(stdout);
 }
 
+
+////////////////////////////////////////////////////////
 //for fetching node id's and returning them as a uint64_t
 uint64_t token_to_uint64(struct json_token * token){
   uint64_t value = atoll(token->ptr); //convert char to long long
@@ -74,13 +76,11 @@ uint64_t token_to_uint64(struct json_token * token){
 //given http request body, return (1, vector of node ids) on successful parse
 //return (0, empty vector) if no node ids found
 pair<int, vector<uint64_t> > parse_for_node_ids(struct mg_str body, int num, ...){
-  
   int i;
   vector<uint64_t> node_ids;
   //set up for multiple node ids
   va_list valist;
   va_start(valist, num);
-
 
   //Get json_tokens from body
   struct json_token *tokens = parse_json2(body.p, body.len);
@@ -89,14 +89,17 @@ pair<int, vector<uint64_t> > parse_for_node_ids(struct mg_str body, int num, ...
   //Find specified node ids
   for(i=0;i<num;i++){
     const char * node_id_path = va_arg(valist, const char *);
+    //this will SEGFAULT if node_id_path is not found.  bad?
     struct json_token *token = find_json_token(tokens, node_id_path);
-    print_json_token(token);
-    uint64_t node_id = token_to_uint64(token);
-    printf("Node_id found was: %llu\n", node_id);
-    fflush(stdout);
+    //print_json_token(token);
+    if(token !=0){ //only convert token to uint64_t if it was found
+      uint64_t node_id = token_to_uint64(token);
+      printf("Node_id found was: %llu\n", node_id);
+      fflush(stdout);
 
-    //push result into vector
-    node_ids.push_back(node_id);
+      //push result into vector
+      node_ids.push_back(node_id);
+    }
   }
 
   //clean up valist
@@ -123,6 +126,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
   static const struct mg_str api_prefix = MG_STR("/api/v1");
   struct http_message *hm = (struct http_message *) ev_data;
   struct mg_str key;
+  int error = 0;
 
   switch (ev) {
     case MG_EV_HTTP_REQUEST:
@@ -132,17 +136,6 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
 
         printf("Received a valid request\n");
         fflush(stdout);
-        // print_flush("~~~~~KEY~~~~~");
-        // print_mg_str(key);
-        // print_flush("~~~~~HM-MESSAGE~~~~~");
-        // print_mg_str(hm->message);
-        // print_flush("~~~~~HM-METHOD~~~~~");
-        // print_mg_str(hm->method);
-        // print_flush("~~~~~HM-URI~~~~~");
-        // print_mg_str(hm->uri);
-        // print_flush("~~~~~HM-PROTO~~~~~");
-        // print_mg_str(hm->proto);
-        // print_flush("~~~~~~~~~~");
 
         //how to parse the content (the json stuff); ????
         print_flush("~~~~~~~~MESSAGE BODY, if any~~~~~~~~~~~~\n");
@@ -164,39 +157,107 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             //call wrapper function
 
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
+            if(result.first == 1) {
+              event_add_node(result.second[0]);
+            }
+            else {
+              error = 1;
+            }
 
-            // struct json_token *tokens = parse_json2(hm->body.p, hm->body.len);
-            // print_json_token(tokens);
-            // struct json_token *token = find_json_token(tokens, "node_id");
-            // print_json_token(token);
-            // uint64_t node_id = token_to_uint64(token);
-            // printf("Node_id found was: %u\n", node_id);
+            //reply
+            //mg_send_response_line(nc, 200, "Transfer-Encoding: chunked");
+            //mg_send_response_line(nc, 200, "Access-Control-Allow-Origin: *");
+            // mg_send_head(nc, 200, -1, NULL);
+            // mg_printf(nc, "HTTP/1.1 %d Error (%s)\r\n\r\n%s",
+            //         500,
+            //         "we only care about HTTP GET",
+            //         "we only care about HTTP GET");
+            mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 500, "Error\n");
+            char buf[1000];
+            json_emit(buf, sizeof(buf), "{\n  s: i\n}", "distance", (long) 12023);
+            mg_printf_http_chunk(nc, "%s", buf);
+            mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
             // fflush(stdout);
+            
           }
           else if(is_equal(&key, &key_add_edge)){
             print_flush("KEY was add_edge");
+            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
+            if(result.first == 1) {
+              event_add_edge(result.second[0], result.second[1]);
+            }
+            else {
+              error = 1;
+            }
           }
           else if(is_equal(&key, &key_remove_node)){
             print_flush("KEY was remove_node");
+            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
+            if(result.first == 1) {
+              event_remove_node(result.second[0]);
+            }
+            else {
+              error = 1;
+            }
           }
           else if(is_equal(&key, &key_remove_edge)){
             print_flush("KEY was remove_edge");
+            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
+            if(result.first == 1) {
+              event_remove_edge(result.second[0], result.second[1]);
+            }
+            else {
+              error = 1;
+            }
           }
           else if(is_equal(&key, &key_get_node)){
             print_flush("KEY was get_node");
+            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
+            if(result.first == 1) {
+              event_get_node(result.second[0]);
+            }
+            else {
+              error = 1;
+            }
           }
           else if(is_equal(&key, &key_get_edge)){
             print_flush("KEY was get_edge");
+            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
+            if(result.first == 1) {
+              event_get_edge(result.second[0], result.second[1]);
+            }
+            else {
+              error = 1;
+            }
           }
           else if(is_equal(&key, &key_get_neighbors)){
             print_flush("KEY was get_neighbors");
+            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
+            if(result.first == 1) {
+              event_get_neighbors(result.second[0]);
+            }
+            else {
+              error = 1;
+            }
           }
           else if(is_equal(&key, &key_shortest_path)){
             print_flush("KEY was shortest_path");
+            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
+            if(result.first == 1) {
+              event_shortest_path(result.second[0], result.second[1]);
+            }
+            else {
+              error = 1;
+            }
           }
           else{
             print_flush("KEY was not recognized!");
           }
+          if(error == 1){
+            print_flush("A POST KEY command failed...");
+          }
+
+          //Send return HTTP response
 
         } 
         else {
