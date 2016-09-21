@@ -4,12 +4,12 @@ RM      = rm -f
 
 default: all
 
-all: server
+all: cs426_graph_server
 
-server: mongoose.o api.o graph.o server.o 
+cs426_graph_server: mongoose.o api.o graph.o cs426_graph_server.o 
 	${CC} ${CFLAGS} -o $@ $^
 
-server.o: server.cpp
+cs426_graph_server.o: cs426_graph_server.cpp
 
 mongoose.o: mongoose.c
 
@@ -17,9 +17,9 @@ api.o: api.cpp
 
 graph.o: graph.cpp
 
-valgrind: server
-	valgrind -q —-tool=memcheck —leak-check=yes ./server
+valgrind: cs426_graph_server
+	valgrind -q —-tool=memcheck —leak-check=yes ./cs426_graph_server
 
 clean:
-	$(RM) server *.o
+	$(RM) cs426_graph_server *.o
 	
