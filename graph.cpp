@@ -76,7 +76,7 @@ set<uint64_t> Graph::Dijkstra_get_unvisited_neighbors(set<uint64_t> unvisited, u
 	}
 
 	//unvisited_neighbors is the set_intersection between neighbors and unvisited
-	set_intersection(neighbors.begin(), neighbors.end(), unvisited.begin(),unvisited.end(), std::inserter(unvisited_neighbors, unvisited_neighbors.begin()));
+	std::set_intersection(neighbors.begin(), neighbors.end(), unvisited.begin(),unvisited.end(), std::inserter(unvisited_neighbors, unvisited_neighbors.begin()));
 	return unvisited_neighbors;
 }
 
