@@ -13,6 +13,7 @@
 #include <utility> //has type 'pair'
 #include <map>
 #include <set>
+#include <algorithm>
 
 
 using std::pair; 
