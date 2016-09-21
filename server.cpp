@@ -38,6 +38,8 @@ static const struct mg_str key_shortest_path = MG_STR("/shortest_path");
 
 static const vector<uint64_t> EmptyVector; //if no node id's found
 
+Graph graph; //global graph
+
 //////// my helper print functions////////////
 void print_flush(char * string){
   printf("%s\n", string);
@@ -128,6 +130,12 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
   struct mg_str key;
   int error = 0;
 
+  //memory buffer issue?
+  struct mbuf *io_send = &nc->send_mbuf;
+
+  //clear the send buf first?
+  mbuf_remove(io_send, io_send->len);
+
   switch (ev) {
     case MG_EV_HTTP_REQUEST:
       if (has_prefix(&hm->uri, &api_prefix)) {
@@ -151,40 +159,21 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
           //Parse the desired command by checking the key
           if(is_equal(&key, &key_add_node)){
             print_flush("KEY was add_node");
-            //parse JSON 
-            //return a vector of node id's: vector[0] and/or vector[1]
-            //sanity check the size of vector
-            //call wrapper function
-
+            //Parse Json
+            //Call wrapper, which edits graph and returns HTTP reply
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
-              event_add_node(result.second[0]);
+              event_add_node(graph, nc, result.second[0]);
             }
             else {
               error = 1;
             }
-
-            //reply
-            //mg_send_response_line(nc, 200, "Transfer-Encoding: chunked");
-            //mg_send_response_line(nc, 200, "Access-Control-Allow-Origin: *");
-            // mg_send_head(nc, 200, -1, NULL);
-            // mg_printf(nc, "HTTP/1.1 %d Error (%s)\r\n\r\n%s",
-            //         500,
-            //         "we only care about HTTP GET",
-            //         "we only care about HTTP GET");
-            mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 500, "Error\n");
-            char buf[1000];
-            json_emit(buf, sizeof(buf), "{\n  s: i\n}", "distance", (long) 12023);
-            mg_printf_http_chunk(nc, "%s", buf);
-            mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
-            // fflush(stdout);
-            
           }
           else if(is_equal(&key, &key_add_edge)){
             print_flush("KEY was add_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
-              event_add_edge(result.second[0], result.second[1]);
+              event_add_edge(graph, nc, result.second[0], result.second[1]);
             }
             else {
               error = 1;
@@ -194,7 +183,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             print_flush("KEY was remove_node");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
-              event_remove_node(result.second[0]);
+              event_remove_node(graph, nc, result.second[0]);
             }
             else {
               error = 1;
@@ -204,7 +193,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             print_flush("KEY was remove_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
-              event_remove_edge(result.second[0], result.second[1]);
+              event_remove_edge(graph, nc, result.second[0], result.second[1]);
             }
             else {
               error = 1;
@@ -214,7 +203,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             print_flush("KEY was get_node");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
-              event_get_node(result.second[0]);
+              event_get_node(graph, nc, result.second[0]);
             }
             else {
               error = 1;
@@ -224,7 +213,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             print_flush("KEY was get_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
-              event_get_edge(result.second[0], result.second[1]);
+              event_get_edge(graph, nc, result.second[0], result.second[1]);
             }
             else {
               error = 1;
@@ -234,7 +223,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             print_flush("KEY was get_neighbors");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
-              event_get_neighbors(result.second[0]);
+              event_get_neighbors(graph, nc, result.second[0]);
             }
             else {
               error = 1;
@@ -244,7 +233,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             print_flush("KEY was shortest_path");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
-              event_shortest_path(result.second[0], result.second[1]);
+              event_shortest_path(graph, nc, result.second[0], result.second[1]);
             }
             else {
               error = 1;
@@ -252,36 +241,43 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
           }
           else{
             print_flush("KEY was not recognized!");
+            mg_send_head(nc, 400, -1, NULL);
+            mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 400, "Bad Request\n");
+            mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
           }
           if(error == 1){
             print_flush("A POST KEY command failed...");
+            mg_send_head(nc, 500, -1, NULL);
+            mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 500, "Server Error\n");
+            mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
           }
-
-          //Send return HTTP response
-
         } 
         else {
-          mg_printf(nc, "%s",
-                    "HTTP/1.0 501 Not Implemented\r\n"
-                    "Content-Length: 0\r\n\r\n");
           print_flush("Request was NOT a POST request");
+          //reply
+          mg_send_head(nc, 200, -1, NULL);
+          mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 500, "Error Not Implemented\n");
+          mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
+
         }
       } else {
         printf("Received unrecognized request...\n");
         fflush(stdout);
         mg_serve_http(nc, hm, s_http_server_opts); /* Serve static content */
+
+        mg_send_head(nc, 400, -1, NULL);
+        mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 400, "Unrecognized Client Request\n");
+        mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
       }
       break;
     default:
       break;
   }
+
 }
 
 
 int main(void) {
-
-  //Initialize the graph in memory
-  Graph graph;
 
   //Set up the server
   struct mg_mgr mgr;
