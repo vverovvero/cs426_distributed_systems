@@ -18,7 +18,6 @@ using std::map;
 using std::set;
 using std::string;
 
-//Return HTTP reply??
 
 int event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	//Call graph function
@@ -26,11 +25,15 @@ int event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 
 	//Send HTTP reply
 	if(result == 1){
-		//This has a payload
+		//Status line
 		mg_send_head(nc, 200, -1, NULL);
-        mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 200, "OK\n");
+        mg_printf_http_chunk(nc, "%s %u %s", "HTTP/1.1 ", 200, "OK\n");
+        //Additional headers
         char buf[1000];
-        json_emit(buf, sizeof(buf), "{\n  s: i\n}\n", "node_id", node_id);
+        int size = json_emit(buf, sizeof(buf), "{\n  s: i\n}\n", "node_id", node_id);
+        mg_printf_http_chunk(nc, "%s %d %s", "Content-Length: ", size, "\n");
+        mg_printf_http_chunk(nc, "%s", "Content-Type: application/json\n\n");
+        //Emit json
         mg_printf_http_chunk(nc, "%s", buf);
         mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
 
@@ -55,7 +58,10 @@ int event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, u
 		mg_send_head(nc, 200, -1, NULL);
         mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 200, "OK\n");
         char buf[1000];
-        json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i\n}\n", "node_a_id", node_a_id, "node_b_id", node_b_id);
+        int size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i\n}\n", "node_a_id", node_a_id, "node_b_id", node_b_id);
+        mg_printf_http_chunk(nc, "%s %d %s", "Content-Length: ", size, "\n");
+        mg_printf_http_chunk(nc, "%s", "Content-Type: application/json\n\n");
+        //emit json
         mg_printf_http_chunk(nc, "%s", buf);
         mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
 	}
@@ -83,7 +89,10 @@ int event_remove_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 		mg_send_head(nc, 200, -1, NULL);
         mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 200, "OK\n");
         char buf[1000];
-        json_emit(buf, sizeof(buf), "{\n  s: i\n}\n", "node_id", node_id);
+        int size = json_emit(buf, sizeof(buf), "{\n  s: i\n}\n", "node_id", node_id);
+        mg_printf_http_chunk(nc, "%s %d %s", "Content-Length: ", size, "\n");
+        mg_printf_http_chunk(nc, "%s", "Content-Type: application/json\n\n");
+        //emit json
         mg_printf_http_chunk(nc, "%s", buf);
         mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
 
@@ -107,7 +116,10 @@ int event_remove_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id
 		mg_send_head(nc, 200, -1, NULL);
         mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 200, "OK\n");
         char buf[1000];
-        json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i\n}\n", "node_a_id", node_a_id, "node_b_id", node_b_id);
+        int size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i\n}\n", "node_a_id", node_a_id, "node_b_id", node_b_id);
+       	mg_printf_http_chunk(nc, "%s %d %s", "Content-Length: ", size, "\n");
+        mg_printf_http_chunk(nc, "%s", "Content-Type: application/json\n\n");
+        //emit json
         mg_printf_http_chunk(nc, "%s", buf);
         mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
 	}
@@ -128,13 +140,17 @@ int event_get_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	//Send HTTP reply
 	mg_send_head(nc, 200, -1, NULL);
     mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 200, "OK\n");
+    int size;
     char buf[1000];
     if(result == 1){
-    	json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i\n}\n", "node_id", node_id, "in_graph", (long) 1);
+    	size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i\n}\n", "node_id", node_id, "in_graph", (long) 1);
     }
     else{
-    	json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i\n}\n", "node_id", node_id, "in_graph", (long) 0);
+    	size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i\n}\n", "node_id", node_id, "in_graph", (long) 0);
     }
+    mg_printf_http_chunk(nc, "%s %d %s", "Content-Length: ", size, "\n");
+    mg_printf_http_chunk(nc, "%s", "Content-Type: application/json\n\n");
+    //emit json
     mg_printf_http_chunk(nc, "%s", buf);
     mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
 
@@ -149,13 +165,17 @@ int event_get_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, u
 	if(result != 2){
 		mg_send_head(nc, 200, -1, NULL);
 	    mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 200, "OK\n");
+	    int size;
 	    char buf[1000];
 	    if(result == 1){
-	    	json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i,\n  s: i\n}\n", "node_a_id", node_a_id, "node_b_id", node_b_id, "in_graph", (long) 1);
+	    	size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i,\n  s: i\n}\n", "node_a_id", node_a_id, "node_b_id", node_b_id, "in_graph", (long) 1);
 	    }
 	    else{
-	    	json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i,\n  s: i\n}\n", "node_a_id", node_a_id, "node_b_id", node_b_id, "in_graph", (long) 0);	
+	    	size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i,\n  s: i\n}\n", "node_a_id", node_a_id, "node_b_id", node_b_id, "in_graph", (long) 0);	
 	    }
+	    mg_printf_http_chunk(nc, "%s %d %s", "Content-Length: ", size, "\n");
+        mg_printf_http_chunk(nc, "%s", "Content-Type: application/json\n\n");
+	    //emit json
 	    mg_printf_http_chunk(nc, "%s", buf);
 	    mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
 	}
@@ -196,7 +216,10 @@ int event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_id
 	    char buf[1000];
 	    char buf1[1000];
 	    char buf2[1000];
-	    json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: [S]\n}\n", "node_id", node_id, "neighbors", c_neighbor_list);
+	    int size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: [S]\n}\n", "node_id", node_id, "neighbors", c_neighbor_list);
+	    mg_printf_http_chunk(nc, "%s %d %s", "Content-Length: ", size, "\n");
+        mg_printf_http_chunk(nc, "%s", "Content-Type: application/json\n\n");
+        //emit json
 	    mg_printf_http_chunk(nc, "%s", buf);
 	    mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
 	}
@@ -218,7 +241,10 @@ int event_shortest_path(Graph *graph, struct mg_connection *nc, uint64_t node_a_
 		mg_send_head(nc, 200, -1, NULL);
 	    mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 200, "OK\n");
 	    char buf[1000];
-	    json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i,\n  s: i\n}\n", "node_a_id", node_a_id, "node_b_id", node_b_id, "distance", result.second);
+	    int size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i,\n  s: i\n}\n", "node_a_id", node_a_id, "node_b_id", node_b_id, "distance", result.second);
+	    mg_printf_http_chunk(nc, "%s %d %s", "Content-Length: ", size, "\n");
+        mg_printf_http_chunk(nc, "%s", "Content-Type: application/json\n\n");
+	    //emit json
 	    mg_printf_http_chunk(nc, "%s", buf);
 	    mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
 	}
