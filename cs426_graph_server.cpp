@@ -87,7 +87,7 @@ pair<int, vector<uint64_t> > parse_for_node_ids(struct mg_str body, int num, ...
 
   //Get json_tokens from body
   struct json_token *tokens = parse_json2(body.p, body.len);
-  print_json_token(tokens);
+  // print_json_token(tokens);
 
   //Find specified node ids
   for(i=0;i<num;i++){
@@ -97,8 +97,8 @@ pair<int, vector<uint64_t> > parse_for_node_ids(struct mg_str body, int num, ...
     //print_json_token(token);
     if(token !=0){ //only convert token to uint64_t if it was found
       uint64_t node_id = token_to_uint64(token);
-      printf("Node_id found was: %llu\n", node_id);
-      fflush(stdout);
+      // printf("Node_id found was: %llu\n", node_id);
+      // fflush(stdout);
 
       //push result into vector
       node_ids.push_back(node_id);
@@ -143,23 +143,23 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
         key.p = hm->uri.p + api_prefix.len;
         key.len = hm->uri.len - api_prefix.len;
 
-        printf("Received a valid request\n");
-        fflush(stdout);
+        // printf("Received a valid request\n");
+        // fflush(stdout);
 
         //how to parse the content (the json stuff); ????
-        print_flush("~~~~~~~~MESSAGE BODY, if any~~~~~~~~~~~~\n");
-        print_mg_str(hm->body);
-        print_flush("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        // print_flush("~~~~~~~~MESSAGE BODY, if any~~~~~~~~~~~~\n");
+        // print_mg_str(hm->body);
+        // print_flush("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 
         if (is_equal(&hm->method, &s_post_method)) {
-          printf("POST request\n");
-          fflush(stdout);
+          // printf("POST request\n");
+          // fflush(stdout);
 
           //Set up HTTP reply body to fill in from the if-statements
 
           //Parse the desired command by checking the key
           if(is_equal(&key, &key_add_node)){
-            print_flush("KEY was add_node");
+            // print_flush("KEY was add_node");
             //Parse Json
             //Call wrapper, which edits graph and returns HTTP reply
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
@@ -171,7 +171,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             }
           }
           else if(is_equal(&key, &key_add_edge)){
-            print_flush("KEY was add_edge");
+            // print_flush("KEY was add_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
               event_add_edge(&graph, nc, result.second[0], result.second[1]);
@@ -181,7 +181,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             }
           }
           else if(is_equal(&key, &key_remove_node)){
-            print_flush("KEY was remove_node");
+            // print_flush("KEY was remove_node");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
               event_remove_node(&graph, nc, result.second[0]);
@@ -191,7 +191,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             }
           }
           else if(is_equal(&key, &key_remove_edge)){
-            print_flush("KEY was remove_edge");
+            // print_flush("KEY was remove_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
               event_remove_edge(&graph, nc, result.second[0], result.second[1]);
@@ -201,7 +201,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             }
           }
           else if(is_equal(&key, &key_get_node)){
-            print_flush("KEY was get_node");
+            // print_flush("KEY was get_node");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
               event_get_node(&graph, nc, result.second[0]);
@@ -211,7 +211,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             }
           }
           else if(is_equal(&key, &key_get_edge)){
-            print_flush("KEY was get_edge");
+            // print_flush("KEY was get_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
               event_get_edge(&graph, nc, result.second[0], result.second[1]);
@@ -221,7 +221,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             }
           }
           else if(is_equal(&key, &key_get_neighbors)){
-            print_flush("KEY was get_neighbors");
+            // print_flush("KEY was get_neighbors");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
               event_get_neighbors(&graph, nc, result.second[0]);
@@ -231,7 +231,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             }
           }
           else if(is_equal(&key, &key_shortest_path)){
-            print_flush("KEY was shortest_path");
+            // print_flush("KEY was shortest_path");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
               event_shortest_path(&graph, nc, result.second[0], result.second[1]);
@@ -241,20 +241,20 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             }
           }
           else{
-            print_flush("KEY was not recognized!");
+            // print_flush("KEY was not recognized!");
             mg_send_head(nc, 400, -1, NULL);
             mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 400, "Bad Request\n");
             mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
           }
           if(error == 1){
-            print_flush("A POST KEY command failed...");
+            // print_flush("A POST KEY command failed...");
             mg_send_head(nc, 500, -1, NULL);
             mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 500, "Server Error\n");
             mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
           }
         } 
         else {
-          print_flush("Request was NOT a POST request");
+          // print_flush("Request was NOT a POST request");
           //reply
           mg_send_head(nc, 200, -1, NULL);
           mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 500, "Error Not Implemented\n");
@@ -262,9 +262,9 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
 
         }
       } else {
-        printf("Received unrecognized request...\n");
-        fflush(stdout);
-        mg_serve_http(nc, hm, s_http_server_opts); /* Serve static content */
+        // printf("Received unrecognized request...\n");
+        // fflush(stdout);
+        // mg_serve_http(nc, hm, s_http_server_opts); /* Serve static content */
 
         mg_send_head(nc, 400, -1, NULL);
         mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 400, "Unrecognized Client Request\n");
