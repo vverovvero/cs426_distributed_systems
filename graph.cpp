@@ -196,7 +196,7 @@ int Graph::remove_node(uint64_t node_id){
 				pair<int, set<uint64_t> > neighbor_result = get_neighbors(*n);
 				if(neighbor_result.first){
 					set<uint64_t> n_neighbor_list = neighbor_result.second;
-					n_neighbor_list.remove(node_id);
+					n_neighbor_list.erase(node_id);
 				}
 			}
 		}
