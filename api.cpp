@@ -215,9 +215,9 @@ int event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_id
 		//Send list of neighbors
 		mg_send_head(nc, 200, -1, NULL);
 	    mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 200, "OK\n");
-	    char buf[1000];
-	    char buf1[1000];
-	    char buf2[1000];
+	    char buf[10000];
+	    char buf1[10000];
+	    char buf2[10000];
 	    int size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: [S]\n}\n", "node_id", node_id, "neighbors", c_neighbor_list);
 	    mg_printf_http_chunk(nc, "%s %d %s", "Content-Length: ", size, "\n");
         mg_printf_http_chunk(nc, "%s", "Content-Type: application/json\n\n");
@@ -242,9 +242,9 @@ int event_shortest_path(Graph *graph, struct mg_connection *nc, uint64_t node_a_
 	if(result.first == 1){
 		mg_send_head(nc, 200, -1, NULL);
 	    mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 200, "OK\n");
-	    char buf[1000];
-	    //int size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i,\n  s: i\n}\n", "node_a_id", node_a_id, "node_b_id", node_b_id, "distance", result.second);
-	    int size = json_emit(buf, sizeof(buf), "{\n  s: i\n}\n", "distance", (long) result.second);	    
+	    char buf[10000];
+	    int size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i,\n  s: i\n}\n", "node_a_id", node_a_id, "node_b_id", node_b_id, "distance", result.second);
+	    // int size = json_emit(buf, sizeof(buf), "{\n  s: i\n}\n", "distance", (long) result.second);	    
 	    mg_printf_http_chunk(nc, "%s %d %s", "Content-Length: ", size, "\n");
         mg_printf_http_chunk(nc, "%s", "Content-Type: application/json\n\n");
 	    //emit json
