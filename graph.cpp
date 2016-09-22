@@ -241,11 +241,13 @@ pair<int, set<uint64_t> > Graph::get_neighbors(uint64_t node_id){
 	int found_node = get_node(node_id);
 	if(found_node == 1){
 		//Node found.  Return the set of neighbors.
-		map<uint64_t, set<uint64_t> >::iterator it;
-		it = this->nodes.find(node_id);
-		set<uint64_t> neighbors = it->second;
+		//map<uint64_t, set<uint64_t> >::iterator it;
+		//it = this->nodes.find(node_id);
+		//set<uint64_t> neighbors = it->second;
 		// print_set(neighbors);
-		return pair<int, set<uint64_t> > (1, neighbors);
+
+		////
+		return pair<int, set<uint64_t> > (1, this->nodes[node_id]);
 	}
 	// std::cout << "Node doesn't exist.  No neighbors to fetch." << std::endl;
 	return pair<int, set<uint64_t> > (0, EmptySet); //is this correct?
