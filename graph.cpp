@@ -241,12 +241,6 @@ pair<int, set<uint64_t> > Graph::get_neighbors(uint64_t node_id){
 	int found_node = get_node(node_id);
 	if(found_node == 1){
 		//Node found.  Return the set of neighbors.
-		//map<uint64_t, set<uint64_t> >::iterator it;
-		//it = this->nodes.find(node_id);
-		//set<uint64_t> neighbors = it->second;
-		// print_set(neighbors);
-
-		////
 		return pair<int, set<uint64_t> > (1, this->nodes[node_id]);
 	}
 	// std::cout << "Node doesn't exist.  No neighbors to fetch." << std::endl;
@@ -302,24 +296,25 @@ pair<int, uint64_t> Graph::shortest_path(uint64_t node_a_id, uint64_t node_b_id)
 		//is this check a hack?
 		if(u == dest && distance[dest] != Infinity){
 			// std::cout << "Found destination node!  Distance is: " << distance[dest] << std::endl;
-			uint64_t shortest_dist = distance[dest];
-			return pair<int, uint64_t> (1, shortest_dist); //is this valid fetch?
+			return pair<int, uint64_t> (1, distance[dest]); //is this valid fetch?
 		}
 
 		//remove 'u' from unvisited
 		unvisited.erase(u);
 
 		//construct set of unvisited neighbrs
-		set<uint64_t> unvisited_neighbors = Dijkstra_get_unvisited_neighbors(unvisited, u);
+		set<uint64_t> u_neighbors = this->nodes[u];
 
-		//loop through neighbors if not empty
-		if(!unvisited_neighbors.empty()){
+		//loop through neighbors of u if not empty
+		if(!u_neighbors.empty()){
 			//loop through the neighbors
-			for(set<uint64_t>::iterator v = unvisited_neighbors.begin(); v != unvisited_neighbors.end(); v++){
-			//for(const auto &n : unvisited_neighbors){
-				alt = distance[u] + 1;
-				if(alt < distance[*v]){
-					distance[*v] = alt;
+			for(set<uint64_t>::iterator v = u_neighbors.begin(); v != u_neighbors.end(); v++){
+				//check that neighbor v is unvisited
+				if(unvisited.find(*v) != unvisited.end()){
+					alt = distance[u] + 1;
+					if(alt < distance[*v]){
+						distance[*v] = alt;
+					}
 				}
 			}
 		}
