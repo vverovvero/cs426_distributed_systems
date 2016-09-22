@@ -12,6 +12,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <cstdint> //has type 'uint64_t'
 
 using std::pair;
 using std::map;
@@ -19,9 +20,9 @@ using std::set;
 using std::string;
 
 
-int event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
+uint64_t event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	//Call graph function
-	int result = (*graph).add_node(node_id);
+	uint64_t result = (*graph).add_node(node_id);
 
 	//Send HTTP reply
 	if(result == 1){
@@ -48,9 +49,9 @@ int event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	return 1;
 }
 
-int event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
+uint64_t event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
 	//Call graph function
-	int result = (*graph).add_edge(node_a_id, node_b_id);
+	uint64_t result = (*graph).add_edge(node_a_id, node_b_id);
 
 	//Send HTTP reply
 	if(result == 1){
@@ -79,9 +80,9 @@ int event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, u
 	return 1;
 }
 
-int event_remove_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
+uint64_t event_remove_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	//Call graph function
-	int result = (*graph).remove_node(node_id);
+	uint64_t result = (*graph).remove_node(node_id);
 
 	//Send HTTP reply
 	if(result == 1){
@@ -106,9 +107,9 @@ int event_remove_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	return 1;
 }
 
-int event_remove_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
+uint64_t event_remove_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
 	//Call graph function
-	int result = (*graph).remove_edge(node_a_id, node_b_id);
+	uint64_t result = (*graph).remove_edge(node_a_id, node_b_id);
 
 	//Send HTTP reply
 	if(result == 1){
@@ -133,9 +134,9 @@ int event_remove_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id
 	return 1;
 }
 
-int event_get_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
+uint64_t event_get_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	//Call graph function
-	int result = (*graph).get_node(node_id);
+	uint64_t result = (*graph).get_node(node_id);
 
 	//Send HTTP reply
 	mg_send_head(nc, 200, -1, NULL);
@@ -157,9 +158,9 @@ int event_get_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	return 1;
 }
 
-int event_get_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
+uint64_t event_get_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
 	//Call graph function
-	int result = (*graph).get_edge(node_a_id, node_b_id);
+	uint64_t result = (*graph).get_edge(node_a_id, node_b_id);
 
 	//Send HTTP reply
 	if(result != 2){
@@ -188,9 +189,9 @@ int event_get_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, u
 	return 1;
 }
 
-int event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_id){
+uint64_t event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	//Call graph function
-	pair<int, set<uint64_t> > result = (*graph).get_neighbors(node_id);
+	pair<uint64_t, set<uint64_t> > result = (*graph).get_neighbors(node_id);
 
 	//Send HTTP reply
 	if(result.first == 1){
@@ -234,9 +235,9 @@ int event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_id
 	return 1;
 }
 
-int event_shortest_path(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
+uint64_t event_shortest_path(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
 	//Call graph function
-	pair<int, uint64_t> result = (*graph).shortest_path(node_a_id, node_b_id);
+	pair<uint64_t, uint64_t> result = (*graph).shortest_path(node_a_id, node_b_id);
 
 	//Send HTTP reply
 	if(result.first == 1){

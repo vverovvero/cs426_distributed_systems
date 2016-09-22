@@ -73,7 +73,7 @@ set<uint64_t> Graph::Dijkstra_get_unvisited_neighbors(set<uint64_t> unvisited, u
 	set<uint64_t>::iterator it;
 
 	//fetch the neighbors of node
-	pair<int, set<uint64_t> > result = get_neighbors(node);
+	pair<uint64_t, set<uint64_t> > result = get_neighbors(node);
 	if(result.first == 1){
 		neighbors = result.second;
 	}
@@ -89,7 +89,7 @@ set<uint64_t> Graph::Dijkstra_get_unvisited_neighbors(set<uint64_t> unvisited, u
 ////////////////////////////////////////////////////////////////////////
 //return 1 if node is in the graph
 //return 0 if node is not in the graph
-int Graph::get_node(uint64_t node_id){
+uint64_t Graph::get_node(uint64_t node_id){
 	// std::cout << "Getting node: " << node_id << std::endl;
 	map<uint64_t, set<uint64_t> >::iterator it;
 	it = this->nodes.find(node_id);
@@ -106,7 +106,7 @@ int Graph::get_node(uint64_t node_id){
 //return 1 if edge is in graph
 //return 0 if edge is not in graph
 //return 2 if at least one of vertices does not exist (or if nodes are same?)
-int Graph::get_edge(uint64_t node_a_id, uint64_t node_b_id){
+uint64_t Graph::get_edge(uint64_t node_a_id, uint64_t node_b_id){
 	// std::cout << "Getting edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
 	//are the nodes the same?
 	if(node_a_id == node_b_id){
@@ -141,7 +141,7 @@ int Graph::get_edge(uint64_t node_a_id, uint64_t node_b_id){
 }
 
 //return 1 if success, 0 if node already exists
-int Graph::add_node(uint64_t node_id){
+uint64_t Graph::add_node(uint64_t node_id){
 	// std::cout << "Client would like to add node: " << node_id << std::endl;
 	if(get_node(node_id) == 0){
 		//Node was not found, create it
@@ -157,9 +157,9 @@ int Graph::add_node(uint64_t node_id){
 
 //return 1 if success, 0 if edge already exists,
 //2 if node doesn't exist or node_a_id == node_b_id
-int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id){
+uint64_t Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id){
 	// std::cout << "Client wants to add edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
-	int found_edge = get_edge(node_a_id, node_b_id);
+	uint64_t found_edge = get_edge(node_a_id, node_b_id);
 	if(found_edge == 2){
 		// std::cout << "Cannot add edge because node(s) doesn't exist, or is same." << std::endl;
 		return 2;
@@ -183,14 +183,14 @@ int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id){
 
 
 //return 1 if success, 0 if node does not exist
-int Graph::remove_node(uint64_t node_id){
+uint64_t Graph::remove_node(uint64_t node_id){
 	//std::cout << "Client would like to erase node: " << node_id << std::endl;
 	//Check for node existance
 	if(get_node(node_id)){
 		//Node(s) was erased.
 		// std::cout << "Node will be erased" << std::endl;
 		// Update neighbors for the erased node, if any neighbors
-		pair<int, set<uint64_t> > result = get_neighbors(node_id);
+		pair<uint64_t, set<uint64_t> > result = get_neighbors(node_id);
 
 		// If get neighbors returns, proceed to erase node from neighbor lists (if any)
 		if(result.first && !result.second.empty()){
@@ -214,10 +214,10 @@ int Graph::remove_node(uint64_t node_id){
 }
 
 //return 1 if success, 0 if edge does not exist
-int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id){
+uint64_t Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id){
 	// std::cout << "Client wants to remove edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
 	//does edge exist?  Check neighbors of both nodes
-	int found_edge = get_edge(node_a_id, node_b_id);
+	uint64_t found_edge = get_edge(node_a_id, node_b_id);
 	if(found_edge == 1){
 		// std::cout << "Removing edge!" << std::endl;
 		//Edge is in graph.  Get neighbors for each node, and remove the opposite 
@@ -235,16 +235,16 @@ int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id){
 //return pair (success/fail, vector of neighbors)
 //return (1, set of neighbors) if node exists
 //return (0, empty set) if node doesn't exist
-pair<int, set<uint64_t> > Graph::get_neighbors(uint64_t node_id){
+pair<uint64_t, set<uint64_t> > Graph::get_neighbors(uint64_t node_id){
 	// std::cout << "Client would like to get neighbors of node: " << node_id << std::endl;
 	//first find node
-	int found_node = get_node(node_id);
+	uint64_t found_node = get_node(node_id);
 	if(found_node == 1){
 		//Node found.  Return the set of neighbors.
-		return pair<int, set<uint64_t> > (1, this->nodes[node_id]);
+		return pair<uint64_t, set<uint64_t> > (1, this->nodes[node_id]);
 	}
 	// std::cout << "Node doesn't exist.  No neighbors to fetch." << std::endl;
-	return pair<int, set<uint64_t> > (0, EmptySet); //is this correct?
+	return pair<uint64_t, set<uint64_t> > (0, EmptySet); //is this correct?
 }
 
 //return pair (success/fail, distance/NULL)
@@ -253,7 +253,7 @@ pair<int, set<uint64_t> > Graph::get_neighbors(uint64_t node_id){
 //return (2, Infinity) if either node does not exist
 //node_a_id is the source, node_b_id is the destination
 //implementation based off wikipedia psuedocode: https://www.wikiwand.com/en/Dijkstra's_algorithm
-pair<int, uint64_t> Graph::shortest_path(uint64_t node_a_id, uint64_t node_b_id){
+pair<uint64_t, uint64_t> Graph::shortest_path(uint64_t node_a_id, uint64_t node_b_id){
 	// std::cout << "Client would like to get shortest path between nodes " << node_a_id << " and "<< node_b_id << std::endl;
 	//rename nodes
 	uint64_t &source = node_a_id;
@@ -263,13 +263,13 @@ pair<int, uint64_t> Graph::shortest_path(uint64_t node_a_id, uint64_t node_b_id)
 	//if either node doesn't exist, don't look for path
 	if(get_node(source) == 0 || get_node(dest) == 0){
 		// std::cout<< "One or both nodes don't exist.  No path." << std::endl;
-		return pair<int, uint64_t> (2, Infinity);
+		return pair<uint64_t, uint64_t> (2, Infinity);
 	}
 
 	//if source and dest node are same, return 204 (0, Infinity)
 	if(source == dest){
 		// std::cout << "Source and dest node are same, return 204 (no path)" << std::endl;
-		return pair<int, uint64_t> (0, Infinity);
+		return pair<uint64_t, uint64_t> (0, Infinity);
 	}
 
 	//Else, perform dijkstra's///////////////////////////
@@ -296,11 +296,11 @@ pair<int, uint64_t> Graph::shortest_path(uint64_t node_a_id, uint64_t node_b_id)
 		//is this check a hack?
 		if(u == dest && distance[dest] != Infinity){
 			// std::cout << "Found destination node!  Distance is: " << distance[dest] << std::endl;
-			return pair<int, uint64_t> (1, distance[dest]); //is this valid fetch?
+			return pair<uint64_t, uint64_t> (1, distance[dest]); //is this valid fetch?
 		}
 		if(u == dest && distance[dest] == Infinity){
 			//dest found, but no path exists
-			return pair<int, uint64_t> (0, Infinity);
+			return pair<uint64_t, uint64_t> (0, Infinity);
 		}
 
 		//remove 'u' from unvisited
@@ -328,7 +328,7 @@ pair<int, uint64_t> Graph::shortest_path(uint64_t node_a_id, uint64_t node_b_id)
 	//if no more unvisited, and we never returned the dest node,
 	//then there is no path
 	// std::cout << "No path to destination node found." << std::endl;
-	return pair<int, uint64_t> (0, Infinity);
+	return pair<uint64_t, uint64_t> (0, Infinity);
 }
 
 

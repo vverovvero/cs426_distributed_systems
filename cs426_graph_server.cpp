@@ -78,7 +78,7 @@ uint64_t token_to_uint64(struct json_token * token){
 
 //given http request body, return (1, vector of node ids) on successful parse
 //return (0, empty vector) if no node ids found
-pair<int, vector<uint64_t> > parse_for_node_ids(struct mg_str body, int num, ...){
+pair<uint64_t, vector<uint64_t> > parse_for_node_ids(struct mg_str body, int num, ...){
   int i;
   vector<uint64_t> node_ids;
   //set up for multiple node ids
@@ -109,10 +109,10 @@ pair<int, vector<uint64_t> > parse_for_node_ids(struct mg_str body, int num, ...
   va_end(valist);
 
   if(node_ids.size() > 0){
-    return pair<int, vector<uint64_t> > (1, node_ids);
+    return pair<uint64_t, vector<uint64_t> > (1, node_ids);
   }
   else {
-    return pair<int, vector<uint64_t> > (0, EmptyVector);
+    return pair<uint64_t, vector<uint64_t> > (0, EmptyVector);
   }
 }
 
@@ -162,7 +162,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             // print_flush("KEY was add_node");
             //Parse Json
             //Call wrapper, which edits graph and returns HTTP reply
-            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
+            pair<uint64_t, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
               event_add_node(&graph, nc, result.second[0]);
             }
@@ -172,7 +172,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
           }
           else if(is_equal(&key, &key_add_edge)){
             // print_flush("KEY was add_edge");
-            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
+            pair<uint64_t, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
               event_add_edge(&graph, nc, result.second[0], result.second[1]);
             }
@@ -182,7 +182,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
           }
           else if(is_equal(&key, &key_remove_node)){
             // print_flush("KEY was remove_node");
-            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
+            pair<uint64_t, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
               event_remove_node(&graph, nc, result.second[0]);
             }
@@ -192,7 +192,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
           }
           else if(is_equal(&key, &key_remove_edge)){
             // print_flush("KEY was remove_edge");
-            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
+            pair<uint64_t, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
               event_remove_edge(&graph, nc, result.second[0], result.second[1]);
             }
@@ -202,7 +202,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
           }
           else if(is_equal(&key, &key_get_node)){
             // print_flush("KEY was get_node");
-            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
+            pair<uint64_t, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
               event_get_node(&graph, nc, result.second[0]);
             }
@@ -212,7 +212,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
           }
           else if(is_equal(&key, &key_get_edge)){
             // print_flush("KEY was get_edge");
-            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
+            pair<uint64_t, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
               event_get_edge(&graph, nc, result.second[0], result.second[1]);
             }
@@ -222,7 +222,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
           }
           else if(is_equal(&key, &key_get_neighbors)){
             // print_flush("KEY was get_neighbors");
-            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
+            pair<uint64_t, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
               event_get_neighbors(&graph, nc, result.second[0]);
             }
@@ -232,7 +232,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
           }
           else if(is_equal(&key, &key_shortest_path)){
             // print_flush("KEY was shortest_path");
-            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
+            pair<uint64_t, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
               event_shortest_path(&graph, nc, result.second[0], result.second[1]);
             }
