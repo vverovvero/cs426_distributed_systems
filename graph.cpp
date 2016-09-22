@@ -280,6 +280,13 @@ pair<int, uint64_t> Graph::shortest_path(uint64_t node_a_id, uint64_t node_b_id)
 		// std::cout<< "One or both nodes don't exist.  No path." << std::endl;
 		return pair<int, uint64_t> (2, Infinity);
 	}
+
+	//if source and dest node are same, return 204 (0, Infinity)
+	if(node_a_id == node_b_id){
+		return pair<int, uint64_t> (0, Infinity);
+	}
+
+
 	//Else, perform dijkstra's///////////////////////////
 	set<uint64_t> unvisited;  //Set of unvisited nodes
 	map<uint64_t, uint64_t> distance; //hash of (node, distance)
@@ -313,15 +320,17 @@ pair<int, uint64_t> Graph::shortest_path(uint64_t node_a_id, uint64_t node_b_id)
 		//construct set of unvisited neighbrs
 		set<uint64_t> unvisited_neighbors = Dijkstra_get_unvisited_neighbors(unvisited, u);
 
-		//loop through the neighbors
-		for(set<uint64_t>::iterator v = unvisited_neighbors.begin(); v != unvisited_neighbors.end(); v++){
-		//for(const auto &n : unvisited_neighbors){
-			alt = distance[u] + 1;
-			if(alt < distance[*v]){
-				distance[*v] = alt;
+		//loop through neighbors if not empty
+		if(!unvisited_neighbors.empty()){
+			//loop through the neighbors
+			for(set<uint64_t>::iterator v = unvisited_neighbors.begin(); v != unvisited_neighbors.end(); v++){
+			//for(const auto &n : unvisited_neighbors){
+				alt = distance[u] + 1;
+				if(alt < distance[*v]){
+					distance[*v] = alt;
+				}
 			}
 		}
-
 		// std::cout << "After one iteration, unvisited set is: " << std::endl;
 		// print_set(unvisited);
 	}
