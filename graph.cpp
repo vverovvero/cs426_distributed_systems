@@ -179,17 +179,17 @@ int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id){
 
 //return 1 if success, 0 if node does not exist
 int Graph::remove_node(uint64_t node_id){
-	std::cout << "Client would like to erase node: " << node_id << std::endl;
+	//std::cout << "Client would like to erase node: " << node_id << std::endl;
 	//Check for node existance
 	if(get_node(node_id)){
 		//Node(s) was erased.
-		std::cout << "Node will be erased" << std::endl;
+		// std::cout << "Node will be erased" << std::endl;
 		// Update neighbors for the erased node, if any neighbors
 		pair<int, set<uint64_t> > result = get_neighbors(node_id);
 
 		// If get neighbors returns, proceed to erase node from neighbor lists (if any)
 		if(result.first && !result.second.empty()){
-			std::cout << "Node has nonempty neighbor list.  Must visit each neighbor." << std::endl;
+			// std::cout << "Node has nonempty neighbor list.  Must visit each neighbor." << std::endl;
 			//Nonempty neighbor list for node_id
 			set<uint64_t> neighbors = result.second;
 			for(set<uint64_t>::iterator n = neighbors.begin(); n!=neighbors.end(); n++){
