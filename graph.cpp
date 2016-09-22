@@ -180,10 +180,28 @@ int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id){
 //return 1 if success, 0 if node does not exist
 int Graph::remove_node(uint64_t node_id){
 	// std::cout << "Client would like to erase node: " << node_id << std::endl;
-	//Call erase.  If no items erased, then node did not exist
-	if(this->nodes.erase(node_id) != 0){
+	//Check for node existance
+	if(get_node(node_id)){
 		//Node(s) was erased.
 		// std::cout << "Node was erased" << std::endl;
+		// Update neighbors for the erased node, if any neighbors
+		pair<int, set<uint64_t> > result = get_neighbors(node_id);
+
+		// If get neighbors returns, proceed to erase node from neighbor lists (if any)
+		if(result.first && !result.second.empty()){
+			//Nonempty neighbor list for node_id
+			set<uint64_t> neighbors = result.second;
+			for(set<uint64_t>::iterator n = neighbors.begin(); n!=neighbors.end(); n++){
+				//For each neighbor, erase node_id from neighbors' neighbor list
+				pair<int, set<uint64_t> > neighbor_result = get_neighbors(*n);
+				if(neighbor_result.first){
+					set<uint64_t> n_neighbor_list = neighbor_result.second;
+					n_neighbor_list.remove(node_id);
+				}
+			}
+		}
+		// Erase node
+		this->nodes.erase(node_id);
 		return 1;
 	}
 	//No node erased.
@@ -199,13 +217,22 @@ int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id){
 	if(found_edge == 1){
 		// std::cout << "Removing edge!" << std::endl;
 		//Edge is in graph.  Need to remove from both nodes.
-		map<uint64_t, set<uint64_t> >::iterator it_a, it_b;
-		set<uint64_t> it_a_neighbors = this->nodes.find(node_a_id)->second;
-		set<uint64_t> it_b_neighbors = this->nodes.find(node_b_id)->second;
+		// map<uint64_t, set<uint64_t> >::iterator it_a, it_b;
+		// set<uint64_t> it_a_neighbors = this->nodes.find(node_a_id)->second;
+		// set<uint64_t> it_b_neighbors = this->nodes.find(node_b_id)->second;
 
 		//Remove from each neighbor list.
-		it_a_neighbors.erase(node_b_id);
-		it_b_neighbors.erase(node_a_id);
+		// it_a_neighbors.erase(node_b_id);
+		// it_b_neighbors.erase(node_a_id);
+
+		//////////////////
+		//Edge is in graph.  Get neighbors for each node, and remove the opposite 
+		set<uint64_t> node_a_neighbors = this->nodes[node_a_id];
+		set<uint64_t> node_b_neighbors = this->nodes[node_b_id];
+
+		node_a_neighbors.erase(node_b_id);
+		node_b_neighbors.erase(node_a_id);
+
 		return 1;
 	}
 	//No edge to remove.
