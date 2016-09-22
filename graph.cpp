@@ -47,17 +47,22 @@ uint64_t Graph::Dijkstra_get_min_distance_unvisited_node(set<uint64_t> unvisited
 	uint64_t current_node_dist;
 	uint64_t current_min_dist = Infinity;
 
-	for(set<uint64_t>::iterator n = unvisited.begin(); n != unvisited.end(); n++){
-	//for(const auto &n : unvisited){
-		current_node_dist = distance[*n];
-		if(current_node_dist <= current_min_dist){
-			//set new minimum distance and node
-			current_min_dist = current_node_dist;
-			min_dist_node = *n;
+	if(!unvisited.empty()){
+		for(set<uint64_t>::iterator n = unvisited.begin(); n != unvisited.end(); n++){
+		//for(const auto &n : unvisited){
+			current_node_dist = distance[*n];
+			if(current_node_dist <= current_min_dist){
+				//set new minimum distance and node
+				current_min_dist = current_node_dist;
+				min_dist_node = *n;
+			}
 		}
+		//std::cout << "Min distance node is: " << min_dist_node << std::endl;
+		return min_dist_node;
 	}
-	//std::cout << "Min distance node is: " << min_dist_node << std::endl;
-	return min_dist_node;
+	else{
+		exit(EXIT_FAILURE);
+	}
 }
 
 set<uint64_t> Graph::Dijkstra_get_unvisited_neighbors(set<uint64_t> unvisited, uint64_t node){
@@ -266,7 +271,7 @@ pair<int, uint64_t> Graph::shortest_path(uint64_t node_a_id, uint64_t node_b_id)
 	}
 
 	//if source and dest node are same, return 204 (0, Infinity)
-	if(node_a_id == node_b_id){
+	if(source == dest){
 		// std::cout << "Source and dest node are same, return 204 (no path)" << std::endl;
 		return pair<int, uint64_t> (0, Infinity);
 	}
@@ -295,7 +300,8 @@ pair<int, uint64_t> Graph::shortest_path(uint64_t node_a_id, uint64_t node_b_id)
 		//is this check a hack?
 		if(u == dest && distance[dest] != Infinity){
 			// std::cout << "Found destination node!  Distance is: " << distance[dest] << std::endl;
-			return pair<int, uint64_t> (1, distance[dest]); //is this valid fetch?
+			uint64_t shortest_dist = distance[dest];
+			return pair<int, uint64_t> (1, shortest_dist); //is this valid fetch?
 		}
 
 		//remove 'u' from unvisited
