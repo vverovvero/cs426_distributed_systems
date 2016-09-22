@@ -298,6 +298,10 @@ pair<int, uint64_t> Graph::shortest_path(uint64_t node_a_id, uint64_t node_b_id)
 			// std::cout << "Found destination node!  Distance is: " << distance[dest] << std::endl;
 			return pair<int, uint64_t> (1, distance[dest]); //is this valid fetch?
 		}
+		if(u == dest && distance[dest] == Infinity){
+			//dest found, but no path exists
+			return pair<int, uint64_t> (0, Infinity);
+		}
 
 		//remove 'u' from unvisited
 		unvisited.erase(u);
