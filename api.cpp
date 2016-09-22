@@ -197,14 +197,16 @@ int event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_id
 		set<uint64_t> neighbors = result.second;
 		string neighbor_list = "";
 
-   		for(set<uint64_t>::iterator i = neighbors.begin(); i != neighbors.end(); i++){
-			uint64_t neighbor = *i;
-			neighbor_list += std::to_string(neighbor);
-			neighbor_list += ", ";
+		if(!neighbors.empty()){
+	   		for(set<uint64_t>::iterator i = neighbors.begin(); i != neighbors.end(); i++){
+				uint64_t neighbor = *i;
+				neighbor_list += std::to_string(neighbor);
+				neighbor_list += ", ";
+			}
+			//Delete last ", "
+			neighbor_list.pop_back();
+			neighbor_list.pop_back();
 		}
-		//Delete last ", "
-		neighbor_list.pop_back();
-		neighbor_list.pop_back();
 
 		//Convert string to C-style char *
 		char *c_neighbor_list = new char[neighbor_list.length() + 1];
