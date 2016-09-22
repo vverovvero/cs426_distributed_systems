@@ -232,11 +232,8 @@ int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id){
 
 		//////////////////
 		//Edge is in graph.  Get neighbors for each node, and remove the opposite 
-		set<uint64_t> node_a_neighbors = this->nodes[node_a_id];
-		set<uint64_t> node_b_neighbors = this->nodes[node_b_id];
-
-		node_a_neighbors.erase(node_b_id);
-		node_b_neighbors.erase(node_a_id);
+		this->nodes[node_a_id].erase(node_b_id);
+		this->nodes[node_b_id].erase(node_a_id);
 
 		return 1;
 	}
