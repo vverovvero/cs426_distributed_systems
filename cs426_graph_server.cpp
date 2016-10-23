@@ -97,8 +97,6 @@ pair<int, vector<uint64_t> > parse_for_node_ids(struct mg_str body, int num, ...
     //print_json_token(token);
     if(token !=0){ //only convert token to uint64_t if it was found
       uint64_t node_id = token_to_uint64(token);
-      // printf("Node_id found was: %llu\n", node_id);
-      // fflush(stdout);
 
       //push result into vector
       node_ids.push_back(node_id);
@@ -143,20 +141,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
         key.p = hm->uri.p + api_prefix.len;
         key.len = hm->uri.len - api_prefix.len;
 
-        // printf("Received a valid request\n");
-        // fflush(stdout);
-
-        //how to parse the content (the json stuff); ????
-        // print_flush("~~~~~~~~MESSAGE BODY, if any~~~~~~~~~~~~\n");
-        // print_mg_str(hm->body);
-        // print_flush("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-
         if (is_equal(&hm->method, &s_post_method)) {
-          // printf("POST request\n");
-          // fflush(stdout);
-
-          //Set up HTTP reply body to fill in from the if-statements
-
           //Parse the desired command by checking the key
           if(is_equal(&key, &key_add_node)){
             // print_flush("KEY was add_node");
