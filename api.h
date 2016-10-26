@@ -17,7 +17,7 @@ using std::set;
 #ifndef API_H
 #define API_H
 
-void emit_json_start(struct mg_connection *nc, const int code)
+void emit_json_start(struct mg_connection *nc, const int code);
 void emit_json_header(struct mg_connection *nc, const int code, const char *message);
 void emit_json_body(struct mg_connection *nc, const char *buf, const int size);
 void emit_json_end(struct mg_connection *nc);
