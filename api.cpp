@@ -26,19 +26,14 @@ void emit_json_start(struct mg_connection *nc, const int code){
 //emits status line and message
 void emit_json_header(struct mg_connection *nc, const int code, const char *message){
 	//This has no payload
-	// mg_send_head(nc, code, -1, NULL); //-1 indicates chunked encoding
     mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", code, message);
-    // mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
 }
 
 //call after using json_emit (b/c size and buffer).  emits body
 void emit_json_body(struct mg_connection *nc, const char *buf, const int size){
-	// printf("emitting JSON body!");
-	// mg_send_head(nc, 200, -1, NULL);
     mg_printf_http_chunk(nc, "%s %d %s", "Content-Length: ", size, "\n");
     mg_printf_http_chunk(nc, "%s", "Content-Type: application/json\n\n");
     mg_printf_http_chunk(nc, "%s", buf);
-    // mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
 }
 
 //send after sending everything
@@ -211,6 +206,7 @@ void event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_i
 		emit_json_end(nc);
 	}
 }
+
 
 void event_shortest_path(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
 	//Call graph function
