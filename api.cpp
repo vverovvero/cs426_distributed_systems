@@ -19,7 +19,7 @@ using std::set;
 using std::string;
 
 //send before sending anything else
-void emit_json_start(){
+void emit_json_start(struct mg_connection *nc, const int code){
 	mg_send_head(nc, code, -1, NULL); //-1 indicates chunked encoding	
 }
 
@@ -42,7 +42,7 @@ void emit_json_body(struct mg_connection *nc, const char *buf, const int size){
 }
 
 //send after sending everything
-void emit_json_end(){
+void emit_json_end(struct mg_connection *nc){
 	mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
 }
 
@@ -52,17 +52,17 @@ void event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	int result = (*graph).add_node(node_id);
 	//Send HTTP reply
 	if(result == 1){
-		emit_json_start();
+		emit_json_start(nc, 200);
 		emit_json_header(nc, 200, "OK\n");
         char buf[1000];
         int size = json_emit(buf, sizeof(buf), "{\n  s: i\n}\n", "node_id", node_id);
         emit_json_body(nc, buf, size);
-        emit_json_end();
+        emit_json_end(nc);
 	} 
 	else {
-		emit_json_start();
+		emit_json_start(nc, 204);
 		emit_json_header(nc, 204, "No Content\n");
-		emit_json_end();
+		emit_json_end(nc);
 	}
 }
 
@@ -71,22 +71,22 @@ void event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, 
 	int result = (*graph).add_edge(node_a_id, node_b_id);
 	//Send HTTP reply
 	if(result == 1){
-		emit_json_start();
+		emit_json_start(nc, 200);
 		emit_json_header(nc, 200, "OK\n");
         char buf[1000];
         int size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i\n}\n", "node_a_id", node_a_id, "node_b_id", node_b_id);
         emit_json_body(nc, buf, size);
-        emit_json_end();
+        emit_json_end(nc);
 	}
 	else if(result == 0){
-		emit_json_start();
+		emit_json_start(nc, 204);
 		emit_json_header(nc, 204, "No Content\n");
-		emit_json_end();
+		emit_json_end(nc);
 	}
 	else{
-		emit_json_start();
+		emit_json_start(nc, 400);
 		emit_json_header(nc, 400, "Bad Request\n");
-		emit_json_end();
+		emit_json_end(nc);
 	}
 }
 
@@ -95,17 +95,17 @@ void event_remove_node(Graph *graph, struct mg_connection *nc, uint64_t node_id)
 	int result = (*graph).remove_node(node_id);
 	//Send HTTP reply
 	if(result == 1){
-		emit_json_start();
+		emit_json_start(nc, 200);
 		emit_json_header(nc, 200, "OK\n");
         char buf[1000];
         int size = json_emit(buf, sizeof(buf), "{\n  s: i\n}\n", "node_id", node_id);
         emit_json_body(nc, buf, size);
-        emit_json_end();
+        emit_json_end(nc);
 	} 
 	else {
-		emit_json_start();
+		emit_json_start(nc, 400);
 		emit_json_header(nc, 400, "No Content\n");
-		emit_json_end();
+		emit_json_end(nc);
 	}
 }
 
@@ -115,17 +115,17 @@ void event_remove_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_i
 
 	//Send HTTP reply
 	if(result == 1){
-		emit_json_start();
+		emit_json_start(nc, 200);
 		emit_json_header(nc, 200, "OK\n");
         char buf[1000];
         int size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i\n}\n", "node_a_id", node_a_id, "node_b_id", node_b_id);
        	emit_json_body(nc, buf, size);
-       	emit_json_end();
+       	emit_json_end(nc);
 	}
 	else if(result == 0){
-		emit_json_start();
+		emit_json_start(nc, 400);
 		emit_json_header(nc, 400, "No Content\n");
-		emit_json_end();
+		emit_json_end(nc);
 	}
 }
 
@@ -134,7 +134,7 @@ void event_get_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	int result = (*graph).get_node(node_id);
 
 	//Send HTTP reply
-	emit_json_start();
+	emit_json_start(nc, 200);
 	emit_json_header(nc, 200, "OK\n");
     int size;
     char buf[1000];
@@ -145,7 +145,7 @@ void event_get_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
     	size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i\n}\n", "node_id", node_id, "in_graph", (long) 0);
     }
     emit_json_body(nc, buf, size);
-    emit_json_end();
+    emit_json_end(nc);
 }
 
 void event_get_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
@@ -153,7 +153,7 @@ void event_get_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, 
 	int result = (*graph).get_edge(node_a_id, node_b_id);
 	//Send HTTP reply
 	if(result != 2){
-		emit_json_start();
+		emit_json_start(nc, 200);
 		emit_json_header(nc, 200, "OK\n");
 	    int size;
 	    char buf[1000];
@@ -164,12 +164,12 @@ void event_get_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, 
 	    	size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i,\n  s: i\n}\n", "node_a_id", node_a_id, "node_b_id", node_b_id, "in_graph", (long) 0);	
 	    }
 	    emit_json_body(nc, buf, size);
-	    emit_json_end();
+	    emit_json_end(nc);
 	}
 	else{
-		emit_json_start();
+		emit_json_start(nc, 400);
 		emit_json_header(nc, 400, "No Content\n");
-		emit_json_end();
+		emit_json_end(nc);
 	}
 }
 
@@ -198,17 +198,17 @@ void event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_i
 		strcpy(c_neighbor_list, neighbor_list.c_str());
 
 		//Send list of neighbors
-		emit_json_start();
+		emit_json_start(nc, 200);
 		emit_json_header(nc, 200, "OK\n");
 	    char buf[1000];
 	    int size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: [S]\n}\n", "node_id", node_id, "neighbors", c_neighbor_list);
 	    emit_json_body(nc, buf, size);
-	    emit_json_end();
+	    emit_json_end(nc);
 	}
 	else{
-		emit_json_start();
+		emit_json_start(nc, 400);
 		emit_json_header(nc, 400, "Bad Request\n");
-		emit_json_end();
+		emit_json_end(nc);
 	}
 }
 
@@ -218,23 +218,23 @@ void event_shortest_path(Graph *graph, struct mg_connection *nc, uint64_t node_a
 
 	//Send HTTP reply
 	if(result.first == 1){
-		emit_json_start();
+		emit_json_start(nc, 200);
 		emit_json_header(nc, 200, "OK\n");
 	    char buf[1000];
 	    int size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i,\n  s: i\n}\n", "node_a_id", node_a_id, "node_b_id", node_b_id, "distance", result.second);
 	    // int size = json_emit(buf, sizeof(buf), "{\n  s: i\n}\n", "distance", (long) result.second);	    
 	    emit_json_body(nc, buf, size);
-	    emit_json_end();
+	    emit_json_end(nc);
 	}
 	else if(result.first == 0){
-		emit_json_start();
+		emit_json_start(nc, 204);
 		emit_json_header(nc, 204, "No Content\n");
-		emit_json_end();
+		emit_json_end(nc);
 	}
 	else{
-		emit_json_start();
+		emit_json_start(nc, 400);
 		emit_json_header(nc, 400, "Bad Request\n");
-		emit_json_end();
+		emit_json_end(nc);
 	}
 }
 
