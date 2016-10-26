@@ -28,6 +28,7 @@ void emit_json_header(struct mg_connection *nc, const int code, const char *mess
 
 //call after using json_emit (b/c size and buffer).  emits body
 void emit_json_body(struct mg_connection *nc, const char *buf, const int size){
+	printf("emitting JSON body!");
 	mg_send_head(nc, 200, -1, NULL);
     mg_printf_http_chunk(nc, "%s %d %s", "Content-Length: ", size, "\n");
     mg_printf_http_chunk(nc, "%s", "Content-Type: application/json\n\n");
