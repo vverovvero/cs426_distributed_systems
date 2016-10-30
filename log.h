@@ -22,28 +22,28 @@
 #include <inttypes.h>
 
 
-struct superblock{
-  uint64_t checksum;
-  uint32_t generation;
-  uint32_t start; //start of log segment
-  uint32_t size; //size of log segment
-  void *empty; //4076 bytes empty
-};
+// struct superblock{
+//   uint64_t checksum;
+//   uint32_t generation;
+//   uint32_t start; //start of log segment
+//   uint32_t size; //size of log segment
+//   void *empty; //4076 bytes empty
+// };
 
-//each, 20 bytes each
-struct entry{
-  uint32_t opcode;
-  uint64_t node_a_id;
-  uint64_t node_b_id;
-};
+// //each, 20 bytes each
+// struct entry{
+//   uint32_t opcode;
+//   uint64_t node_a_id;
+//   uint64_t node_b_id;
+// };
 
-struct block{
-  uint64_t checksum;
-  uint32_t generation;
-  uint32_t num_entries;
-  struct entry entries[MAX_ENTRIES]; //199 entries total, 0 to 198
-  void *empty; //4 bytes empty
-};
+// struct block{
+//   uint64_t checksum;
+//   uint32_t generation;
+//   uint32_t num_entries;
+//   struct entry entries[MAX_ENTRIES]; //199 entries total, 0 to 198
+//   void *empty; //4 bytes empty
+// };
 
 void print_superblock(void *addr);
 void print_block(void *addr);
