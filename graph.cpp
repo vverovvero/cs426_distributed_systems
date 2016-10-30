@@ -7,6 +7,8 @@
 
 #include "graph.h"
 
+#include "stdint.h"
+
 #include <iostream>
 #include <stdlib.h> //has exit, EXIT_FAILURE
 #include <cstdint> //has type 'uint64_t'

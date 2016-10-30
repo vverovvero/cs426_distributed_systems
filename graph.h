@@ -6,6 +6,8 @@
 #include <map>
 #include <set>
 
+#include "stdint.h"
+
 using std::pair;
 using std::map;
 using std::set;
