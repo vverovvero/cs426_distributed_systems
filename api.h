@@ -10,10 +10,13 @@
 #include <utility>
 #include <map>
 #include <set>
+#include <string>
+#include <sstream>
 
 using std::pair;
 using std::map;
 using std::set;
+using std::string;
 
 #ifndef API_H
 #define API_H

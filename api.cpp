@@ -13,6 +13,7 @@
 #include <map>
 #include <set>
 #include <string>
+#include <sstream>
 
 using std::pair;
 using std::map;
