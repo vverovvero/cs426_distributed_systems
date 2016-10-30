@@ -5,6 +5,7 @@
 //then returns the appropriate HTTP reply/JSON.
 
 #include "graph.h"
+#include "stdint.h"
 
 #include <utility>
 #include <map>

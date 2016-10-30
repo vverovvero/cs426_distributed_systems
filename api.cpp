@@ -7,6 +7,7 @@
 #include "api.h"
 #include "graph.h"
 #include "mongoose.h"
+#include "stdint.h"
 
 #include <utility>
 #include <map>
