@@ -437,6 +437,7 @@ int check_validity_superblock(int fd){
 	read_superblock_from_disk(fd, superblock);
 	original_checksum = superblock->checksum;
 	current_checksum = set_checksum(superblock);
+	printf("Validity check.  Original_checksum=%llu, current_checksum=%llu\n", (unsigned long long) original_checksum, (unsigned long long) current_checksum);
 	if(original_checksum == current_checksum){
 		return 1;
 	}
