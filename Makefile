@@ -1,5 +1,6 @@
 CC      = g++
-CFLAGS = -std=c++11
+CFLAGS = -std=gnu++11
+#CFLAGS = -std=c++11 
 RM      = rm -f
 
 default: all
