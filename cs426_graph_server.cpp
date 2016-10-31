@@ -14,7 +14,7 @@
 #include <stdarg.h>
 #include <stdlib.h> //has atoll
 #include <iostream>
-#include <cstdint> //has type 'uint64_t'
+// #include <cstdint> //has type 'uint64_t'
 #include <vector>
 #include <utility> //has type 'pair'
 
