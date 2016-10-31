@@ -8,6 +8,7 @@
 #include "graph.h"
 #include "mongoose.h"
 #include "stdint.h"
+#include "log.h"
 
 #include <utility>
 #include <map>
@@ -19,6 +20,9 @@ using std::pair;
 using std::map;
 using std::set;
 // using std::string;
+
+///////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////
 
 //send before sending anything else
 void emit_json_start(struct mg_connection *nc, const int code){
