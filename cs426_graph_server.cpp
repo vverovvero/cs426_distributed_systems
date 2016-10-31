@@ -41,6 +41,7 @@ static const struct mg_str key_shortest_path = MG_STR("/shortest_path");
 static const vector<uint64_t> EmptyVector; //if no node id's found
 
 Graph graph; //global graph
+int fd; //global file descriptor
 
 //////// my helper print functions////////////
 void print_flush(char * string){
@@ -150,7 +151,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             //Call wrapper, which edits graph and returns HTTP reply
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
-              event_add_node(&graph, nc, result.second[0]);
+              event_add_node(&graph, nc, result.second[0], fd);
             }
             else {
               error = 1;
@@ -160,7 +161,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             // print_flush("KEY was add_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
-              event_add_edge(&graph, nc, result.second[0], result.second[1]);
+              event_add_edge(&graph, nc, result.second[0], result.second[1], fd);
             }
             else {
               error = 1;
@@ -170,7 +171,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             // print_flush("KEY was remove_node");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
-              event_remove_node(&graph, nc, result.second[0]);
+              event_remove_node(&graph, nc, result.second[0], fd);
             }
             else {
               error = 1;
@@ -180,7 +181,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             // print_flush("KEY was remove_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
-              event_remove_edge(&graph, nc, result.second[0], result.second[1]);
+              event_remove_edge(&graph, nc, result.second[0], result.second[1], fd);
             }
             else {
               error = 1;
@@ -266,9 +267,9 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
 int main(int argc, char *argv[]) {
 
   //read port from command line
-  if(argc == 2){
+  if(argc == 3){
     static const char *s_http_port = argv[1];
-    // int fd = open_disk(argv[2]);
+    fd = open_disk(argv[2]);
 
     //Set up the server
     struct mg_mgr mgr;
@@ -284,6 +285,17 @@ int main(int argc, char *argv[]) {
     s_http_server_opts.enable_directory_listing = "yes";
 
     //Check for existence of checkpoint and log
+    //To check for log, look up superblock and compare the checksum
+    //If format flag is specified or invalid checksum, init a new log
+    //Else, log exists
+    if(check_validity_superblock(fd)){
+      //log exists, load it
+      printf("Log exists.  Do something\n");
+    }
+    else{
+      //log does not exist yet, create it
+      init_log_segment(fd);
+    }
 
     printf("Starting web server on port %s\n", s_http_port);
     for (;;) {

@@ -423,6 +423,48 @@ int write_log_to_disk(int fd, uint32_t opcode, uint64_t node_a_id, uint64_t node
   return 1;
 }
 
+
+//////////////////////////////////////////////////////////////////
+/* Existence 													*/
+//////////////////////////////////////////////////////////////////
+
+//return 1 if block specified is valid.  return 0 if invalid
+//check is based on checksum
+int check_validity_superblock(int fd){
+	uint64_t original_checksum;
+	uint64_t current_checksum;
+	Superblock *superblock = (Superblock *) load_block();
+	read_superblock_from_disk(fd, superblock);
+	original_checksum = superblock->checksum;
+	current_checksum = set_checksum(superblock);
+	if(original_checksum == current_checksum){
+		return 1;
+	}
+	else{
+		return 0;
+	}
+}
+
+int check_validity_block(int fd, uint32_t block_num){
+	uint64_t original_checksum;
+	uint64_t current_checksum;
+	Block *block = (Block *) load_block();
+	read_block_from_disk(fd, block_num, block);
+	original_checksum = block->checksum;
+	current_checksum = set_checksum(block);
+	if(original_checksum == current_checksum){
+		return 1;
+	}
+	else{
+		return 0;
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////
+/* Reconstruction 												*/
+//////////////////////////////////////////////////////////////////
+
 //untested!!
 //read_log_from_disk, given virtual memory space the size of an entry
 void read_log_from_disk(int fd, void *addr){
@@ -442,7 +484,6 @@ void read_log_from_disk(int fd, void *addr){
 //plays log up until current generation
 //should check if checksum is current before playing the block
 
-//////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 
 

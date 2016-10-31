@@ -48,9 +48,19 @@ void emit_json_end(struct mg_connection *nc){
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-void event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
+void event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id, int fd){
 	//Call graph function
 	int result = (*graph).add_node(node_id);
+	//Log the request
+	int log_result = write_log_to_disk(fd, 0, node_id, 0);
+
+	//error if the log failed.  checkpoint required
+	if(log_result == 0){
+		emit_json_start(nc, 507);
+		emit_json_header(nc, 507, "Log is full\n");
+		emit_json_end(nc);
+		return;
+	}
 	//Send HTTP reply
 	if(result == 1){
 		emit_json_start(nc, 200);
@@ -67,9 +77,19 @@ void event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	}
 }
 
-void event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
+void event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id, int fd){
 	//Call graph function
 	int result = (*graph).add_edge(node_a_id, node_b_id);
+	//Log the request
+	int log_result = write_log_to_disk(fd, 1, node_a_id, node_b_id);
+
+	//error if the log failed.  checkpoint required
+	if(log_result == 0){
+		emit_json_start(nc, 507);
+		emit_json_header(nc, 507, "Log is full\n");
+		emit_json_end(nc);
+		return;
+	}
 	//Send HTTP reply
 	if(result == 1){
 		emit_json_start(nc, 200);
@@ -91,9 +111,19 @@ void event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, 
 	}
 }
 
-void event_remove_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
+void event_remove_node(Graph *graph, struct mg_connection *nc, uint64_t node_id, int fd){
 	//Call graph function
 	int result = (*graph).remove_node(node_id);
+	//Log the request
+	int log_result = write_log_to_disk(fd, 2, node_id, 0);
+
+	//error if the log failed.  checkpoint required
+	if(log_result == 0){
+		emit_json_start(nc, 507);
+		emit_json_header(nc, 507, "Log is full\n");
+		emit_json_end(nc);
+		return;
+	}
 	//Send HTTP reply
 	if(result == 1){
 		emit_json_start(nc, 200);
@@ -110,9 +140,19 @@ void event_remove_node(Graph *graph, struct mg_connection *nc, uint64_t node_id)
 	}
 }
 
-void event_remove_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
+void event_remove_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id, int fd){
 	//Call graph function
 	int result = (*graph).remove_edge(node_a_id, node_b_id);
+	//Log the request
+	int log_result = write_log_to_disk(fd, 3, node_a_id, node_b_id);
+
+	//error if the log failed.  checkpoint required
+	if(log_result == 0){
+		emit_json_start(nc, 507);
+		emit_json_header(nc, 507, "Log is full\n");
+		emit_json_end(nc);
+		return;
+	}
 
 	//Send HTTP reply
 	if(result == 1){
