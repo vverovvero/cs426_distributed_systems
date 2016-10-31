@@ -493,7 +493,7 @@ void read_log_from_disk(int fd, void *addr){
 
 //write giberish to devfile
 void randomize_disk(int fd){
-	int fd_random = open("/dev/random", O_RDONLY);
+	int fd_random = open("/dev/urandom", O_RDONLY);
 	assert(fd_random != -1);
 
 	uint32_t i;
@@ -502,7 +502,7 @@ void randomize_disk(int fd){
 		Block *block = (Block *) load_block();
 		//read random bytes
 		int read_return = read(fd_random, block, LOG_SIZE);
-		printf("read_return: %d\n", read_return);
+		// printf("read_return: %d\n", read_return);
 		assert(read_return == LOG_SIZE);
 		// read_disk(fd_random, i, block);
 		//write random bytes to disk
