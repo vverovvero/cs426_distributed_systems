@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include <stdlib.h> //has exit, EXIT_FAILURE
-#include <cstdint> //has type 'uint64_t'
+// #include <cstdint> //has type 'uint64_t'
 #include <utility> //has type 'pair'
 #include <map>
 #include <set>

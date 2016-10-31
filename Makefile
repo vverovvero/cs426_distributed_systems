@@ -1,5 +1,5 @@
 CC      = g++
-CFLAGS = -Werror -Wall -g -std=gnu++11
+CFLAGS = -Werror -Wall -g -std=c++11
 RM      = rm -f
 
 default: all
