@@ -1,6 +1,5 @@
-CC      = g++
-CFLAGS  = -std=c++0x  
-# CFLAGS = -std=c++11
+CC      = clang++
+CFLAGS  = -std=c++11 -stdlib=libc++
 RM      = rm -f
 
 default: all

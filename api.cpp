@@ -170,6 +170,45 @@ void event_get_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, 
 	}
 }
 
+// void event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_id){
+// 	//Call graph function
+// 	pair<int, set<uint64_t> > result = (*graph).get_neighbors(node_id);
+
+// 	//Send HTTP reply
+// 	if(result.first == 1){
+// 		set<uint64_t> neighbors = result.second;
+// 		string neighbor_list = "";
+
+// 		if(!neighbors.empty()){
+// 	   		for(set<uint64_t>::iterator i = neighbors.begin(); i != neighbors.end(); i++){
+// 				uint64_t neighbor = *i;
+// 				neighbor_list += std::to_string(neighbor);
+// 				neighbor_list += ", ";
+// 			}
+// 			//Delete last ", "
+// 			neighbor_list.pop_back();
+// 			neighbor_list.pop_back();
+// 		}
+
+// 		//Convert string to C-style char *
+// 		char *c_neighbor_list = new char[neighbor_list.length() + 1];
+// 		strcpy(c_neighbor_list, neighbor_list.c_str());
+
+// 		//Send list of neighbors
+// 		emit_json_start(nc, 200);
+// 		emit_json_header(nc, 200, "OK\n");
+// 	    char buf[1000];
+// 	    int size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: [S]\n}\n", "node_id", node_id, "neighbors", c_neighbor_list);
+// 	    emit_json_body(nc, buf, size);
+// 	    emit_json_end(nc);
+// 	}
+// 	else{
+// 		emit_json_start(nc, 400);
+// 		emit_json_header(nc, 400, "Bad Request\n");
+// 		emit_json_end(nc);
+// 	}
+// }
+
 void event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	//Call graph function
 	pair<int, set<uint64_t> > result = (*graph).get_neighbors(node_id);
@@ -177,22 +216,27 @@ void event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_i
 	//Send HTTP reply
 	if(result.first == 1){
 		set<uint64_t> neighbors = result.second;
-		string neighbor_list = "";
+		char c_neighbor_list[1000] = "";
 
 		if(!neighbors.empty()){
+			set<uint64_t>::iterator j; //peek_ahead
 	   		for(set<uint64_t>::iterator i = neighbors.begin(); i != neighbors.end(); i++){
 				uint64_t neighbor = *i;
-				neighbor_list += std::to_string(neighbor);
-				neighbor_list += ", ";
+				char c_neighbor[50];
+				j = i+1;
+				if(j != neighbors.end()){
+					sprintf(c_neighbor, "%u, ", neighbor);
+				}
+				else{
+					sprintf(c_neighbor, "%u", neighbor);
+				}
+				strcat(c_neighbor_list, c_neighbor);
 			}
-			//Delete last ", "
-			neighbor_list.pop_back();
-			neighbor_list.pop_back();
 		}
 
 		//Convert string to C-style char *
-		char *c_neighbor_list = new char[neighbor_list.length() + 1];
-		strcpy(c_neighbor_list, neighbor_list.c_str());
+		// char *c_neighbor_list = new char[neighbor_list.length() + 1];
+		// strcpy(c_neighbor_list, neighbor_list.c_str());
 
 		//Send list of neighbors
 		emit_json_start(nc, 200);
