@@ -124,7 +124,7 @@ static int is_equal(const struct mg_str *s1, const struct mg_str *s2) {
   return s1->len == s2->len && memcmp(s1->p, s2->p, s2->len) == 0;
 }
 
-static void ev_handler(struct mg_connection *nc, int ev, void *ev_data, int fd) {
+static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
   static const struct mg_str api_prefix = MG_STR("/api/v1");
   struct http_message *hm = (struct http_message *) ev_data;
   struct mg_str key;
@@ -266,9 +266,9 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data, int fd) 
 int main(int argc, char *argv[]) {
 
   //read port from command line
-  if(argc == 3){
+  if(argc == 2){
     static const char *s_http_port = argv[1];
-    int fd = open_disk(argv[2]);
+    // int fd = open_disk(argv[2]);
 
     //Set up the server
     struct mg_mgr mgr;
@@ -282,6 +282,8 @@ int main(int argc, char *argv[]) {
     s_http_server_opts.document_root = ".";      // Serve current directory
     s_http_server_opts.dav_document_root = ".";  // Allow access via WebDav
     s_http_server_opts.enable_directory_listing = "yes";
+
+    //Check for existence of checkpoint and log
 
     printf("Starting web server on port %s\n", s_http_port);
     for (;;) {
