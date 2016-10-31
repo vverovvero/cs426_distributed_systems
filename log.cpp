@@ -494,14 +494,16 @@ void read_log_from_disk(int fd, void *addr){
 //write giberish to devfile
 void randomize_disk(int fd){
 	int fd_random = open("/dev/random", O_RDONLY);
+	assert(fd_random != -1);
 
 	uint32_t i;
 	for(i=0; i<MAX_ENTRIES+1; i++){
 		//allocate block size
 		Block *block = (Block *) load_block();
 		//read random bytes
-		// read(fd_random, block, LOG_SIZE);
-		read_disk(fd_random, i, block);
+		int read_return = read(fd_random, block, LOG_SIZE);
+		assert(read_return == LOG_SIZE);
+		// read_disk(fd_random, i, block);
 		//write random bytes to disk
 		write_disk(fd, i, block);
 		//free block
