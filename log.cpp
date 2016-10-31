@@ -502,6 +502,7 @@ void randomize_disk(int fd){
 		Block *block = (Block *) load_block();
 		//read random bytes
 		int read_return = read(fd_random, block, LOG_SIZE);
+		printf("read_return: %d\n", read_return);
 		assert(read_return == LOG_SIZE);
 		// read_disk(fd_random, i, block);
 		//write random bytes to disk
