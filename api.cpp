@@ -12,13 +12,13 @@
 #include <utility>
 #include <map>
 #include <set>
-#include <string>
+// #include <string>
 // #include <sstream>
 
 using std::pair;
 using std::map;
 using std::set;
-using std::string;
+// using std::string;
 
 //send before sending anything else
 void emit_json_start(struct mg_connection *nc, const int code){
@@ -170,6 +170,7 @@ void event_get_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, 
 	}
 }
 
+//verion of get_neighbors that uses string
 // void event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 // 	//Call graph function
 // 	pair<int, set<uint64_t> > result = (*graph).get_neighbors(node_id);
@@ -209,6 +210,7 @@ void event_get_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, 
 // 	}
 // }
 
+//version of get_neighbors without string
 void event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	//Call graph function
 	pair<int, set<uint64_t> > result = (*graph).get_neighbors(node_id);
@@ -223,20 +225,17 @@ void event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_i
 	   		for(set<uint64_t>::iterator i = neighbors.begin(); i != neighbors.end(); i++){
 				uint64_t neighbor = *i;
 				char c_neighbor[50];
-				j = i+1;
+				set<uint64_t>::iterator j = i;
+				j++;
 				if(j != neighbors.end()){
-					sprintf(c_neighbor, "%u, ", neighbor);
+					sprintf(c_neighbor, "%llu, ", neighbor);
 				}
 				else{
-					sprintf(c_neighbor, "%u", neighbor);
+					sprintf(c_neighbor, "%llu", neighbor);
 				}
 				strcat(c_neighbor_list, c_neighbor);
 			}
 		}
-
-		//Convert string to C-style char *
-		// char *c_neighbor_list = new char[neighbor_list.length() + 1];
-		// strcpy(c_neighbor_list, neighbor_list.c_str());
 
 		//Send list of neighbors
 		emit_json_start(nc, 200);

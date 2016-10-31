@@ -267,7 +267,7 @@ void close_disk(int fd){
 
 
 /////////////////////////////////////////////////////////////////////////////////////
-/* Write the Virtual memory to Physical disk                                       */
+ Write the Virtual memory to Physical disk                                       
 /////////////////////////////////////////////////////////////////////////////////////
 
 //read into virtual buffer; user needs to load_block and free_block
