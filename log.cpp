@@ -438,6 +438,7 @@ int check_validity_superblock(int fd){
 	original_checksum = superblock->checksum;
 	current_checksum = set_checksum(superblock);
 	printf("Validity check.  Original_checksum=%llu, current_checksum=%llu\n", (unsigned long long) original_checksum, (unsigned long long) current_checksum);
+	free_block(superblock);
 	if(original_checksum == current_checksum){
 		return 1;
 	}
@@ -453,6 +454,7 @@ int check_validity_block(int fd, uint32_t block_num){
 	read_block_from_disk(fd, block_num, block);
 	original_checksum = block->checksum;
 	current_checksum = set_checksum(block);
+	free_block(block);
 	if(original_checksum == current_checksum){
 		return 1;
 	}
@@ -484,6 +486,29 @@ void read_log_from_disk(int fd, void *addr){
 //play_log_from_disk (this should be hooked up to the API)
 //plays log up until current generation
 //should check if checksum is current before playing the block
+
+//////////////////////////////////////////////////////////////////
+/* Scramble functions	   									    */
+//////////////////////////////////////////////////////////////////
+
+//write giberish to devfile
+void randomize_disk(int fd){
+	int fd_random = open("/dev/random", O_RDONLY);
+
+	uint32_t i;
+	for(i=0; i<MAX_ENTRIES+1; i++){
+		//allocate block size
+		Block *block = (Block *) load_block();
+		//read random bytes
+		// read(fd_random, block, LOG_SIZE);
+		read_disk(fd_random, i, block);
+		//write random bytes to disk
+		write_disk(fd, i, block);
+		//free block
+		free_block(block);
+	}
+	close(fd_random);
+}
 
 //////////////////////////////////////////////////////////////////
 

@@ -288,14 +288,22 @@ int main(int argc, char *argv[]) {
     //To check for log, look up superblock and compare the checksum
     //If format flag is specified or invalid checksum, init a new log
     //Else, log exists
+
+    //testing only
+    randomize_disk(fd);
+
     if(check_validity_superblock(fd)){
       //log exists, load it
       printf("Log exists.  Do something\n");
     }
     else{
       //log does not exist yet, create it
+      printf("Created new log\n");
       init_log_segment(fd);
     }
+
+    //test block
+    //check_validity_block(int fd, uint32_t block_num)
 
     printf("Starting web server on port %s\n", s_http_port);
     for (;;) {

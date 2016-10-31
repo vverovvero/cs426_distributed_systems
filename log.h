@@ -77,4 +77,6 @@ int check_validity_block(int fd, uint32_t block_num);
 
 void read_log_from_disk(int fd, void *addr);
 
+void randomize_disk(int fd);
+
 #endif
