@@ -65,7 +65,8 @@ const uint64_t Infinity = UINT64_MAX;
 //define max size of checkpoint area
 #define CHECKPOINT_DISK_OFFSET (2147483648) //offset is size of log (first 2GB)
 #define CHECKPOINT_SIZE (8589934592) //8GB total size
-#define CHECKPOINT_NUM_SLOTS (134217727) //number of uint64_t that can be stored in checkpoint, ignoring checksum
+// #define CHECKPOINT_NUM_SLOTS (134217727) //number of uint64_t that can be stored in checkpoint, ignoring checksum
+#define CHECKPOINT_NUM_SLOTS (1073741816) //number of uint64_t ignoring checksum.  each is 8 byte
 
 #define CH_MAGIC_NUMBER (666)
 
@@ -83,6 +84,7 @@ typedef struct checkpoint Checkpoint;
 void * ch_load_block(){
 	void * addr = mmap(NULL, CHECKPOINT_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0);
 	assert( addr != MAP_FAILED);
+	printf("Loaded block addr: %llu\n", (unsigned long long) addr);
 	return addr;
 }
 
@@ -195,6 +197,7 @@ void ch_read_disk(int fd, void *addr){
 int dump_checkpoint(int fd, Graph *graph){
 	//Load virtual memory
 	Checkpoint *checkpoint = (Checkpoint *) ch_load_block();
+	printf("Checkpoint addr loaded\n");
 	//Write checkpoint to virtual memory
 	int checkpoint_result = ch_write_checkpoint(checkpoint, graph);
 	//Fail if checkpoint failed
