@@ -144,7 +144,7 @@ int ch_write_checkpoint(void * addr, Graph *graph){
 				//Write the neighbor
 				uint64_t neighbor_id = (*neighbor_iterator);
 				checkpoint.slots[used_slots++] = neighbor_id;
-				printf("neighbor_id: %llu\n" (unsigned long long) neighbor_id);
+				printf("neighbor_id: %llu\n", (unsigned long long) neighbor_id);
 			}
 		}
 		//synchronize
