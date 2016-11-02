@@ -10,6 +10,7 @@
 #include "api.h"
 #include "graph.h"
 #include "log.h"
+#include "checkpoint.h"
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -304,6 +305,30 @@ int main(int argc, char *argv[]) {
 
     //test block
     //check_validity_block(int fd, uint32_t block_num)
+
+    ///TESTING////////////////////////////////////
+    graph.add_node(1);
+    graph.add_node(2);
+    graph.add_node(3);
+    graph.add_node(4);
+    graph.add_node(5);
+    graph.add_node(6);
+    graph.add_edge(1,2);
+    graph.add_edge(2,3);
+    graph.add_edge(1,4);
+    graph.add_edge(1,6);
+    graph.add_edge(1,5);
+    graph.add_edge(5,3);
+    graph.add_edge(4,6);
+    graph.add_edge(2,6);
+    graph.add_edge(3,4);
+
+    printf("dumping checkpoint......\n");
+    dump_checkpoint(fd, &graph);
+
+    print_checkpoint(fd);
+    ////////////////////////////////////////////////
+
 
     printf("Starting web server on port %s\n", s_http_port);
     for (;;) {
