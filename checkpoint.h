@@ -36,7 +36,7 @@ using std::set;
 
 void * ch_load_block();
 void ch_free_block(void * addr);
-void ch_synchronize(void *dest, const void *source);
+// void ch_synchronize(void *dest, const void *source);
 uint64_t ch_set_checksum(void * addr);
 int ch_write_checkpoint(void * addr, Graph *graph);
 

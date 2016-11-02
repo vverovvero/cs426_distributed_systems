@@ -93,10 +93,10 @@ void ch_free_block(void * addr){
 	assert(munmap_return == 0);
 }
 
-void ch_synchronize(void *dest, const void *source){
-	memcpy(dest, source, CHECKPOINT_SIZE);
-	msync(dest, CHECKPOINT_SIZE, MS_SYNC);
-}
+// void ch_synchronize(void *dest, const void *source){
+// 	memcpy(dest, source, CHECKPOINT_SIZE);
+// 	msync(dest, CHECKPOINT_SIZE, MS_SYNC);
+// }
 
 //for all 8GB, calculate and return checksum.  
 //Given addr that points to beginning of checkpoint
@@ -117,53 +117,98 @@ uint64_t ch_set_checksum(void * addr){
 
 //return 1 if success.  0 if fail
 //write checkpoint to memory specified by addr
-int ch_write_checkpoint(void * addr, Graph *graph){
-	printf("Writing checkpoint...\n");
-  	// Checkpoint checkpoint;
-  	int used_slots = 0;
-	// //Update checkpoint while space (include checksum)
-	// while(used_slots + 1 <= CHECKPOINT_NUM_SLOTS){
-	// 	//Write total number of nodes
-	// 	uint64_t num_nodes = (*graph).get_num_nodes();
-	// 	checkpoint.slots[used_slots++] = num_nodes;
-	// 	printf("num_nodes: %llu\n", (unsigned long long) num_nodes);
-	// 	//Write all entries in for loop
-	// 	map<uint64_t, set<uint64_t> > nodes = (*graph).get_graph();
-	// 	for(map<uint64_t, set<uint64_t> >::iterator node_iterator = nodes.begin(); node_iterator != nodes.end(); node_iterator++){
-	// 		//Write the node
-	// 		uint64_t node_id = (*node_iterator).first;
-	// 		checkpoint.slots[used_slots++] = node_id;
-	// 		printf("node_id: %llu\n", (unsigned long long) node_id);
-	// 		//Fetch the neighbors
-	// 		pair<int, set<uint64_t> > get_neighbors_result = (*graph).get_neighbors(node_id);
-	// 		set<uint64_t> neighbors = get_neighbors_result.second;
-	// 		//Write num neighbors
-	// 		uint64_t num_neighbors = neighbors.size();
-	// 		checkpoint.slots[used_slots++] = num_neighbors;
-	// 		printf("num_neighbors: %llu\n", (unsigned long long) num_neighbors);
-	// 		//Loop through the neighbors
-	// 		for(set<uint64_t>::iterator neighbor_iterator = neighbors.begin(); neighbor_iterator != neighbors.end(); neighbor_iterator++){
-	// 			//Write the neighbor
-	// 			uint64_t neighbor_id = (*neighbor_iterator);
-	// 			checkpoint.slots[used_slots++] = neighbor_id;
-	// 			printf("neighbor_id: %llu\n", (unsigned long long) neighbor_id);
-	// 		}
-	// 	}
-	// 	//synchronize
-	// 	ch_synchronize(addr, &checkpoint);
-	// 	//perform checksum
-	// 	checkpoint.checksum = ch_set_checksum(addr);
-	// 	printf("checksum: %llu\n", (unsigned long long) checkpoint.checksum);
-	// 	ch_synchronize(addr, &checkpoint);
-	// 	//success
-	// 	return 1;
-	// }
-	// //fail, if used_slots exceeds 	
-	// return 0;
+// int ch_write_checkpoint(void * addr, Graph *graph){
+// 	printf("Writing checkpoint...\n");
+//   	Checkpoint checkpoint;
+//   	int used_slots = 0;
+// 	//Update checkpoint while space (include checksum)
+// 	while(used_slots + 1 <= CHECKPOINT_NUM_SLOTS){
+// 		//Write total number of nodes
+// 		uint64_t num_nodes = (*graph).get_num_nodes();
+// 		checkpoint.slots[used_slots++] = num_nodes;
+// 		printf("num_nodes: %llu\n", (unsigned long long) num_nodes);
+// 		//Write all entries in for loop
+// 		map<uint64_t, set<uint64_t> > nodes = (*graph).get_graph();
+// 		for(map<uint64_t, set<uint64_t> >::iterator node_iterator = nodes.begin(); node_iterator != nodes.end(); node_iterator++){
+// 			//Write the node
+// 			uint64_t node_id = (*node_iterator).first;
+// 			checkpoint.slots[used_slots++] = node_id;
+// 			printf("node_id: %llu\n", (unsigned long long) node_id);
+// 			//Fetch the neighbors
+// 			pair<int, set<uint64_t> > get_neighbors_result = (*graph).get_neighbors(node_id);
+// 			set<uint64_t> neighbors = get_neighbors_result.second;
+// 			//Write num neighbors
+// 			uint64_t num_neighbors = neighbors.size();
+// 			checkpoint.slots[used_slots++] = num_neighbors;
+// 			printf("num_neighbors: %llu\n", (unsigned long long) num_neighbors);
+// 			//Loop through the neighbors
+// 			for(set<uint64_t>::iterator neighbor_iterator = neighbors.begin(); neighbor_iterator != neighbors.end(); neighbor_iterator++){
+// 				//Write the neighbor
+// 				uint64_t neighbor_id = (*neighbor_iterator);
+// 				checkpoint.slots[used_slots++] = neighbor_id;
+// 				printf("neighbor_id: %llu\n", (unsigned long long) neighbor_id);
+// 			}
+// 		}
+// 		//synchronize
+// 		ch_synchronize(addr, &checkpoint);
+// 		//perform checksum
+// 		checkpoint.checksum = ch_set_checksum(addr);
+// 		printf("checksum: %llu\n", (unsigned long long) checkpoint.checksum);
+// 		ch_synchronize(addr, &checkpoint);
+// 		//success
+// 		return 1;
+// 	}
+// 	//fail, if used_slots exceeds 	
+// 	return 0;
+// }
 
-	//debugging only
-	return 1;
+int ch_write_checkpoint(Checkpoint *checkpoint, Graph *graph){
+	printf("Writing checkpoint...\n");
+  	int used_slots = 0;
+	//Update checkpoint while space (include checksum)
+	while(used_slots + 1 <= CHECKPOINT_NUM_SLOTS){
+		//Write total number of nodes
+		uint64_t num_nodes = (*graph).get_num_nodes();
+		checkpoint->slots[used_slots++] = num_nodes;
+		printf("num_nodes: %llu\n", (unsigned long long) num_nodes);
+		//Write all entries in for loop
+		map<uint64_t, set<uint64_t> > nodes = (*graph).get_graph();
+		for(map<uint64_t, set<uint64_t> >::iterator node_iterator = nodes.begin(); node_iterator != nodes.end(); node_iterator++){
+			//Write the node
+			uint64_t node_id = (*node_iterator).first;
+			checkpoint->slots[used_slots++] = node_id;
+			printf("node_id: %llu\n", (unsigned long long) node_id);
+			//Fetch the neighbors
+			pair<int, set<uint64_t> > get_neighbors_result = (*graph).get_neighbors(node_id);
+			set<uint64_t> neighbors = get_neighbors_result.second;
+			//Write num neighbors
+			uint64_t num_neighbors = neighbors.size();
+			checkpoint->slots[used_slots++] = num_neighbors;
+			printf("num_neighbors: %llu\n", (unsigned long long) num_neighbors);
+			//Loop through the neighbors
+			for(set<uint64_t>::iterator neighbor_iterator = neighbors.begin(); neighbor_iterator != neighbors.end(); neighbor_iterator++){
+				//Write the neighbor
+				uint64_t neighbor_id = (*neighbor_iterator);
+				checkpoint->slots[used_slots++] = neighbor_id;
+				printf("neighbor_id: %llu\n", (unsigned long long) neighbor_id);
+			}
+		}
+		//synchronize
+		// ch_synchronize(addr, &checkpoint);
+		msync(checkpoint, CHECKPOINT_SIZE, MS_SYNC);
+		//perform checksum
+		checkpoint.checksum = ch_set_checksum(addr);
+		printf("checksum: %llu\n", (unsigned long long) checkpoint.checksum);
+		// ch_synchronize(addr, &checkpoint);
+		msync(checkpoint, CHECKPOINT_SIZE, MS_SYNC);
+		//success
+		return 1;
+	}
+	//fail, if used_slots exceeds 	
+	return 0;
+
 }
+
 
 
 //////////////////////////////////////////////////////////////////
