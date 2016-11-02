@@ -200,14 +200,18 @@ int dump_checkpoint(int fd, Graph *graph){
 	printf("Checkpoint addr loaded\n");
 	//Write checkpoint to virtual memory
 	int checkpoint_result = ch_write_checkpoint(checkpoint, graph);
+	printf("Checkpoint finished\n");
 	//Fail if checkpoint failed
 	if(checkpoint_result == 0){
+		printf("Checkpoint failed\n");
 		ch_free_block(checkpoint);
 		return 0;
 	}
 	else{
+		printf("Checkpoint success\n");
 		//Write checkpoint to disk
 		ch_write_disk(fd, checkpoint);
+		printf("Checkpoint copied to disk\n");
 		//Free virutal memory
 		ch_free_block(checkpoint);
 		//return success
