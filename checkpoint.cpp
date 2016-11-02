@@ -39,6 +39,7 @@
 
 #include <assert.h>
 #include <inttypes.h>
+#include <string.h> //has memcpy? weird
 
 #include <iostream>
 #include <stdlib.h> //has exit, EXIT_FAILURE
@@ -92,7 +93,7 @@ void ch_free_block(void * addr){
 
 void ch_synchronize(void *dest, const void *source){
 	memcpy(dest, source, CHECKPOINT_SIZE);
-	mysync(dest, CHECKPOINT_SIZE, MS_SYNC);
+	msync(dest, CHECKPOINT_SIZE, MS_SYNC);
 }
 
 //for all 8GB, calculate and return checksum.  
