@@ -64,8 +64,7 @@ const uint64_t Infinity = UINT64_MAX;
 
 //define max size of checkpoint area
 #define CHECKPOINT_DISK_OFFSET (2147483648) //offset is size of log (first 2GB)
-// #define CHECKPOINT_SIZE (8589934592) //8GB total size
-#define CHECKPOINT_SIZE (2147489999)
+#define CHECKPOINT_SIZE (8589934592) //8GB total size
 #define CHECKPOINT_NUM_SLOTS (134217727) //number of uint64_t that can be stored in checkpoint, ignoring checksum
 
 #define CH_MAGIC_NUMBER (666)
