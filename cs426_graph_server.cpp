@@ -290,7 +290,7 @@ int main(int argc, char *argv[]) {
     //Else, log exists
 
     //testing only
-    randomize_disk(fd);
+    randomize_disk(fd); //!!!!! don't forget to remove this line!!!
 
     if(check_validity_superblock(fd)){
       //log exists, load it
