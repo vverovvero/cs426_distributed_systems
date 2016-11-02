@@ -233,6 +233,7 @@ void ch_write_disk(int fd, const void *addr){
 
 //read from disk into the buffer (addr is the block)
 void ch_read_disk(int fd, void *addr){
+	printf("Reading from the disk...\n");
 	//Set to checkpoint offset in disk
 	off_t lseek_return = lseek(fd, CHECKPOINT_DISK_OFFSET, SEEK_SET);
 	assert(lseek_return != -1);
