@@ -28,6 +28,18 @@
 
 #include "stdint.h" //has type 'uint64_t'
 
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+
+
+#include <assert.h>
+#include <inttypes.h>
+
 #include <iostream>
 #include <stdlib.h> //has exit, EXIT_FAILURE
 // #include <cstdint> //has type 'uint64_t'
@@ -96,7 +108,7 @@ uint64_t ch_set_checksum(void * addr){
     checksum = (*word) ^ checksum;
     word++;
   }
-  checksum += MAGIC_NUMBER;
+  checksum += CH_MAGIC_NUMBER;
   return checksum;
 }
 
@@ -213,15 +225,15 @@ int load_checkpoint(int fd, Graph *graph){
 	while(read_nodes < num_nodes){
 		//Get node
 		uint64_t node_id = checkpoint->slots[slot_i++];
-		graph.add_node(node_id);
+		(*graph).add_node(node_id);
 		//Get neighbors
 		uint64_t num_neighbors = checkpoint->slots[slot_i++];
 		int read_neighbors = 0;
 		while(read_neighbors < num_neighbors){
 			//Get neighbor id
 			uint64_t neighbor_id = checkpoint->slots[slot_i++];
-			graph.add_node(neighbor_id);
-			graph.add_edge(node_id, neighbor_id);
+			(*graph).add_node(neighbor_id);
+			(*graph).add_edge(node_id, neighbor_id);
 			//Finished reading neighbor.  Increment.
 			read_neighbors++;
 		}
@@ -288,7 +300,7 @@ int ch_check_validity_checkpoint(int fd){
 	original_checksum = checkpoint->checksum;
 	current_checksum = ch_set_checksum(checkpoint);
 	printf("Validity check.  Original_checksum=%llu, current_checksum=%llu\n", (unsigned long long) original_checksum, (unsigned long long) current_checksum);
-	free_block(checkpoint);
+	ch_free_block(checkpoint);
 	if(original_checksum == current_checksum){
 		return 1;
 	}

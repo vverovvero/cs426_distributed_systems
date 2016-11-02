@@ -1,8 +1,21 @@
 //checkpoint.h 										Wendy Chen, 10/2016
 
+
 #include "graph.h"
 
 #include "stdint.h" //has type 'uint64_t'
+
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+
+
+#include <assert.h>
+#include <inttypes.h>
 
 #include <iostream>
 #include <stdlib.h> //has exit, EXIT_FAILURE
