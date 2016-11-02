@@ -119,7 +119,7 @@ uint64_t ch_set_checksum(void * addr){
 //write checkpoint to memory specified by addr
 int ch_write_checkpoint(void * addr, Graph *graph){
 	printf("Writing checkpoint...\n");
-  	Checkpoint checkpoint;
+  	// Checkpoint checkpoint;
   	int used_slots = 0;
 	// //Update checkpoint while space (include checksum)
 	// while(used_slots + 1 <= CHECKPOINT_NUM_SLOTS){
