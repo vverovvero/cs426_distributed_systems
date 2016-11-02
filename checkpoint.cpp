@@ -173,12 +173,15 @@ int ch_write_checkpoint(void * addr, Graph *graph){
 
 //writes checkpoint to disk, addr is virtual checkpoint memory
 void ch_write_disk(int fd, const void *addr){
+	printf("Writing to the disk...\n");
 	//Set to checkpoint offset in disk
 	off_t lseek_return = lseek(fd, CHECKPOINT_DISK_OFFSET, SEEK_SET);
 	assert(lseek_return != -1);
 	//Copy information from struct into the disk
 	ssize_t write_return = write(fd, addr, CHECKPOINT_SIZE);
+	printf("write_return: %d\n", write_return);
 	assert(write_return == CHECKPOINT_SIZE);
+	printf("Finished writing to the disk\n");
 }
 
 //read from disk into the buffer (addr is the block)
