@@ -119,47 +119,50 @@ uint64_t ch_set_checksum(void * addr){
 //write checkpoint to memory specified by addr
 int ch_write_checkpoint(void * addr, Graph *graph){
 	printf("Writing checkpoint...\n");
-  	Checkpoint checkpoint;
-  	int used_slots = 0;
-	//Update checkpoint while space (include checksum)
-	while(used_slots + 1 <= CHECKPOINT_NUM_SLOTS){
-		//Write total number of nodes
-		uint64_t num_nodes = (*graph).get_num_nodes();
-		checkpoint.slots[used_slots++] = num_nodes;
-		printf("num_nodes: %llu\n", (unsigned long long) num_nodes);
-		//Write all entries in for loop
-		map<uint64_t, set<uint64_t> > nodes = (*graph).get_graph();
-		for(map<uint64_t, set<uint64_t> >::iterator node_iterator = nodes.begin(); node_iterator != nodes.end(); node_iterator++){
-			//Write the node
-			uint64_t node_id = (*node_iterator).first;
-			checkpoint.slots[used_slots++] = node_id;
-			printf("node_id: %llu\n", (unsigned long long) node_id);
-			//Fetch the neighbors
-			pair<int, set<uint64_t> > get_neighbors_result = (*graph).get_neighbors(node_id);
-			set<uint64_t> neighbors = get_neighbors_result.second;
-			//Write num neighbors
-			uint64_t num_neighbors = neighbors.size();
-			checkpoint.slots[used_slots++] = num_neighbors;
-			printf("num_neighbors: %llu\n", (unsigned long long) num_neighbors);
-			//Loop through the neighbors
-			for(set<uint64_t>::iterator neighbor_iterator = neighbors.begin(); neighbor_iterator != neighbors.end(); neighbor_iterator++){
-				//Write the neighbor
-				uint64_t neighbor_id = (*neighbor_iterator);
-				checkpoint.slots[used_slots++] = neighbor_id;
-				printf("neighbor_id: %llu\n", (unsigned long long) neighbor_id);
-			}
-		}
-		//synchronize
-		ch_synchronize(addr, &checkpoint);
-		//perform checksum
-		checkpoint.checksum = ch_set_checksum(addr);
-		printf("checksum: %llu\n", (unsigned long long) checkpoint.checksum);
-		ch_synchronize(addr, &checkpoint);
-		//success
-		return 1;
-	}
-	//fail, if used_slots exceeds 	
-	return 0;
+ //  	Checkpoint checkpoint;
+ //  	int used_slots = 0;
+	// //Update checkpoint while space (include checksum)
+	// while(used_slots + 1 <= CHECKPOINT_NUM_SLOTS){
+	// 	//Write total number of nodes
+	// 	uint64_t num_nodes = (*graph).get_num_nodes();
+	// 	checkpoint.slots[used_slots++] = num_nodes;
+	// 	printf("num_nodes: %llu\n", (unsigned long long) num_nodes);
+	// 	//Write all entries in for loop
+	// 	map<uint64_t, set<uint64_t> > nodes = (*graph).get_graph();
+	// 	for(map<uint64_t, set<uint64_t> >::iterator node_iterator = nodes.begin(); node_iterator != nodes.end(); node_iterator++){
+	// 		//Write the node
+	// 		uint64_t node_id = (*node_iterator).first;
+	// 		checkpoint.slots[used_slots++] = node_id;
+	// 		printf("node_id: %llu\n", (unsigned long long) node_id);
+	// 		//Fetch the neighbors
+	// 		pair<int, set<uint64_t> > get_neighbors_result = (*graph).get_neighbors(node_id);
+	// 		set<uint64_t> neighbors = get_neighbors_result.second;
+	// 		//Write num neighbors
+	// 		uint64_t num_neighbors = neighbors.size();
+	// 		checkpoint.slots[used_slots++] = num_neighbors;
+	// 		printf("num_neighbors: %llu\n", (unsigned long long) num_neighbors);
+	// 		//Loop through the neighbors
+	// 		for(set<uint64_t>::iterator neighbor_iterator = neighbors.begin(); neighbor_iterator != neighbors.end(); neighbor_iterator++){
+	// 			//Write the neighbor
+	// 			uint64_t neighbor_id = (*neighbor_iterator);
+	// 			checkpoint.slots[used_slots++] = neighbor_id;
+	// 			printf("neighbor_id: %llu\n", (unsigned long long) neighbor_id);
+	// 		}
+	// 	}
+	// 	//synchronize
+	// 	ch_synchronize(addr, &checkpoint);
+	// 	//perform checksum
+	// 	checkpoint.checksum = ch_set_checksum(addr);
+	// 	printf("checksum: %llu\n", (unsigned long long) checkpoint.checksum);
+	// 	ch_synchronize(addr, &checkpoint);
+	// 	//success
+	// 	return 1;
+	// }
+	// //fail, if used_slots exceeds 	
+	// return 0;
+
+	//debugging only
+	return 1;
 }
 
 
@@ -199,24 +202,24 @@ int dump_checkpoint(int fd, Graph *graph){
 	Checkpoint *checkpoint = (Checkpoint *) ch_load_block();
 	printf("Checkpoint addr loaded\n");
 	//Write checkpoint to virtual memory
-	// int checkpoint_result = ch_write_checkpoint(checkpoint, graph);
-	// printf("Checkpoint finished\n");
-	// //Fail if checkpoint failed
-	// if(checkpoint_result == 0){
-	// 	printf("Checkpoint failed\n");
-	// 	ch_free_block(checkpoint);
-	// 	return 0;
-	// }
-	// else{
-	// 	printf("Checkpoint success\n");
-	// 	//Write checkpoint to disk
-	// 	ch_write_disk(fd, checkpoint);
-	// 	printf("Checkpoint copied to disk\n");
-	// 	//Free virutal memory
-	// 	ch_free_block(checkpoint);
-	// 	//return success
-	// 	return 1;
-	// }
+	int checkpoint_result = ch_write_checkpoint(checkpoint, graph);
+	printf("Checkpoint finished\n");
+	//Fail if checkpoint failed
+	if(checkpoint_result == 0){
+		printf("Checkpoint failed\n");
+		ch_free_block(checkpoint);
+		return 0;
+	}
+	else{
+		printf("Checkpoint success\n");
+		//Write checkpoint to disk
+		ch_write_disk(fd, checkpoint);
+		printf("Checkpoint copied to disk\n");
+		//Free virutal memory
+		ch_free_block(checkpoint);
+		//return success
+		return 1;
+	}
 }
 
 
