@@ -119,8 +119,8 @@ uint64_t ch_set_checksum(void * addr){
 //write checkpoint to memory specified by addr
 int ch_write_checkpoint(void * addr, Graph *graph){
 	printf("Writing checkpoint...\n");
- //  	Checkpoint checkpoint;
- //  	int used_slots = 0;
+  	Checkpoint checkpoint;
+  	int used_slots = 0;
 	// //Update checkpoint while space (include checksum)
 	// while(used_slots + 1 <= CHECKPOINT_NUM_SLOTS){
 	// 	//Write total number of nodes
@@ -179,7 +179,7 @@ void ch_write_disk(int fd, const void *addr){
 	assert(lseek_return != -1);
 	//Copy information from struct into the disk
 	ssize_t write_return = write(fd, addr, CHECKPOINT_SIZE);
-	printf("write_return: %d\n", write_return);
+	printf("write_return: %d\n", write_return);  //2147479552 (why is it only 2GB?)
 	assert(write_return == CHECKPOINT_SIZE);
 	printf("Finished writing to the disk\n");
 }
