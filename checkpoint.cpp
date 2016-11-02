@@ -197,8 +197,9 @@ int ch_write_checkpoint(Checkpoint *checkpoint, Graph *graph){
 		// ch_synchronize(addr, &checkpoint);
 		msync(checkpoint, CHECKPOINT_SIZE, MS_SYNC);
 		//perform checksum
-		checkpoint.checksum = ch_set_checksum(addr);
-		printf("checksum: %llu\n", (unsigned long long) checkpoint.checksum);
+		uint64_t checksum = ch_set_checksum(checkpoint);
+		checkpoint->checksum = checksum;
+		printf("checksum: %llu\n", (unsigned long long) checkpoint->checksum);
 		// ch_synchronize(addr, &checkpoint);
 		msync(checkpoint, CHECKPOINT_SIZE, MS_SYNC);
 		//success
