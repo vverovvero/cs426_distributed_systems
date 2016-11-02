@@ -81,7 +81,7 @@ typedef struct checkpoint Checkpoint;
 //////////////////////////////////////////////////////////////////
 
 void * ch_load_block(){
-	void * addr = mmap(NULL, CHECKPOINT_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+	void * addr = mmap(NULL, CHECKPOINT_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0);
 	assert( addr != MAP_FAILED);
 	return addr;
 }
