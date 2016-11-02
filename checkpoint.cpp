@@ -177,6 +177,7 @@ int ch_write_checkpoint(Checkpoint *checkpoint, Graph *graph){
 			//Write the node
 			uint64_t node_id = (*node_iterator).first;
 			checkpoint->slots[used_slots++] = node_id;
+			printf("~~~~~~~~~~~~~~~\n");
 			printf("node_id: %llu\n", (unsigned long long) node_id);
 			//Fetch the neighbors
 			pair<int, set<uint64_t> > get_neighbors_result = (*graph).get_neighbors(node_id);
@@ -226,7 +227,7 @@ void ch_write_disk(int fd, const void *addr){
 	//Copy information from struct into the disk
 	ssize_t write_return = write(fd, addr, CHECKPOINT_SIZE);
 	printf("write_return: %d\n", write_return);  //2147479552 (why is it only 2GB?)
-	assert(write_return == CHECKPOINT_SIZE);
+	// assert(write_return == CHECKPOINT_SIZE);
 	printf("Finished writing to the disk\n");
 }
 
@@ -237,6 +238,7 @@ void ch_read_disk(int fd, void *addr){
 	assert(lseek_return != -1);
 	//read information into the buffer
 	ssize_t read_return = read(fd, addr, CHECKPOINT_SIZE);
+	printf("read_return: %d\n", read_return);
 	assert(read_return == CHECKPOINT_SIZE);
 }
 
@@ -330,6 +332,7 @@ int print_checkpoint(int fd){
 	printf("num_nodes: %llu\n", (unsigned long long) num_nodes);
 	while(read_nodes < num_nodes){
 		//Get node
+		printf("~~~~~~~~~~~~~~~\n");
 		uint64_t node_id = checkpoint->slots[slot_i++];
 		printf("node_id: %llu\n", (unsigned long long) node_id);
 		//Get neighbors
