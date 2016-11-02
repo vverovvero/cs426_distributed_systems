@@ -145,7 +145,7 @@ int ch_write_checkpoint(void * addr, Graph *graph){
 		ch_synchronize(addr, &checkpoint);
 		//perform checksum
 		checkpoint.checksum = ch_set_checksum(addr);
-		synchronize(addr, &checkpoint);
+		ch_synchronize(addr, &checkpoint);
 		//success
 		return 1;
 	}
