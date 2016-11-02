@@ -199,7 +199,7 @@ int dump_checkpoint(int fd, Graph *graph){
 	Checkpoint *checkpoint = (Checkpoint *) ch_load_block();
 	printf("Checkpoint addr loaded\n");
 	//Write checkpoint to virtual memory
-	int checkpoint_result = ch_write_checkpoint(checkpoint, graph);
+	// int checkpoint_result = ch_write_checkpoint(checkpoint, graph);
 	printf("Checkpoint finished\n");
 	//Fail if checkpoint failed
 	if(checkpoint_result == 0){
