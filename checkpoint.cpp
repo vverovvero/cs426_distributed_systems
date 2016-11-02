@@ -121,7 +121,7 @@ int ch_write_checkpoint(void * addr, Graph *graph){
 	//Update checkpoint while space (include checksum)
 	while(used_slots + 1 <= CHECKPOINT_NUM_SLOTS){
 		//Write total number of nodes
-		uint64_t num_nodes = (*graph).get_size();
+		uint64_t num_nodes = (*graph).get_num_nodes();
 		checkpoint.slots[used_slots++] = num_nodes;
 		//Write all entries in for loop
 		map<uint64_t, set<uint64_t> > nodes = (*graph).get_graph();
