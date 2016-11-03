@@ -43,6 +43,9 @@ int ch_get_serial_size(Graph *graph);
 void ch_write_checkpoint(uint64_t *checkpoint, int serial_size_bytes, Graph *graph);
 void ch_write_superblock(Ch_Superblock *ch_superblock, uint32_t generation, uint32_t num_blocks);
 
+void ch_write_disk_block(int fd, int block_num, const void *addr);
+void ch_write_disk_checkpoint(int fd, int num_blocks, const void *addr);
+
 int dump_checkpoint(int fd, Graph *graph, uint32_t generation);
 
 
