@@ -55,7 +55,7 @@ void print_checkpoint(int fd);
 
 int ch_check_validity_superblock(int fd);
 int ch_check_validity_checkpoint(int fd, int num_blocks, int serial_size_bytes);
-int ch_check_validity(fd);
+int ch_check_validity(int fd);
 
 uint32_t checkpoint_get_generation(int fd);
 
