@@ -327,7 +327,7 @@ int main(int argc, char *argv[]) {
     printf("dumping checkpoint......\n");
     dump_checkpoint(fd, &graph, 5);
 
-    // print_checkpoint(fd);
+    print_checkpoint(fd);
     ////////////////////////////////////////////////
 
 

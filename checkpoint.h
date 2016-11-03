@@ -34,7 +34,7 @@ using std::set;
 #define CHECKPOINT_H
 
 typedef struct ch_superblock Ch_Superblock;
-typedef struct ch_block Ch_Block;
+// typedef struct ch_block Ch_Block;
 
 void * ch_load_block(size_t length);
 void ch_free_block(void * addr, size_t length);
@@ -47,6 +47,8 @@ void ch_write_disk_block(int fd, int block_num, const void *addr);
 void ch_write_disk_checkpoint(int fd, int num_blocks, const void *addr);
 
 int dump_checkpoint(int fd, Graph *graph, uint32_t generation);
+int load_checkpoint(int fd, Graph *graph);
+void print_checkpoint(int fd);
 
 
 #endif
