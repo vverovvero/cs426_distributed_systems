@@ -671,21 +671,30 @@ void ch_write_disk_checkpoint(int fd, int num_blocks, const void *addr){
 	uint64_t *checkpoint_cur = (uint64_t *) addr;
 	for(int i=1; i<num_blocks+1; i++){
 		ch_write_disk_block(fd, i, checkpoint_cur);
-		checkpoint_cur += CH_BLOCK_SIZE;
+		checkpoint_cur += CH_BLOCK_NUM_SLOTS; //increment by num uint64_t's, or bytes?
 	}
 }
 
-// //read from disk into the buffer (addr is the block)
-// void ch_read_disk(int fd, void *addr){
-// 	printf("Reading from the disk...\n");
-// 	//Set to checkpoint offset in disk
-// 	off_t lseek_return = lseek(fd, CHECKPOINT_DISK_OFFSET, SEEK_SET);
-// 	assert(lseek_return != -1);
-// 	//read information into the buffer
-// 	ssize_t read_return = read(fd, addr, 4096);
-// 	printf("read_return: %d\n", read_return);
-// 	assert(read_return == 4096);
-// }
+//read from disk into the buffer (addr is the block)
+void ch_read_disk_block(int fd, int block_num, void *addr){
+	printf("Reading from the disk...\n");
+	//Set to checkpoint offset in disk
+	off_t lseek_return = lseek(fd, CHECKPOINT_DISK_OFFSET + block_num * CH_BLOCK_SIZE, SEEK_SET);
+	assert(lseek_return != -1);
+	//read information into the buffer
+	ssize_t read_return = read(fd, addr, CH_BLOCK_SIZE);
+	printf("read_return: %d\n", read_return);
+	assert(read_return == CH_BLOCK_SIZE);
+}
+
+//read checkpoint in in number of blocks
+void ch_read_disk_checkpoint(int fd, int num_blocks, const void *addr){
+	uint64_t *checkpoint_cur = (uint64_t *) addr;
+	for(int i=1; i<num_blocks+1; i++){
+		ch_read_disk_block(fd, i, checkpoint_cur);
+		checkpoint_cur += CH_BLOCK_NUM_SLOTS;
+	}
+}
 
 //////////////////////////////////////////////////////////////////
 /* Dump Checkpoint												*/
