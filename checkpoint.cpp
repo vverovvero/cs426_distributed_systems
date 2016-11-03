@@ -493,6 +493,8 @@ const uint64_t Infinity = UINT64_MAX;
 
 #define CH_MAX_BLOCKS (2097151) //total number of blocks (excludes the superblock)
 
+#define CH_MAX_SIZE (8589930496) //total max bytes, excluding superblock
+
 #define CH_MAGIC_NUMBER (666)
 
 // int Checkpoint_Num_Slots = 0;  //global that is modified
@@ -703,6 +705,7 @@ void ch_read_disk_checkpoint(int fd, int num_blocks, const void *addr){
 /* Dump Checkpoint												*/
 //////////////////////////////////////////////////////////////////
 
+//FAIL IF NOT ENOUGH SPACE
 //return 1 if success.  0 if fail (ie, run out of space)
 //assumes fresh start
 int dump_checkpoint(int fd, Graph *graph, uint32_t generation){
@@ -712,6 +715,10 @@ int dump_checkpoint(int fd, Graph *graph, uint32_t generation){
 	//Load virtual memory
 	int serial_size_bytes = serial_size * 8;
 	printf("Serial_size_bytes: %d\n", serial_size_bytes);
+	if(serial_size_bytes > CHECKPOINT_SIZE){
+		//checkpoint is too big.  Fail
+		return 0;
+	}
 	uint64_t *checkpoint = (uint64_t *) ch_load_block(serial_size_bytes);
 	printf("Checkpoint addr loaded\n");
 	//Write checkpoint to virtual memory
@@ -741,9 +748,10 @@ int dump_checkpoint(int fd, Graph *graph, uint32_t generation){
 /* Load Checkpoint												*/
 //////////////////////////////////////////////////////////////////
 
+//FAIL IF CHECKSUM NOT VALID
 //ASSUMES CHECKSUMS PASSED
 //only call load_checkpoint if ch_check_vaildity_checkpoint passed
-//return 1 if success; 0 if fail (would it fail?)
+//return 1 if success; 0 if fail (would it fail?) 
 //Rebuilds id
 int load_checkpoint(int fd, Graph *graph){
 	printf("Loading checkpoint!\n");

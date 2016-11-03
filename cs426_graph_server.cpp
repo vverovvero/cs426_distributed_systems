@@ -38,6 +38,7 @@ static const struct mg_str key_get_node = MG_STR("/get_node");
 static const struct mg_str key_get_edge = MG_STR("/get_edge");
 static const struct mg_str key_get_neighbors = MG_STR("/get_neighbors");
 static const struct mg_str key_shortest_path = MG_STR("/shortest_path");
+static const struct mg_str key_checkpoint = MG_STR("/checkpoint");
 
 static const vector<uint64_t> EmptyVector; //if no node id's found
 
@@ -227,6 +228,10 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             else {
               error = 1;
             }
+          }
+          else if(is_equal(&key, &key_checkpoint)){
+            printf("KEY was checkpoint!\n");
+            event_checkpoint(Graph *graph, struct mg_connection *nc, int fd);
           }
           else{
             // print_flush("KEY was not recognized!");

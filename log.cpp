@@ -468,6 +468,34 @@ int check_validity_block(int fd, uint32_t block_num){
 
 
 //////////////////////////////////////////////////////////////////
+/* Functions to aid checkpointing                          */
+//////////////////////////////////////////////////////////////////
+
+//return current generation
+uint32_t log_get_generation(int fd){
+  Superblock *superblock = (Superblock *) load_block();
+  read_disk(fd, 0, superblock);
+  uint32_t generation = superblock->generation;
+  free_block(superblock);
+  return generation;
+}
+
+void log_increment_generation(int fd){
+  Superblock *superblock = (Superblock *) load_block();
+  read_disk(fd, 0, superblock);
+  //perform updates
+  uint32_t generation = superblock->generation + 1;
+  uint32_t start = superblock->start;
+  uint32_t size = superblock->size;
+  write_superblock(superblock, generation, start, size);
+  // print_superblock(superblock);
+  // printf("here3\n");
+  write_disk(fd, 0, superblock);
+  // printf("here4\n");
+  free_block(superblock);
+}
+
+//////////////////////////////////////////////////////////////////
 /* Reconstruction 												*/
 //////////////////////////////////////////////////////////////////
 

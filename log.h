@@ -79,6 +79,9 @@ int write_log_to_disk(int fd, uint32_t opcode, uint64_t node_a_id, uint64_t node
 int check_validity_superblock(int fd);
 int check_validity_block(int fd, uint32_t block_num);
 
+uint32_t log_get_generation(int fd);
+void log_increment_generation(int fd);
+
 void read_log_from_disk(int fd, void *addr);
 
 void randomize_disk(int fd);

@@ -9,6 +9,7 @@
 #include "mongoose.h"
 #include "stdint.h"
 #include "log.h"
+#include "checkpoint.h"
 
 #include <utility>
 #include <map>
@@ -324,7 +325,26 @@ void event_shortest_path(Graph *graph, struct mg_connection *nc, uint64_t node_a
 }
 
 
+void event_checkpoint(Graph *graph, struct mg_connection *nc, int fd){
+	//Fetch the generation
+	uint32_t generation = log_get_generation(fd);
+	//Dump the checkpoint
+	int checkpoint_result = dump_checkpoint(fd, graph, generation);
 
+	if(checkpoint_result == 1){
+		//Increment generation
+		log_increment_generation(fd);
+		emit_json_start(nc, 200);
+		emit_json_header(nc, 200, "OK\n");
+		emit_json_end(nc);
+	}
+	else{
+		//Checkpoint failed
+		emit_json_start(nc, 507);
+		emit_json_header(nc, 507, "Insufficient space for checkpoint\n");
+		emit_json_end(nc);
+	}
+}
 
 
 
