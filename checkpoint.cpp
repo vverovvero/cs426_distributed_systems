@@ -589,6 +589,7 @@ void ch_write_checkpoint(uint64_t *checkpoint, int serial_size_bytes, Graph *gra
 	printf("Writing checkpoint...\n");
 	uint64_t *checkpoint_start = checkpoint;
 	uint64_t *checkpoint_cur = checkpoint;
+	checkpoint_cur++; //increment to skip checksum location
 	//Write total number of nodes
 	uint64_t num_nodes = (*graph).get_num_nodes();
 	(*checkpoint_cur) = num_nodes;
