@@ -747,6 +747,7 @@ int dump_checkpoint(int fd, Graph *graph, uint32_t generation){
 int load_checkpoint(int fd, Graph *graph){
 	//First get information from superblock
 	Ch_Superblock *ch_superblock = (Ch_Superblock *) ch_load_block(CH_BLOCK_SIZE);
+	ch_read_disk_block(fd, 0, ch_superblock);
 	int num_blocks = ch_superblock->num_blocks;
 	int serial_size = ch_superblock->serial_size;
 	int serial_size_bytes = serial_size * 8;
@@ -798,11 +799,15 @@ void print_checkpoint(int fd){
 	printf("Printing CHECKPOINT in disk\n");
 	//First get information from superblock
 	Ch_Superblock *ch_superblock = (Ch_Superblock *) ch_load_block(CH_BLOCK_SIZE);
+	printf("Loaded virtual mem for superblock\n");
+	ch_read_disk_block(fd, 0, ch_superblock);
 	int num_blocks = ch_superblock->num_blocks;
 	int serial_size = ch_superblock->serial_size;
 	int serial_size_bytes = serial_size * 8;
 	//Load virtual memory
+	printf("Need bytes for checkpoint: %d\n", serial_size_bytes);
 	uint64_t *checkpoint = (uint64_t *) ch_load_block(serial_size_bytes);
+	printf("Loaded virtual mem for checkpoint\n");
 	//Read from disk
 	ch_read_disk_checkpoint(fd, num_blocks, checkpoint);
 	//Rebuild from checkpoint
