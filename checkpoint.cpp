@@ -622,11 +622,11 @@ void ch_write_checkpoint(uint64_t *checkpoint, int serial_size_bytes, Graph *gra
 	// ch_synchronize(addr, &checkpoint);
 	msync(checkpoint_start, serial_size_bytes, MS_SYNC);
 	//perform checksum
-	uint64_t checksum = ch_set_checksum(checkpoint);
+	uint64_t checksum = ch_set_checksum(checkpoint, serial_size_bytes);
 	(*checkpoint_start) = checksum;
 	printf("checksum: %llu\n", (unsigned long long) *checkpoint_start);
 	// ch_synchronize(addr, &checkpoint);
-	msync(checkpoint_start, CHECKPOINT_SIZE, MS_SYNC);
+	msync(checkpoint_start, serial_size_bytes, MS_SYNC);
 }
 
 //write the superblock information
@@ -681,35 +681,29 @@ int dump_checkpoint(int fd, Graph *graph, uint32_t generation){
 	int serial_size = ch_get_serial_size(graph);
 	//Load virtual memory
 	int serial_size_bytes = serial_size * 8;
-	Checkpoint *checkpoint = (Checkpoint *) ch_load_block(serial_size_bytes);
+	uint64_t *checkpoint = (uint64_t *) ch_load_block(serial_size_bytes);
 	printf("Checkpoint addr loaded\n");
 	//Write checkpoint to virtual memory
 	ch_write_checkpoint(checkpoint, serial_size_bytes, graph);
 	printf("Checkpoint finished\n");
-	//Fail if checkpoint failed
-	if(checkpoint_result == 0){
-		printf("Checkpoint failed\n");
-		ch_free_block(checkpoint);
-		return 0;
-	}
-	else{
-		//Load virtual memory for superblock
-		Ch_Superblock *ch_superblock = (Ch_Superblock *) ch_load_block(CH_BLOCK_SIZE);
-		uint32_t num_blocks = 1 + ((serial_size_bytes - 1) / CH_BLOCK_SIZE); // if x != 0
-		ch_write_superblock(ch_superblock, generation, num_blocks);
+
+	//Load virtual memory for superblock
+	Ch_Superblock *ch_superblock = (Ch_Superblock *) ch_load_block(CH_BLOCK_SIZE);
+	uint32_t num_blocks = 1 + ((serial_size_bytes - 1) / CH_BLOCK_SIZE); // if x != 0
+	ch_write_superblock(ch_superblock, generation, num_blocks);
 
 
-		//MODIFY HOW THE DISK IS WRITTEN!!!
-		printf("Checkpoint success\n");
-		//Write checkpoint to disk
-		// ch_write_disk(fd, checkpoint);
-		// printf("Checkpoint copied to disk\n");
-		//Free virutal memory
-		ch_free_block(checkpoint, serial_size_bytes);
-		ch_free_block(ch_superblock, CH_BLOCK_SIZE);
-		//return success
-		return 1;
-	}
+	//MODIFY HOW THE DISK IS WRITTEN!!!
+	printf("Checkpoint success\n");
+	//Write checkpoint to disk
+	// ch_write_disk(fd, checkpoint);
+	// printf("Checkpoint copied to disk\n");
+	//Free virutal memory
+	ch_free_block(checkpoint, serial_size_bytes);
+	ch_free_block(ch_superblock, CH_BLOCK_SIZE);
+	//return success
+	return 1;
+
 }
 
 
