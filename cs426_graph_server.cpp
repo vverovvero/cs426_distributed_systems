@@ -231,7 +231,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
           }
           else if(is_equal(&key, &key_checkpoint)){
             printf("KEY was checkpoint!\n");
-            event_checkpoint(Graph *graph, struct mg_connection *nc, int fd);
+            event_checkpoint(&graph, nc, fd);
           }
           else{
             // print_flush("KEY was not recognized!");
