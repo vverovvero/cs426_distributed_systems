@@ -486,30 +486,54 @@ const uint64_t Infinity = UINT64_MAX;
 #define CHECKPOINT_DISK_OFFSET (2147483648) //offset is size of log (first 2GB)
 #define CHECKPOINT_SIZE (8589934592) //8GB total size
 // #define CHECKPOINT_NUM_SLOTS (134217727) //number of uint64_t that can be stored in checkpoint, ignoring checksum
-#define CHECKPOINT_NUM_SLOTS (1073741816) //number of uint64_t ignoring checksum.  each is 8 byte
+// #define CHECKPOINT_NUM_SLOTS (1073741816) //number of uint64_t ignoring checksum.  each is 8 byte
+
+#define CH_BLOCK_SIZE (4096) //4096 bytes.  divides into 64 segments of 512 segments of 8-bytes
+#define CH_BLOCK_NUM_SLOTS (512) //how many uint64_t fit in one block
+
+#define CH_MAX_BLOCKS (2097151) //total number of blocks (excludes the superblock)
 
 #define CH_MAGIC_NUMBER (666)
 
+int Checkpoint_Num_Slots = 0;  //global that is modified
+
+struct ch_superblock{
+	uint64_t checksum;
+	uint32_t generation;
+	uint32_t num_blocks; //how many blocks does the checkpoint take up
+
+};
+
+struct ch_block{
+	uint64_t slots[CH_BLOCK_NUM_SLOTS];
+};
+
+//Checkpoint is just an array of uint64_t, of unknown size
 struct checkpoint{
 	uint64_t checksum;
-	uint64_t slots[CHECKPOINT_NUM_SLOTS];
+	uint64_t slots[Checkpoint_Num_Slots];
 };
 
 typedef struct checkpoint Checkpoint;
+typedef struct ch_superblock Ch_Superblock;
+typedef struct ch_block Ch_Block;
 
 //////////////////////////////////////////////////////////////////
 /* Checkpoint virtual functions									*/
 //////////////////////////////////////////////////////////////////
 
-void * ch_load_block(){
-	void * addr = mmap(NULL, CHECKPOINT_SIZE, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0);
+//length should be the size of all uint64_t for the graph checkpoint
+//length measured in bytees
+//Can also be the size of the superblock
+void * ch_load_block(size_t length){
+	void * addr = mmap(NULL, length, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE, -1, 0);
 	assert( addr != MAP_FAILED);
 	printf("Loaded block addr: %llu\n", (unsigned long long) addr);
 	return addr;
 }
 
-void ch_free_block(void * addr){
-	int munmap_return = munmap(addr, CHECKPOINT_SIZE);
+void ch_free_block(void * addr, size_t length){
+	int munmap_return = munmap(addr, length);
 	assert(munmap_return == 0);
 }
 
@@ -518,16 +542,16 @@ void ch_free_block(void * addr){
 // 	msync(dest, CHECKPOINT_SIZE, MS_SYNC);
 // }
 
-//for all 8GB, calculate and return checksum.  
-//Given addr that points to beginning of checkpoint
-uint64_t ch_set_checksum(void * addr){
+//addr points to start, goes for length in bytes
+uint64_t ch_set_checksum(void * addr, size_t length){
   int i;
   //word points to next word after addr begins
   uint64_t *word = (uint64_t *) addr;
   word++;
   uint64_t checksum = 0;
   //iterate over entire checkpoint
-  for(i=0; i<CHECKPOINT_NUM_SLOTS; i++){
+  int num_words = length/4096 - 1;
+  for(i=0; i<num_words; i++){
     checksum = (*word) ^ checksum;
     word++;
   }
@@ -535,53 +559,31 @@ uint64_t ch_set_checksum(void * addr){
   return checksum;
 }
 
+
+//return the number of uint64_t need to send
+int ch_get_serial_size(Graph *graph){
+	int count = 2; //checksum and total_num_nodes
+	map<uint64_t, set<uint64_t> > nodes = (*graph).get_graph();
+	for(map<uint64_t, set<uint64_t> >::iterator node_iterator = nodes.begin(); node_iterator != nodes.end(); node_iterator++){
+		//Get the node
+		uint64_t node_id = (*node_iterator).first;
+		//Fetch the neighbors
+		pair<int, set<uint64_t> > get_neighbors_result = (*graph).get_neighbors(node_id);
+		set<uint64_t> neighbors = get_neighbors_result.second;
+		uint64_t num_neighbors = neighbors.size();
+		count += 2; //for node_id and num_neighbors
+		count += num_neighbors; //for each neighbor
+	}
+	return count;
+}
+
+//number of slots is serial size, excluding checksum
+int set_checkpoint_num_slots(int num_slots){
+	Checkpoint_Num_Slots = num_slots;
+}
+
 //return 1 if success.  0 if fail
 //write checkpoint to memory specified by addr
-// int ch_write_checkpoint(void * addr, Graph *graph){
-// 	printf("Writing checkpoint...\n");
-//   	Checkpoint checkpoint;
-//   	int used_slots = 0;
-// 	//Update checkpoint while space (include checksum)
-// 	while(used_slots + 1 <= CHECKPOINT_NUM_SLOTS){
-// 		//Write total number of nodes
-// 		uint64_t num_nodes = (*graph).get_num_nodes();
-// 		checkpoint.slots[used_slots++] = num_nodes;
-// 		printf("num_nodes: %llu\n", (unsigned long long) num_nodes);
-// 		//Write all entries in for loop
-// 		map<uint64_t, set<uint64_t> > nodes = (*graph).get_graph();
-// 		for(map<uint64_t, set<uint64_t> >::iterator node_iterator = nodes.begin(); node_iterator != nodes.end(); node_iterator++){
-// 			//Write the node
-// 			uint64_t node_id = (*node_iterator).first;
-// 			checkpoint.slots[used_slots++] = node_id;
-// 			printf("node_id: %llu\n", (unsigned long long) node_id);
-// 			//Fetch the neighbors
-// 			pair<int, set<uint64_t> > get_neighbors_result = (*graph).get_neighbors(node_id);
-// 			set<uint64_t> neighbors = get_neighbors_result.second;
-// 			//Write num neighbors
-// 			uint64_t num_neighbors = neighbors.size();
-// 			checkpoint.slots[used_slots++] = num_neighbors;
-// 			printf("num_neighbors: %llu\n", (unsigned long long) num_neighbors);
-// 			//Loop through the neighbors
-// 			for(set<uint64_t>::iterator neighbor_iterator = neighbors.begin(); neighbor_iterator != neighbors.end(); neighbor_iterator++){
-// 				//Write the neighbor
-// 				uint64_t neighbor_id = (*neighbor_iterator);
-// 				checkpoint.slots[used_slots++] = neighbor_id;
-// 				printf("neighbor_id: %llu\n", (unsigned long long) neighbor_id);
-// 			}
-// 		}
-// 		//synchronize
-// 		ch_synchronize(addr, &checkpoint);
-// 		//perform checksum
-// 		checkpoint.checksum = ch_set_checksum(addr);
-// 		printf("checksum: %llu\n", (unsigned long long) checkpoint.checksum);
-// 		ch_synchronize(addr, &checkpoint);
-// 		//success
-// 		return 1;
-// 	}
-// 	//fail, if used_slots exceeds 	
-// 	return 0;
-// }
-
 int ch_write_checkpoint(Checkpoint *checkpoint, Graph *graph){
 	printf("Writing checkpoint...\n");
   	int used_slots = 0;
@@ -630,6 +632,15 @@ int ch_write_checkpoint(Checkpoint *checkpoint, Graph *graph){
 	return 0;
 }
 
+//write the superblock information
+void ch_write_superblock(Ch_Superblock *ch_superblock, uint32_t generation, uint32_t num_blocks){
+	ch_superblock->generation = generation;
+	ch_superblock->num_blocks = num_blocks;
+	msync(ch_superblock, CH_BLOCK_SIZE, MS_SYNC);
+	uint64_t checksum = ch_set_checksum(ch_superblock, CH_BLOCK_SIZE);
+	ch_superblock->checksum = checksum;
+	msync(ch_superblock, CH_BLOCK_SIZE, MS_SYNC);
+}
 
 
 //////////////////////////////////////////////////////////////////
@@ -637,30 +648,30 @@ int ch_write_checkpoint(Checkpoint *checkpoint, Graph *graph){
 //////////////////////////////////////////////////////////////////
 //ASSUME THAT DISK FD IS ALREADY KNOWN(from opening log)
 
-//writes checkpoint to disk, addr is virtual checkpoint memory
-void ch_write_disk(int fd, const void *addr){
-	printf("Writing to the disk...\n");
-	//Set to checkpoint offset in disk
-	off_t lseek_return = lseek(fd, CHECKPOINT_DISK_OFFSET, SEEK_SET);
-	assert(lseek_return != -1);
-	//Copy information from struct into the disk
-	ssize_t write_return = write(fd, addr, 4096);
-	printf("write_return: %d\n", write_return);  //2147479552 (why is it only 2GB?)
-	assert(write_return == 4096);
-	printf("Finished writing to the disk\n");
-}
+// //writes checkpoint to disk, addr is virtual checkpoint memory
+// void ch_write_disk(int fd, const void *addr){
+// 	printf("Writing to the disk...\n");
+// 	//Set to checkpoint offset in disk
+// 	off_t lseek_return = lseek(fd, CHECKPOINT_DISK_OFFSET, SEEK_SET);
+// 	assert(lseek_return != -1);
+// 	//Copy information from struct into the disk
+// 	ssize_t write_return = write(fd, addr, 4096);
+// 	printf("write_return: %d\n", write_return);  //2147479552 (why is it only 2GB?)
+// 	assert(write_return == 4096);
+// 	printf("Finished writing to the disk\n");
+// }
 
-//read from disk into the buffer (addr is the block)
-void ch_read_disk(int fd, void *addr){
-	printf("Reading from the disk...\n");
-	//Set to checkpoint offset in disk
-	off_t lseek_return = lseek(fd, CHECKPOINT_DISK_OFFSET, SEEK_SET);
-	assert(lseek_return != -1);
-	//read information into the buffer
-	ssize_t read_return = read(fd, addr, 4096);
-	printf("read_return: %d\n", read_return);
-	assert(read_return == 4096);
-}
+// //read from disk into the buffer (addr is the block)
+// void ch_read_disk(int fd, void *addr){
+// 	printf("Reading from the disk...\n");
+// 	//Set to checkpoint offset in disk
+// 	off_t lseek_return = lseek(fd, CHECKPOINT_DISK_OFFSET, SEEK_SET);
+// 	assert(lseek_return != -1);
+// 	//read information into the buffer
+// 	ssize_t read_return = read(fd, addr, 4096);
+// 	printf("read_return: %d\n", read_return);
+// 	assert(read_return == 4096);
+// }
 
 //////////////////////////////////////////////////////////////////
 /* Dump Checkpoint												*/
@@ -668,9 +679,13 @@ void ch_read_disk(int fd, void *addr){
 
 //return 1 if success.  0 if fail (ie, run out of space)
 //assumes fresh start
-int dump_checkpoint(int fd, Graph *graph){
+int dump_checkpoint(int fd, Graph *graph, uint32_t generation){
+	//Get size of the graph
+	int serial_size = ch_get_serial_size(graph);
+	set_checkpoint_num_slots(serial_size - 1);
 	//Load virtual memory
-	Checkpoint *checkpoint = (Checkpoint *) ch_load_block();
+	int serial_size_bytes = serial_size * 8;
+	Checkpoint *checkpoint = (Checkpoint *) ch_load_block(serial_size_bytes);
 	printf("Checkpoint addr loaded\n");
 	//Write checkpoint to virtual memory
 	int checkpoint_result = ch_write_checkpoint(checkpoint, graph);
@@ -682,12 +697,20 @@ int dump_checkpoint(int fd, Graph *graph){
 		return 0;
 	}
 	else{
+		//Load virtual memory for superblock
+		Ch_Superblock *ch_superblock = (Ch_Superblock *) ch_load_block(CH_BLOCK_SIZE);
+		uint32_t num_blocks = 1 + ((serial_size_bytes - 1) / CH_BLOCK_SIZE); // if x != 0
+		ch_write_superblock(ch_superblock, generation, num_blocks);
+
+
+		//MODIFY HOW THE DISK IS WRITTEN!!!
 		printf("Checkpoint success\n");
 		//Write checkpoint to disk
-		ch_write_disk(fd, checkpoint);
-		printf("Checkpoint copied to disk\n");
+		// ch_write_disk(fd, checkpoint);
+		// printf("Checkpoint copied to disk\n");
 		//Free virutal memory
-		ch_free_block(checkpoint);
+		ch_free_block(checkpoint, serial_size_bytes);
+		ch_free_block(ch_superblock, CH_BLOCK_SIZE);
 		//return success
 		return 1;
 	}
@@ -698,40 +721,40 @@ int dump_checkpoint(int fd, Graph *graph){
 /* Load Checkpoint												*/
 //////////////////////////////////////////////////////////////////
 
-//only call load_checkpoint if ch_check_vaildity_checkpoint passed
-//return 1 if success; 0 if fail (would it fail?)
-//Rebuilds id
-int load_checkpoint(int fd, Graph *graph){
-	//Load virtual memory
-	Checkpoint *checkpoint = (Checkpoint *) ch_load_block();
-	//Read from disk
-	ch_read_disk(fd, checkpoint);
-	//Rebuild from checkpoint
-	int read_nodes = 0;
-	int slot_i = 0;
-	uint64_t num_nodes = checkpoint->slots[slot_i++];
-	while(read_nodes < num_nodes){
-		//Get node
-		uint64_t node_id = checkpoint->slots[slot_i++];
-		(*graph).add_node(node_id);
-		//Get neighbors
-		uint64_t num_neighbors = checkpoint->slots[slot_i++];
-		int read_neighbors = 0;
-		while(read_neighbors < num_neighbors){
-			//Get neighbor id
-			uint64_t neighbor_id = checkpoint->slots[slot_i++];
-			(*graph).add_node(neighbor_id);
-			(*graph).add_edge(node_id, neighbor_id);
-			//Finished reading neighbor.  Increment.
-			read_neighbors++;
-		}
-		//Finished reading node.  Increment.
-		read_nodes++;
-	}
-	//Free virtual memory
-	ch_free_block(checkpoint);
-	return 1;
-}
+// //only call load_checkpoint if ch_check_vaildity_checkpoint passed
+// //return 1 if success; 0 if fail (would it fail?)
+// //Rebuilds id
+// int load_checkpoint(int fd, Graph *graph){
+// 	//Load virtual memory
+// 	Checkpoint *checkpoint = (Checkpoint *) ch_load_block();
+// 	//Read from disk
+// 	ch_read_disk(fd, checkpoint);
+// 	//Rebuild from checkpoint
+// 	int read_nodes = 0;
+// 	int slot_i = 0;
+// 	uint64_t num_nodes = checkpoint->slots[slot_i++];
+// 	while(read_nodes < num_nodes){
+// 		//Get node
+// 		uint64_t node_id = checkpoint->slots[slot_i++];
+// 		(*graph).add_node(node_id);
+// 		//Get neighbors
+// 		uint64_t num_neighbors = checkpoint->slots[slot_i++];
+// 		int read_neighbors = 0;
+// 		while(read_neighbors < num_neighbors){
+// 			//Get neighbor id
+// 			uint64_t neighbor_id = checkpoint->slots[slot_i++];
+// 			(*graph).add_node(neighbor_id);
+// 			(*graph).add_edge(node_id, neighbor_id);
+// 			//Finished reading neighbor.  Increment.
+// 			read_neighbors++;
+// 		}
+// 		//Finished reading node.  Increment.
+// 		read_nodes++;
+// 	}
+// 	//Free virtual memory
+// 	ch_free_block(checkpoint);
+// 	return 1;
+// }
 
 
 //////////////////////////////////////////////////////////////////
@@ -739,40 +762,40 @@ int load_checkpoint(int fd, Graph *graph){
 //////////////////////////////////////////////////////////////////
 
 //print out the checkpoint fetched from disk
-int print_checkpoint(int fd){
-	printf("Printing CHECKPOINT in disk\n");
-	//Load virtual memory
-	Checkpoint *checkpoint = (Checkpoint *) ch_load_block();
-	//Read from disk
-	ch_read_disk(fd, checkpoint);
-	//Rebuild from checkpoint
-	int read_nodes = 0;
-	int slot_i = 0;
-	uint64_t num_nodes = checkpoint->slots[slot_i++];
-	printf("num_nodes: %llu\n", (unsigned long long) num_nodes);
-	while(read_nodes < num_nodes){
-		//Get node
-		printf("~~~~~~~~~~~~~~~\n");
-		uint64_t node_id = checkpoint->slots[slot_i++];
-		printf("node_id: %llu\n", (unsigned long long) node_id);
-		//Get neighbors
-		uint64_t num_neighbors = checkpoint->slots[slot_i++];
-		printf("num_neighbors: %llu\n", (unsigned long long) num_neighbors);
-		int read_neighbors = 0;
-		while(read_neighbors < num_neighbors){
-			//Get neighbor id
-			uint64_t neighbor_id = checkpoint->slots[slot_i++];
-			printf("neighbor_id: %llu\n", (unsigned long long) neighbor_id);
-			//Finished reading neighbor.  Increment.
-			read_neighbors++;
-		}
-		//Finished reading node.  Increment.
-		read_nodes++;
-	}
-	//Free virtual memory
-	ch_free_block(checkpoint);
-	return 1;
-}
+// int print_checkpoint(int fd){
+// 	printf("Printing CHECKPOINT in disk\n");
+// 	//Load virtual memory
+// 	Checkpoint *checkpoint = (Checkpoint *) ch_load_block();
+// 	//Read from disk
+// 	ch_read_disk(fd, checkpoint);
+// 	//Rebuild from checkpoint
+// 	int read_nodes = 0;
+// 	int slot_i = 0;
+// 	uint64_t num_nodes = checkpoint->slots[slot_i++];
+// 	printf("num_nodes: %llu\n", (unsigned long long) num_nodes);
+// 	while(read_nodes < num_nodes){
+// 		//Get node
+// 		printf("~~~~~~~~~~~~~~~\n");
+// 		uint64_t node_id = checkpoint->slots[slot_i++];
+// 		printf("node_id: %llu\n", (unsigned long long) node_id);
+// 		//Get neighbors
+// 		uint64_t num_neighbors = checkpoint->slots[slot_i++];
+// 		printf("num_neighbors: %llu\n", (unsigned long long) num_neighbors);
+// 		int read_neighbors = 0;
+// 		while(read_neighbors < num_neighbors){
+// 			//Get neighbor id
+// 			uint64_t neighbor_id = checkpoint->slots[slot_i++];
+// 			printf("neighbor_id: %llu\n", (unsigned long long) neighbor_id);
+// 			//Finished reading neighbor.  Increment.
+// 			read_neighbors++;
+// 		}
+// 		//Finished reading node.  Increment.
+// 		read_nodes++;
+// 	}
+// 	//Free virtual memory
+// 	ch_free_block(checkpoint);
+// 	return 1;
+// }
 
 
 //////////////////////////////////////////////////////////////////
@@ -781,22 +804,22 @@ int print_checkpoint(int fd){
 
 //return 1 if block specified is valid.  return 0 if invalid
 //check is based on checksum
-int ch_check_validity_checkpoint(int fd){
-	uint64_t original_checksum;
-	uint64_t current_checksum;
-	Checkpoint *checkpoint = (Checkpoint *) ch_load_block();
-	ch_read_disk(fd, checkpoint);
-	original_checksum = checkpoint->checksum;
-	current_checksum = ch_set_checksum(checkpoint);
-	printf("Validity check.  Original_checksum=%llu, current_checksum=%llu\n", (unsigned long long) original_checksum, (unsigned long long) current_checksum);
-	ch_free_block(checkpoint);
-	if(original_checksum == current_checksum){
-		return 1;
-	}
-	else{
-		return 0;
-	}
-}
+// int ch_check_validity_checkpoint(int fd){
+// 	uint64_t original_checksum;
+// 	uint64_t current_checksum;
+// 	Checkpoint *checkpoint = (Checkpoint *) ch_load_block();
+// 	ch_read_disk(fd, checkpoint);
+// 	original_checksum = checkpoint->checksum;
+// 	current_checksum = ch_set_checksum(checkpoint);
+// 	printf("Validity check.  Original_checksum=%llu, current_checksum=%llu\n", (unsigned long long) original_checksum, (unsigned long long) current_checksum);
+// 	ch_free_block(checkpoint);
+// 	if(original_checksum == current_checksum){
+// 		return 1;
+// 	}
+// 	else{
+// 		return 0;
+// 	}
+// }
 
 
 
