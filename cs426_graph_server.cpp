@@ -301,7 +301,7 @@ int main(int argc, char *argv[]) {
       //log does not exist yet, create it
       printf("Created new log\n");
       init_log_segment(fd);
-      printf("Finished initializing log segment\n");
+      printf("Finished initializing log segment\n");  //why does init_log_segment sometimes fail?
     }
 
     //test block

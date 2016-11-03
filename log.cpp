@@ -278,23 +278,23 @@ void read_superblock_from_disk(int fd, void *addr){
 //nothing was written?
 //all aspects of virtual and physical writing covered.  user does not need to load or free
 void write_superblock_to_disk(int fd, uint32_t generation, uint32_t start, uint32_t size){
-  // printf("Calling write_superblock_to_disk!\n");
+  printf("Calling write_superblock_to_disk!\n");
   Superblock *superblock = (Superblock *) load_block();
-  // printf("here1\n");
+  printf("here1\n");
   read_disk(fd, 0, superblock);
-  // printf("here2\n");
+  printf("here2\n");
   write_superblock(superblock, generation, start, size);
-  // print_superblock(superblock);
-  // printf("here3\n");
+  print_superblock(superblock);
+  printf("here3\n");
   write_disk(fd, 0, superblock);
-  // printf("here4\n");
+  printf("here4\n");
   free_block(superblock);
-  // printf("here5\n");
+  printf("here5\n");
 }
 
 //called before any logging happens
 void init_log_segment(int fd){
-  // printf("Calling init_log_segment!\n");
+  printf("Calling init_log_segment!\n");
   //superblock starts at generation = 0, start = 1, size = 0;
   write_superblock_to_disk(fd, 0, 1, 0);
 };
@@ -317,6 +317,7 @@ void read_block_from_disk(int fd, uint32_t block_num, void *addr){
 //only for fresh block!
 //all aspects of virtual and physical writing covered.  user does not need to load or free
 void write_block_to_disk(int fd, uint32_t block_num, uint32_t generation, uint32_t num_entries){
+  printf("Write block to disk!\n");
   Block *block = (Block *) load_block();
   read_disk(fd, block_num, block);
   write_block(block, generation, num_entries);
