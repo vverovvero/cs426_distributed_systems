@@ -324,9 +324,9 @@ int main(int argc, char *argv[]) {
     graph.add_edge(3,4);
 
     printf("dumping checkpoint......\n");
-    dump_checkpoint(fd, &graph);
+    dump_checkpoint(fd, &graph, 5);
 
-    print_checkpoint(fd);
+    // print_checkpoint(fd);
     ////////////////////////////////////////////////
 
 
