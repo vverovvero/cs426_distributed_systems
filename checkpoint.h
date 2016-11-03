@@ -46,9 +46,18 @@ void ch_write_superblock(Ch_Superblock *ch_superblock, uint32_t generation, uint
 void ch_write_disk_block(int fd, int block_num, const void *addr);
 void ch_write_disk_checkpoint(int fd, int num_blocks, const void *addr);
 
+void ch_read_disk_block(int fd, int block_num, void *addr);
+void ch_read_disk_checkpoint(int fd, int num_blocks, void *addr);
+
 int dump_checkpoint(int fd, Graph *graph, uint32_t generation);
 int load_checkpoint(int fd, Graph *graph);
 void print_checkpoint(int fd);
+
+int ch_check_validity_superblock(int fd);
+int ch_check_validity_checkpoint(int fd, int num_blocks, int serial_size_bytes);
+int ch_check_validity(fd);
+
+uint32_t checkpoint_get_generation(int fd);
 
 
 #endif

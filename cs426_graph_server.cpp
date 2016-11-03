@@ -298,6 +298,21 @@ int main(int argc, char *argv[]) {
     //testing only
     randomize_disk(fd); //!!!!! don't forget to remove this line!!!
 
+    //Check for checkpoint, and set checkpoint generation
+    uint32_t checkpoint_generation;
+    if(ch_check_validity(fd)){
+      //Checkpoint exists and was valid
+      //load checkpoint
+      load_checkpoint(fd, &graph);
+      //get checkpoint generation
+      checkpoint_generation = checkpoint_get_generation(fd);
+
+    }
+    else{
+      checkpoint_generation = 0;
+    }
+
+    //Check for log
     if(check_validity_superblock(fd)){
       //log exists, load it
       printf("Log exists.  Do something\n");
@@ -313,28 +328,28 @@ int main(int argc, char *argv[]) {
     //check_validity_block(int fd, uint32_t block_num)
 
     ///TESTING////////////////////////////////////
-    graph.add_node(1);
-    graph.add_node(2);
-    graph.add_node(3);
-    graph.add_node(4);
-    graph.add_node(5);
-    graph.add_node(6);
-    graph.add_edge(1,2);
-    graph.add_edge(2,3);
-    graph.add_edge(1,4);
-    graph.add_edge(1,6);
-    graph.add_edge(1,5);
-    graph.add_edge(5,3);
-    graph.add_edge(4,6);
-    graph.add_edge(2,6);
-    graph.add_edge(3,4);
+    // graph.add_node(1);
+    // graph.add_node(2);
+    // graph.add_node(3);
+    // graph.add_node(4);
+    // graph.add_node(5);
+    // graph.add_node(6);
+    // graph.add_edge(1,2);
+    // graph.add_edge(2,3);
+    // graph.add_edge(1,4);
+    // graph.add_edge(1,6);
+    // graph.add_edge(1,5);
+    // graph.add_edge(5,3);
+    // graph.add_edge(4,6);
+    // graph.add_edge(2,6);
+    // graph.add_edge(3,4);
 
-    printf("dumping checkpoint......\n");
-    dump_checkpoint(fd, &graph, 5);
+    // printf("dumping checkpoint......\n");
+    // dump_checkpoint(fd, &graph, 5);
 
-    print_checkpoint(fd);
+    // print_checkpoint(fd);
 
-    load_checkpoint(fd, &graph);
+    // load_checkpoint(fd, &graph);
     ////////////////////////////////////////////////
 
 

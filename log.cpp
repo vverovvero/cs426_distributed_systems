@@ -297,8 +297,9 @@ void write_superblock_to_disk(int fd, uint32_t generation, uint32_t start, uint3
 //called before any logging happens
 void init_log_segment(int fd){
   printf("Calling init_log_segment!\n");
-  //superblock starts at generation = 0, start = 1, size = 0;
-  write_superblock_to_disk(fd, 0, 1, 0);
+  //superblock starts at generation = 1, start = 1, size = 0;
+  //Starts at gen 1 for checkpoint reason
+  write_superblock_to_disk(fd, 1, 1, 0);
 };
 
 //return the current_log_block
@@ -515,8 +516,10 @@ void read_log_from_disk(int fd, void *addr){
 }
 
 //play_log_from_disk (this should be hooked up to the API)
-//plays log up until current generation
+//plays everything in log after last checkpoint
+//ie. if checkpoint_gen == 0, then play everything
 //should check if checksum is current before playing the block
+void play_log_from_disk(int fd, uint32_t checkpoint_generation);
 
 //////////////////////////////////////////////////////////////////
 /* Scramble functions	   									    */

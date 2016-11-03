@@ -693,7 +693,7 @@ void ch_read_disk_block(int fd, int block_num, void *addr){
 }
 
 //read checkpoint in in number of blocks
-void ch_read_disk_checkpoint(int fd, int num_blocks, const void *addr){
+void ch_read_disk_checkpoint(int fd, int num_blocks, void *addr){
 	uint64_t *checkpoint_cur = (uint64_t *) addr;
 	for(int i=1; i<num_blocks+1; i++){
 		ch_read_disk_block(fd, i, checkpoint_cur);
@@ -860,26 +860,77 @@ void print_checkpoint(int fd){
 /* Existence 													*/
 //////////////////////////////////////////////////////////////////
 
-//return 1 if block specified is valid.  return 0 if invalid
+//return 1 if is valid.  return 0 if invalid
 //check is based on checksum
-// int ch_check_validity_checkpoint(int fd){
-// 	uint64_t original_checksum;
-// 	uint64_t current_checksum;
-// 	Checkpoint *checkpoint = (Checkpoint *) ch_load_block();
-// 	ch_read_disk(fd, checkpoint);
-// 	original_checksum = checkpoint->checksum;
-// 	current_checksum = ch_set_checksum(checkpoint);
-// 	printf("Validity check.  Original_checksum=%llu, current_checksum=%llu\n", (unsigned long long) original_checksum, (unsigned long long) current_checksum);
-// 	ch_free_block(checkpoint);
-// 	if(original_checksum == current_checksum){
-// 		return 1;
-// 	}
-// 	else{
-// 		return 0;
-// 	}
-// }
+int ch_check_validity_superblock(int fd){
+	uint64_t original_checksum;
+	uint64_t current_checksum;
+	Ch_Superblock *ch_superblock = (Ch_Superblock *) ch_load_block(CH_BLOCK_SIZE);
+	ch_read_disk_block(fd, 0, ch_superblock);
+	original_checksum = ch_superblock->checksum;
+	current_checksum = ch_set_checksum(ch_superblock, CH_BLOCK_SIZE);
+	printf("Validity check.  Original_checksum=%llu, current_checksum=%llu\n", (unsigned long long) original_checksum, (unsigned long long) current_checksum);
+	ch_free_block(ch_superblock, CH_BLOCK_SIZE);
+	if(original_checksum == current_checksum){
+		return 1;
+	}
+	else{
+		return 0;
+	}
+}
 
 
+int ch_check_validity_checkpoint(int fd, int num_blocks, int serial_size_bytes){
+	uint64_t original_checksum;
+	uint64_t current_checksum;
+	uint64_t *checkpoint = (uint64_t *) ch_load_block(serial_size_bytes);
+	ch_read_disk_checkpoint(fd, num_blocks, checkpoint);
+	original_checksum = (*checkpoint);
+	current_checksum = ch_set_checksum(checkpoint, serial_size_bytes);
+	printf("Validity check.  Original_checksum=%llu, current_checksum=%llu\n", (unsigned long long) original_checksum, (unsigned long long) current_checksum);
+	ch_free_block(checkpoint, serial_size_bytes);
+	if(original_checksum == current_checksum){
+		return 1;
+	}
+	else{
+		return 0;
+	}
+}
 
+//returns checksum validity of both superblock and checkpoint
+int ch_check_validity(fd){
+	//If superblock is invalid
+	if(!ch_check_validity_superblock(fd)){
+		return 0;
+	}
+	//Superblock is valid.  Fetch info and check checkpoint validity
+	Ch_Superblock *ch_superblock = (Ch_Superblock *) ch_load_block(CH_BLOCK_SIZE);
+	ch_read_disk_block(fd, 0, ch_superblock);
+	int num_blocks = ch_superblock->num_blocks;
+	int serial_size = ch_superblock->serial_size;
+	int serial_size_bytes = serial_size * 8;
+	if(ch_check_validity_checkpoint(fd, num_blocks, serial_size_bytes)){
+		//Checkpoint is valid
+		return 1;
+	}
+	else{
+		//Checkpoint is invalid
+		return 0;
+	}
+
+}
+
+
+//////////////////////////////////////////////////////////////////
+/* Functions for working with log								*/
+//////////////////////////////////////////////////////////////////
+
+uint32_t checkpoint_get_generation(int fd){
+	Ch_Superblock *ch_superblock = (Ch_Superblock *) ch_load_block(CH_BLOCK_SIZE);
+	ch_read_disk_block(fd, 0, ch_superblock);
+	uint32_t checkpoint_generation = ch_superblock->generation;
+	ch_free_block(ch_superblock, CH_BLOCK_SIZE);
+	return checkpoint_generation;
+}
 
 
