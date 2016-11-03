@@ -679,7 +679,6 @@ void ch_write_superblock(Ch_Superblock *ch_superblock, uint32_t generation, uint
 int dump_checkpoint(int fd, Graph *graph, uint32_t generation){
 	//Get size of the graph
 	int serial_size = ch_get_serial_size(graph);
-	set_checkpoint_num_slots(serial_size - 1);
 	//Load virtual memory
 	int serial_size_bytes = serial_size * 8;
 	Checkpoint *checkpoint = (Checkpoint *) ch_load_block(serial_size_bytes);
