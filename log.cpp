@@ -213,7 +213,7 @@ void write_log(Block *block, uint32_t opcode, uint64_t node_a_id, uint64_t node_
   //update block
   block->num_entries = block->num_entries + 1;
 
-  snychronize(block);
+  synchronize(block);
 
   uint64_t checksum = set_checksum(block);
   block->checksum = checksum;
