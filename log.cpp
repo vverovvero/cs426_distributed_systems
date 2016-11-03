@@ -91,32 +91,28 @@ typedef struct block Block;
 /////////////////////////////////////////////////////////////////////////////////////
 
 
-void print_superblock(void *addr){
-  Superblock *block_ptr = (Superblock *) addr;
+void print_superblock(Superblock *superblock){
   printf("Superblock~~\n");
-  printf("Checksum: %llu\n", (long long unsigned int) block_ptr->checksum);
-  printf("Generation: %u\n", block_ptr->generation);
-  printf("Start: %u\n", block_ptr->start);
-  printf("Size: %u\n", block_ptr->size);
+  printf("Checksum: %llu\n", (long long unsigned int) superblock->checksum);
+  printf("Generation: %u\n", superblock->generation);
+  printf("Start: %u\n", superblock->start);
+  printf("Size: %u\n", superblock->size);
 }
 
 
-void print_block(void *addr){
-  //how to increment this pointer correctly
-  // Block *block_ptr = ((Block *) addr) + LOG_SIZE * block_num;
-  Block *block_ptr = (Block *) addr;
-  printf("block_ptr: %u\n", block_ptr);
+void print_block(Block *block){
+  printf("block_ptr: %u\n", block);
 
   printf("Log Block~~\n");
-  printf("Checksum: %llu\n", (long long unsigned int) block_ptr->checksum);
-  printf("Generation: %u\n", block_ptr->generation);
-  printf("Number of entries in block: %u\n", block_ptr->num_entries);
+  printf("Checksum: %llu\n", (long long unsigned int) block->checksum);
+  printf("Generation: %u\n", block->generation);
+  printf("Number of entries in block: %u\n", block->num_entries);
   printf("Entries~~\n");
 
   int i;
-  for(i=0; i<block_ptr->num_entries; i++){
+  for(i=0; i<block->num_entries; i++){
     printf("Entry #%d\n", i);
-    Entry entry = block_ptr->entries[i];
+    Entry entry = block->entries[i];
     printf("Opcode: %u\n", entry.opcode);
     printf("Node_a_id: %llu\n", (long long unsigned int) entry.node_a_id);
     printf("Node_b_id: %llu\n", (long long unsigned int) entry.node_b_id);
@@ -145,10 +141,15 @@ void free_block(void * addr){
   assert( munmap_return == 0);
 }
 
-//synchronize to write struct into virtual block
-void synchronize(void * dest, const void * source){
-  memcpy(dest, source, LOG_SIZE);
-  msync(dest, LOG_SIZE, MS_SYNC);
+// //synchronize to write struct into virtual block
+// void synchronize(void * dest, const void * source){
+//   memcpy(dest, source, LOG_SIZE);
+//   msync(dest, LOG_SIZE, MS_SYNC);
+// }
+
+//flush buffer to mmapped address
+void synchronize(void *addr){
+  msync(addr, LOG_SIZE, MS_SYNC);
 }
 
 //given addr. skip first 8 bytes, XOR 63 different words
@@ -170,52 +171,53 @@ uint64_t set_checksum(void * addr){
   return checksum;
 }
 
-void write_superblock(void * addr, uint32_t generation, uint32_t start, uint32_t size){
-  Superblock superblock;
-  superblock.generation = generation;
-  superblock.start = start; //starts at first block
-  superblock.size = size; //initially, the log is size 0
+//rewritten so that superblock is directly modified
+void write_superblock(Superblock *superblock, uint32_t generation, uint32_t start, uint32_t size){
+  superblock->generation = generation;
+  superblock->start = start; //starts at first block
+  superblock->size = size; //initially, the log is size 0
 
-  synchronize(addr, &superblock);
+  synchronize(superblock);
 
   //perform checksum
-  superblock.checksum = set_checksum(addr);
-  synchronize(addr, &superblock);
+  uint64_t checksum = set_checksum(superblock);
+  superblock->checksum = checksum;
+  synchronize(superblock);
 }
 
 //write header information and perform checksum
 //only writes fresh block!
-void write_block(void *addr, uint32_t generation, uint32_t num_entries){
-  Block block;
-  block.generation = generation;
-  block.num_entries = num_entries;
+void write_block(Block *block, uint32_t generation, uint32_t num_entries){
+  block->generation = generation;
+  block->num_entries = num_entries;
 
-  synchronize(addr, &block);
+  synchronize(block);
 
-  block.checksum = set_checksum(addr);
-  synchronize(addr, &block);
+  uint64_t checksum = set_checksum(block);
+  block->checksum = checksum;
+  synchronize(block);
 }
 
 
 //given appropriate block address, update the log in the block and copy back
 //call write_log on pre-existing block
-void write_log(void *addr, uint32_t opcode, uint64_t node_a_id, uint64_t node_b_id){
-  printf("write_log called on: addr=%u, opcode=%lu, node_a_id=%llu, node_b_id=%llu\n", addr, (unsigned long) opcode, (unsigned long long) node_a_id, (unsigned long long) node_b_id);
-  //first create a block space and copy address to block space
-  Block block;
-  synchronize(&block, addr);
+void write_log(Block *block, uint32_t opcode, uint64_t node_a_id, uint64_t node_b_id){
+  printf("write_log called on: addr=%u, opcode=%lu, node_a_id=%llu, node_b_id=%llu\n", block, (unsigned long) opcode, (unsigned long long) node_a_id, (unsigned long long) node_b_id);
   //do edits on block
-  assert(block.num_entries < MAX_ENTRIES);
+  assert(block->num_entries < MAX_ENTRIES);
   //Update entry
-  block.entries[block.num_entries].opcode = opcode;
-  block.entries[block.num_entries].node_a_id = node_a_id;
-  block.entries[block.num_entries].node_b_id = node_b_id;
+  block->entries[block->num_entries].opcode = opcode;
+  block->entries[block->num_entries].node_a_id = node_a_id;
+  block->entries[block->num_entries].node_b_id = node_b_id;
 
   //update block
-  block.num_entries = block.num_entries + 1;
-  block.checksum = set_checksum(&block);
-  //copy block back to address space
-  synchronize(addr, &block);
+  block->num_entries = block->num_entries + 1;
+
+  snychronize(block);
+
+  uint64_t checksum = set_checksum(block);
+  block->checksum = checksum;
+  synchronize(block);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -278,18 +280,18 @@ void read_superblock_from_disk(int fd, void *addr){
 //nothing was written?
 //all aspects of virtual and physical writing covered.  user does not need to load or free
 void write_superblock_to_disk(int fd, uint32_t generation, uint32_t start, uint32_t size){
-  printf("Calling write_superblock_to_disk!\n");
+  // printf("Calling write_superblock_to_disk!\n");
   Superblock *superblock = (Superblock *) load_block();
-  printf("here1\n");
+  // printf("here1\n");
   read_disk(fd, 0, superblock);
-  printf("here2\n");
+  // printf("here2\n");
   write_superblock(superblock, generation, start, size);
   print_superblock(superblock);
-  printf("here3\n");
+  // printf("here3\n");
   write_disk(fd, 0, superblock);
-  printf("here4\n");
+  // printf("here4\n");
   free_block(superblock);
-  printf("here5\n");
+  // printf("here5\n");
 }
 
 //called before any logging happens
@@ -317,7 +319,7 @@ void read_block_from_disk(int fd, uint32_t block_num, void *addr){
 //only for fresh block!
 //all aspects of virtual and physical writing covered.  user does not need to load or free
 void write_block_to_disk(int fd, uint32_t block_num, uint32_t generation, uint32_t num_entries){
-  printf("Write block to disk!\n");
+  // printf("Write block to disk!\n");
   Block *block = (Block *) load_block();
   read_disk(fd, block_num, block);
   write_block(block, generation, num_entries);

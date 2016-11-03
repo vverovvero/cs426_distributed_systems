@@ -45,16 +45,20 @@
 //   void *empty; //4 bytes empty
 // };
 
+typedef struct superblock Superblock;
+typedef struct entry Entry;
+typedef struct block Block;
+
 void print_superblock(void *addr);
 void print_block(void *addr);
 
 void * load_block();
 void free_block(void * addr);
-void synchronize(void * dest, const void * source);
+void synchronize(void *addr);
 uint64_t set_checksum(void * addr);
-void write_superblock(void * addr, uint32_t generation, uint32_t start, uint32_t size);
-void write_block(void *addr, uint32_t generation, uint32_t num_entries);
-void write_log(void *addr, uint32_t opcode, uint64_t node_a_id, uint64_t node_b_id);
+void write_superblock(Superblock *superblock, uint32_t generation, uint32_t start, uint32_t size);
+void write_block(Block *block, uint32_t generation, uint32_t num_entries);
+void write_log(Block *block, uint32_t opcode, uint64_t node_a_id, uint64_t node_b_id);
 
 int open_disk(const char *devfile);
 void set_disk_offset(int fd, uint32_t block_num);
