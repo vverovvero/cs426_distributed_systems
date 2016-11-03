@@ -14,7 +14,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
-#include <stdlib.h> //has atoll
+#include <stdlib.h> //has atoll, has exit
 #include <iostream>
 // #include <cstdint> //has type 'uint64_t'
 #include <vector>
@@ -296,7 +296,7 @@ int main(int argc, char *argv[]) {
     //Else, log exists
 
     //testing only
-    randomize_disk(fd); //!!!!! don't forget to remove this line!!!
+    // randomize_disk(fd); //!!!!! don't forget to remove this line!!!
 
     //Check for checkpoint, and set checkpoint generation
     uint32_t checkpoint_generation;
@@ -310,12 +310,14 @@ int main(int argc, char *argv[]) {
     }
     else{
       checkpoint_generation = 0;
+      //do I need to exit here, if checkpoint was invalid?
     }
 
     //Check for log
     if(check_validity_superblock(fd)){
       //log exists, load it
-      printf("Log exists.  Do something\n");
+      printf("Log exists.  Play log for all entries with gen number > checkpoint_generation\n");
+      play_log_from_disk(fd, &graph, checkpoint_generation)
     }
     else{
       //log does not exist yet, create it

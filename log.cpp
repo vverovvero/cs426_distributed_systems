@@ -25,7 +25,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 
-
+#include "graph.h"
 
 
 #define MAX_ENTRIES (204) //entries 0 - 203, each 20 bytes
@@ -498,24 +498,85 @@ void log_increment_generation(int fd){
 
 //untested!!
 //read_log_from_disk, given virtual memory space the size of an entry
-void read_log_from_disk(int fd, void *addr){
-  //get_current_block_num
-  uint32_t block_num = get_current_block_num(fd);
-  //load a block
-  Block *block = (Block *) load_block();
-  //read_block_from_disk
-  read_block_from_disk(fd, block_num, block);
-  //memcopy? void *memcpy(void *dest, const void *src, size_t n); for 20 bytes
-  memcpy(block, addr, 20);
-  //free block
-  free_block(block);
+// void read_log_from_disk(int fd, void *addr){
+//   //get_current_block_num
+//   uint32_t block_num = get_current_block_num(fd);
+//   //load a block
+//   Block *block = (Block *) load_block();
+//   //read_block_from_disk
+//   read_block_from_disk(fd, block_num, block);
+//   //memcopy? void *memcpy(void *dest, const void *src, size_t n); for 20 bytes
+//   memcpy(block, addr, 20);
+//   //free block
+//   free_block(block);
+// }
+
+void rebuild_entry(Graph *graph, uint32_t opcode, uint64_t node_a_id, uint64_t node_b_id){
+  if(opcode == 0){
+    (*graph).add_node(node_a_id);
+  }
+  else if(opcode == 1){
+    (*graph).add_edge(node_a_id, node_b_id);
+  }
+  else if(opcode == 2){
+    (*graph).remove_node(node_a_id);
+  }
+  else if(opcode == 3){
+    (*graph).remove_edge(node_a_id, node_b_id);
+  }
+  else{
+    //Invalid opcode
+    assert(false);
+  }
 }
 
 //play_log_from_disk (this should be hooked up to the API)
 //plays everything in log after last checkpoint
 //ie. if checkpoint_gen == 0, then play everything
 //should check if checksum is current before playing the block
-void play_log_from_disk(int fd, uint32_t checkpoint_generation);
+void play_log_from_disk(int fd, Graph *graph, uint32_t checkpoint_generation){
+  //assert that the checksum of superblock is correct
+  Superblock *superblock = (Superblock *) load_block();
+  read_superblock_from_disk(fd, superblock);
+  assert(check_validity_superblock(fd));
+  //Fetch info for looping through blocks
+  uint32_t start = superblock->start;
+  uint32_t size = superblock->size;
+  //Do nothing if no blocks
+  if(size == 0){
+    return;
+  }
+  //Loop through all the blocks
+  for(uint32_t block_num=start; block_num<start+size; block_num++){
+    //For each block, fetch info for reading all the entries
+    Block *block = (Block *) load_block();
+    read_block_from_disk(fd, block_num, block);
+    //return if block is not valid
+    if(!check_validity_block(fd, block_num)){
+      free_block(block);
+      return;
+    }
+    uint32_t generation = block->generation;
+    uint32_t num_entries = block->num_entries;
+    //Do nothing if generation is old, or no entries
+    if((generation <= checkpoint_generation) || (num_entries == 0)){
+      free_block(block);
+      continue;
+    }
+    else{
+      //Loop through all the entries
+      for(uint32_t entry_num=0; entry_num<num_entries; entry_num++){
+        //Call the appropriate opcode (rebuild_entry)
+        uint32_t opcode = block->entries[entry_num].opcode;
+        uint64_t node_a_id = block->entries[entry_num].node_a_id;
+        uint64_t node_b_id = block->entries[entry_num].node_b_id;
+        rebuild_entry(graph, opcode, node_a_id, node_b_id);
+      }
+      free_block(block);
+    }
+  }
+  free_block(superblock);
+}
 
 //////////////////////////////////////////////////////////////////
 /* Scramble functions	   									    */
