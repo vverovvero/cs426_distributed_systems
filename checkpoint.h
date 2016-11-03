@@ -33,6 +33,9 @@ using std::set;
 #ifndef CHECKPOINT_H
 #define CHECKPOINT_H
 
+typedef struct ch_superblock Ch_Superblock;
+typedef struct ch_block Ch_Block;
+
 void * ch_load_block(size_t length);
 void ch_free_block(void * addr, size_t length);
 uint64_t ch_set_checksum(void * addr, size_t length);
