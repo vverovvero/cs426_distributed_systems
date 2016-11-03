@@ -746,6 +746,7 @@ int dump_checkpoint(int fd, Graph *graph, uint32_t generation){
 //return 1 if success; 0 if fail (would it fail?)
 //Rebuilds id
 int load_checkpoint(int fd, Graph *graph){
+	printf("Loading checkpoint!\n");
 	//First get information from superblock
 	Ch_Superblock *ch_superblock = (Ch_Superblock *) ch_load_block(CH_BLOCK_SIZE);
 	ch_read_disk_block(fd, 0, ch_superblock);
@@ -787,6 +788,7 @@ int load_checkpoint(int fd, Graph *graph){
 	//Free virtual memory
 	ch_free_block(checkpoint, serial_size_bytes);
 	ch_free_block(ch_superblock, CH_BLOCK_SIZE);
+	printf("Finish loading checkpoint.\n");
 	return 1;
 }
 
