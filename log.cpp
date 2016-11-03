@@ -496,32 +496,22 @@ void log_increment_generation(int fd){
 /* Reconstruction 												*/
 //////////////////////////////////////////////////////////////////
 
-//untested!!
-//read_log_from_disk, given virtual memory space the size of an entry
-// void read_log_from_disk(int fd, void *addr){
-//   //get_current_block_num
-//   uint32_t block_num = get_current_block_num(fd);
-//   //load a block
-//   Block *block = (Block *) load_block();
-//   //read_block_from_disk
-//   read_block_from_disk(fd, block_num, block);
-//   //memcopy? void *memcpy(void *dest, const void *src, size_t n); for 20 bytes
-//   memcpy(block, addr, 20);
-//   //free block
-//   free_block(block);
-// }
-
+//given graph and entry info, call appropriate graph function
 void rebuild_entry(Graph *graph, uint32_t opcode, uint64_t node_a_id, uint64_t node_b_id){
   if(opcode == 0){
+    printf("Rebuild add_node: %u\n", node_a_id);
     (*graph).add_node(node_a_id);
   }
   else if(opcode == 1){
+    printf("Rebuild add_edge: %u, %u\n", node_a_id, node_b_id);
     (*graph).add_edge(node_a_id, node_b_id);
   }
   else if(opcode == 2){
+    printf("Rebuild remove_node: %u\n", node_a_id);
     (*graph).remove_node(node_a_id);
   }
   else if(opcode == 3){
+    printf("Rebuild remove_edge: %u, %u\n", node_a_id, node_b_id);
     (*graph).remove_edge(node_a_id, node_b_id);
   }
   else{
