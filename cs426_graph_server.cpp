@@ -328,6 +328,8 @@ int main(int argc, char *argv[]) {
     dump_checkpoint(fd, &graph, 5);
 
     print_checkpoint(fd);
+
+    load_checkpoint(fd, &graph);
     ////////////////////////////////////////////////
 
 
