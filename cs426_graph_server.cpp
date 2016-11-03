@@ -317,7 +317,7 @@ int main(int argc, char *argv[]) {
     if(check_validity_superblock(fd)){
       //log exists, load it
       printf("Log exists.  Play log for all entries with gen number > checkpoint_generation\n");
-      play_log_from_disk(fd, &graph, checkpoint_generation)
+      play_log_from_disk(fd, &graph, checkpoint_generation);
     }
     else{
       //log does not exist yet, create it
