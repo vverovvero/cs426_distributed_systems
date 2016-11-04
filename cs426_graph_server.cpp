@@ -280,7 +280,6 @@ int main(int argc, char *argv[]) {
     int c;
     int format_flag = 0;
     int reset_flag = 0;
-    int fd;
     static const char *s_http_port;
     while(optind < argc){
       if((c = getopt(argc, argv, "fr")) != -1){
