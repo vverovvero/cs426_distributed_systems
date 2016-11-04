@@ -521,12 +521,12 @@ void randomize_disk_checkpoint(int fd){
 		//read random bytes
 		int read_return = read(fd_random, block, CH_BLOCK_SIZE);
 		// printf("read_return: %d\n", read_return);
-		assert(read_return == LOG_SIZE);
+		assert(read_return == CH_BLOCK_SIZE);
 		// read_disk(fd_random, i, block);
 		//write random bytes to disk
 		ch_write_disk_block(fd, i, block);
 		//free block
-		free_block(block, CH_BLOCK_SIZE);
+		ch_free_block(block, CH_BLOCK_SIZE);
 	}
 	close(fd_random);
 }

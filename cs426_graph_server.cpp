@@ -19,6 +19,7 @@
 // #include <cstdint> //has type 'uint64_t'
 #include <vector>
 #include <utility> //has type 'pair'
+#include <unistd.h> //getopt
 
 using std::pair;
 using std::vector;
@@ -273,7 +274,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
 int main(int argc, char *argv[]) {
 
   //read port from command line
-  if(argc == 3){
+  if(argc >= 3){
     static const char *s_http_port = argv[1];
     fd = open_disk(argv[2]);
 
@@ -298,6 +299,26 @@ int main(int argc, char *argv[]) {
     //testing only
     randomize_disk_log(fd); //!!!!! don't forget to remove this line!!!
     randomize_disk_checkpoint(fd); //remove this line too
+
+    //Look for format option
+    int format_flag = 0;
+    while((c = getopt(argc, argv, "f")) != -1){
+      switch (c)
+      {
+        case 'f':
+          //set format flag
+          format_flag = 1;
+        default:
+          printf("Unknown option.\n");
+      }
+    }
+
+    if(format_flag == 1){
+      printf("Format flag specified\n");
+      format(fd);
+      log_reset_tail(fd);
+    }
+
 
     //Check for checkpoint, and set checkpoint generation
     uint32_t checkpoint_generation;
@@ -365,6 +386,6 @@ int main(int argc, char *argv[]) {
     return 0;
   }
   else{
-    std::cout << "Specify port by : './cs426_graph_server <port>'" << std::endl;
+    std::cout << "Specify port by : './cs426_graph_server <optional -f> <port> <devfile> '" << std::endl;
   }
 }

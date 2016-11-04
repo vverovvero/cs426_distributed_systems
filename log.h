@@ -81,6 +81,7 @@ int check_validity_block(int fd, uint32_t block_num);
 
 uint32_t log_get_generation(int fd);
 void log_increment_generation(int fd);
+void log_reset_tail(int fd);
 
 void rebuild_entry(Graph *graph, uint32_t opcode, uint64_t node_a_id, uint64_t node_b_id);
 void play_log_from_disk(int fd, Graph *graph, uint32_t checkpoint_generation);
