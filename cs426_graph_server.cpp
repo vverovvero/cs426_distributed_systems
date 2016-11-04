@@ -275,21 +275,25 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
 int main(int argc, char *argv[]) {
   //Need at least port and devfile
   if(argc >= 3){
-    // static const char *s_http_port = argv[1];
-    // fd = open_disk(argv[2]);
-
     //Fetch all the arguments
+    //If format flag, then the format option flag must come first
     int c;
     int format_flag = 0;
+    int reset_flag = 0;
     int fd;
     static const char *s_http_port;
     while(optind < argc){
-      if((c = getopt(argc, argv, "f")) != -1){
+      if((c = getopt(argc, argv, "fr")) != -1){
         switch (c) {
           case 'f':
             //set format flag
             printf("Found format flag\n");
             format_flag = 1;
+          case 'r':
+            //reset disk by randomizing
+            printf("Found reset flag\n");
+            reset_flag = 1;
+
           default:
             break;
         }
@@ -322,20 +326,20 @@ int main(int argc, char *argv[]) {
       }
     }
       
+    if(reset_flag == 1){
+      //testing only
+      printf("Randomizing log and checkpoint!\n");
+      randomize_disk_log(fd); //!!!!! don't forget to remove this line!!!
+      randomize_disk_checkpoint(fd); //remove this line too
+      printf("Finished randomizing!\n");
+
+    }
+
     if(format_flag == 1){
       printf("Format flag specified\n");
       format(fd);
       log_reset_tail(fd);
     }
-
-
-
-    //testing only
-    // printf("Randomizing log and checkpoint!\n");
-    // randomize_disk_log(fd); //!!!!! don't forget to remove this line!!!
-    // randomize_disk_checkpoint(fd); //remove this line too
-    // printf("Finished randomizing!\n");
-
 
     //Check for checkpoint, and set checkpoint generation
     uint32_t checkpoint_generation;
