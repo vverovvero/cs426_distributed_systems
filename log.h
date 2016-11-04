@@ -85,6 +85,8 @@ void log_increment_generation(int fd);
 void rebuild_entry(Graph *graph, uint32_t opcode, uint64_t node_a_id, uint64_t node_b_id);
 void play_log_from_disk(int fd, Graph *graph, uint32_t checkpoint_generation);
 
+void format(int fd);
+
 void randomize_disk_log(int fd);
 
 #endif

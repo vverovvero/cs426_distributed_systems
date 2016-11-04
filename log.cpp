@@ -512,7 +512,7 @@ void log_reset_tail(int fd){
 }
 
 //////////////////////////////////////////////////////////////////
-/* Reconstruction 												*/
+/* Reconstruction 			                       									*/
 //////////////////////////////////////////////////////////////////
 
 //given graph and entry info, call appropriate graph function
@@ -587,8 +587,36 @@ void play_log_from_disk(int fd, Graph *graph, uint32_t checkpoint_generation){
   free_block(superblock);
 }
 
+
 //////////////////////////////////////////////////////////////////
-/* Scramble functions	   									    */
+/* Reconstruction                                               */
+//////////////////////////////////////////////////////////////////
+
+//only call if format flag is specified
+//if superblock is valid, increment generation number
+//else, new superblock
+void format(int fd){
+  //Read in superblock 
+  Superblock *superblock = (Superblock *) load_block();
+  read_superblock_from_disk(fd, superblock);
+  //Check validity
+  if(check_validity_superblock(fd)){
+    uint32_t new_generation = superblock->generation + 1;
+    write_superblock_to_disk(fd, new_generation, superblock->start, superblock->size);
+    //also increase size?  new block
+    set_new_block_from_disk(fd);
+    printf("Format, new generation: %u\n", new_generation);
+
+  }
+  else{
+    //Brand new superblock
+    write_superblock_to_disk(fd, 1, 1, 0);
+  }
+  free_block(superblock);
+}
+
+//////////////////////////////////////////////////////////////////
+/* Scramble functions	   									                      */
 //////////////////////////////////////////////////////////////////
 
 //write giberish to devfile
