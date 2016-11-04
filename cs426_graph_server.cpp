@@ -20,6 +20,7 @@
 #include <vector>
 #include <utility> //has type 'pair'
 #include <unistd.h> //getopt
+#include <ctype.h> //isdigit
 
 using std::pair;
 using std::vector;
@@ -272,40 +273,27 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
 
 
 int main(int argc, char *argv[]) {
-
-  //read port from command line
+  //Need at least port and devfile
   if(argc >= 3){
-    static const char *s_http_port = argv[1];
-    fd = open_disk(argv[2]);
+    // static const char *s_http_port = argv[1];
+    // fd = open_disk(argv[2]);
 
-    //Set up the server
-    struct mg_mgr mgr;
-    struct mg_connection *nc;
-
-    mg_mgr_init(&mgr, NULL);
-    nc = mg_bind(&mgr, s_http_port, ev_handler);
-
-    // Set up HTTP server parameters
-    mg_set_protocol_http_websocket(nc);
-    s_http_server_opts.document_root = ".";      // Serve current directory
-    s_http_server_opts.dav_document_root = ".";  // Allow access via WebDav
-    s_http_server_opts.enable_directory_listing = "yes";
-
-    //testing only
-    // printf("Randomizing log and checkpoint!\n");
-    // randomize_disk_log(fd); //!!!!! don't forget to remove this line!!!
-    // randomize_disk_checkpoint(fd); //remove this line too
-    // printf("Finished randomizing!\n");
-
-    //Look for format option
-    int format_flag = 0;
+    //Fetch all the arguments
     int c;
+    int format_flag = 0;
     while((c = getopt(argc, argv, "f")) != -1){
       switch (c)
       {
         case 'f':
           //set format flag
           format_flag = 1;
+        case '?':
+          if(isdigit(optopt)){
+            static const char *s_http_port = optopt;
+          }
+          else{
+            fd = open_disk(optopt);
+          }
         default:
           printf("Unknown option.\n");
       }
@@ -316,6 +304,14 @@ int main(int argc, char *argv[]) {
       format(fd);
       log_reset_tail(fd);
     }
+
+
+
+    //testing only
+    // printf("Randomizing log and checkpoint!\n");
+    // randomize_disk_log(fd); //!!!!! don't forget to remove this line!!!
+    // randomize_disk_checkpoint(fd); //remove this line too
+    // printf("Finished randomizing!\n");
 
 
     //Check for checkpoint, and set checkpoint generation
@@ -347,6 +343,18 @@ int main(int argc, char *argv[]) {
     }
 
     ////////////////////////////////////////////////
+    //Set up the server
+    struct mg_mgr mgr;
+    struct mg_connection *nc;
+
+    mg_mgr_init(&mgr, NULL);
+    nc = mg_bind(&mgr, s_http_port, ev_handler);
+
+    // Set up HTTP server parameters
+    mg_set_protocol_http_websocket(nc);
+    s_http_server_opts.document_root = ".";      // Serve current directory
+    s_http_server_opts.dav_document_root = ".";  // Allow access via WebDav
+    s_http_server_opts.enable_directory_listing = "yes";
 
     printf("Starting web server on port %s\n", s_http_port);
     for (;;) {
