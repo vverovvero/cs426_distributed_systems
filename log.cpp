@@ -272,6 +272,7 @@ void close_disk(int fd){
 
 //read into virtual buffer; user needs to load_block and free_block
 void read_superblock_from_disk(int fd, void *addr){
+  printf("read superblock from disk\n");
   read_disk(fd, 0, addr);
 }
 
