@@ -407,7 +407,7 @@ int set_writable_block_from_disk(int fd){
 //calls set_writable_block.  Updates log and block.
 //return 1 on success, else return 0
 int write_log_to_disk(int fd, uint32_t opcode, uint64_t node_a_id, uint64_t node_b_id){
-  printf("Write_log_to_disk\n");
+  printf("Write_log_to_disk, fd: %d\n", fd);
   //set_writable_block_from_disk
   if(set_writable_block_from_disk(fd) == 0){
   	//failed!  no space
