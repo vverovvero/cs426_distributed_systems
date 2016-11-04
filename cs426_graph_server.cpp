@@ -298,24 +298,24 @@ int main(int argc, char *argv[]) {
         while(optind < argc){
            //Handle regular arguments
           printf("%s\n", argv[optind]);
-          // //Check for port
-          // char s[100];
-          // sprintf(s, argv[optind]);
-          // int valid_port = true;
-          // for(int i=0; i<strlen(s); i++){
-          //   if(!isdigit(s[i])){
-          //     valid_port = false;
-          //     break;
-          //   }
-          // }
-          // if(valid_port){
-          //   printf("Found port\n");
-          //   s_http_port = argv[optind];
-          // }
-          // else{
-          //   printf("Found devfile\n");
-          //   fd = open_disk(argv[optind]);
-          // }
+          //Check for port
+          char s[100];
+          sprintf(s, argv[optind]);
+          int valid_port = true;
+          for(int i=0; i<strlen(s); i++){
+            if(!isdigit(s[i])){
+              valid_port = false;
+              break;
+            }
+          }
+          if(valid_port){
+            printf("Found port\n");
+            s_http_port = argv[optind];
+          }
+          else{
+            printf("Found devfile\n");
+            fd = open_disk(argv[optind]);
+          }
           optind++;
         }
         break;
