@@ -230,8 +230,10 @@ int open_disk(const char *devfile){
 
 //move the file offset to appropriate block number
 void set_disk_offset(int fd, uint32_t block_num){
+  printf("set disk offset\n");
   //Set the write position to correct block offset
   off_t offset = block_num * LOG_SIZE;
+  printf("block_num: %d, offset: %d\n", block_num, offset);
   // printf("Setting to offset: %ld\n", offset);
   off_t lseek_return = lseek(fd, offset, SEEK_SET);
   assert(lseek_return != -1);
@@ -249,7 +251,7 @@ void write_disk(int fd, uint32_t block_num, const void *addr){
 
 //read from disk into the buffer (addr is the block)
 void read_disk(int fd, uint32_t block_num, void *addr){
-  // printf("Reading from disk\n");
+  printf("Reading from disk\n");
   //Set the write position to correct block offset
   set_disk_offset(fd, block_num);
   //read information into the buffer
