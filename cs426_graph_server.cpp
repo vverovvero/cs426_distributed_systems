@@ -319,6 +319,7 @@ int main(int argc, char *argv[]) {
           else{
             printf("Found devfile\n");
             fd = open_disk(argv[optind]);
+            printf("fd: %d\n", fd);
           }
           optind++;
         }

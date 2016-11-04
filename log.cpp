@@ -230,7 +230,7 @@ int open_disk(const char *devfile){
 
 //move the file offset to appropriate block number
 void set_disk_offset(int fd, uint32_t block_num){
-  printf("set disk offset\n");
+  printf("set disk offset, fd: %d\n", fd);
   //Set the write position to correct block offset
   off_t offset = block_num * LOG_SIZE;
   printf("block_num: %d, offset: %d\n", block_num, offset);
