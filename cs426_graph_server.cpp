@@ -297,7 +297,9 @@ int main(int argc, char *argv[]) {
       else{
         //Handle regular arguments
         printf("%s\n", argv[optind]);
-        if(isdigit(atoi(argv[optind]))){
+        int possible_port = atoi(argv[optind]);
+        printf("possible_port: %d\n", possible_port);
+        if(isdigit(possible_port)){
           printf("Found port\n");
           s_http_port = argv[optind];
         }
