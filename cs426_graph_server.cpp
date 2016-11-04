@@ -292,10 +292,10 @@ int main(int argc, char *argv[]) {
     s_http_server_opts.enable_directory_listing = "yes";
 
     //testing only
-    printf("Randomizing log and checkpoint!\n");
-    randomize_disk_log(fd); //!!!!! don't forget to remove this line!!!
-    randomize_disk_checkpoint(fd); //remove this line too
-    printf("Finished randomizing!\n");
+    // printf("Randomizing log and checkpoint!\n");
+    // randomize_disk_log(fd); //!!!!! don't forget to remove this line!!!
+    // randomize_disk_checkpoint(fd); //remove this line too
+    // printf("Finished randomizing!\n");
 
     //Look for format option
     int format_flag = 0;
