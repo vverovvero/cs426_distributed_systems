@@ -235,7 +235,7 @@ void ch_write_disk_block(int fd, int block_num, const void *addr){
 	assert(lseek_return != -1);
 	//Copy information from struct into the disk
 	ssize_t write_return = write(fd, addr, CH_BLOCK_SIZE);
-	printf("write_return: %d\n", write_return);  //2147479552 (why is it only 2GB?)
+	printf("write_return: %lu\n", write_return);  //2147479552 (why is it only 2GB?)
 	assert(write_return == CH_BLOCK_SIZE);
 	printf("Finished writing to the disk\n");
 }
@@ -257,7 +257,7 @@ void ch_read_disk_block(int fd, int block_num, void *addr){
 	assert(lseek_return != -1);
 	//read information into the buffer
 	ssize_t read_return = read(fd, addr, CH_BLOCK_SIZE);
-	printf("read_return: %d\n", read_return);
+	printf("read_return: %lu\n", read_return);
 	assert(read_return == CH_BLOCK_SIZE);
 }
 

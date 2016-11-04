@@ -302,6 +302,7 @@ int main(int argc, char *argv[]) {
 
     //Look for format option
     int format_flag = 0;
+    int c;
     while((c = getopt(argc, argv, "f")) != -1){
       switch (c)
       {

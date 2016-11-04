@@ -273,10 +273,10 @@ void event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_i
 				set<uint64_t>::iterator j = i;
 				j++;
 				if(j != neighbors.end()){
-					sprintf(c_neighbor, "%llu, ", neighbor);
+					sprintf(c_neighbor, "%lu, ", neighbor);
 				}
 				else{
-					sprintf(c_neighbor, "%llu", neighbor);
+					sprintf(c_neighbor, "%lu", neighbor);
 				}
 				strcat(c_neighbor_list, c_neighbor);
 			}
