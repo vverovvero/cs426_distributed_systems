@@ -351,6 +351,7 @@ int set_new_block_from_disk(int fd){
 //for use when writing a log.  Do nothing if current block is writable, otherwise call set_new_block_from_disk
 //return 1 on success, 0 on fail
 int set_writable_block_from_disk(int fd){
+  printf("Set writable block from disk\n");
   //Load block to store superblock info
   Superblock *superblock = (Superblock *) load_block();
   read_superblock_from_disk(fd, superblock);
@@ -403,6 +404,7 @@ int set_writable_block_from_disk(int fd){
 //calls set_writable_block.  Updates log and block.
 //return 1 on success, else return 0
 int write_log_to_disk(int fd, uint32_t opcode, uint64_t node_a_id, uint64_t node_b_id){
+  printf("Write_log_to_disk\n");
   //set_writable_block_from_disk
   if(set_writable_block_from_disk(fd) == 0){
   	//failed!  no space
