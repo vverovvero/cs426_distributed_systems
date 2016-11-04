@@ -304,7 +304,7 @@ int main(int argc, char *argv[]) {
           printf("%s\n", argv[optind]);
           //Check for port
           char s[100];
-          sprintf(s, argv[optind]);
+          sprintf(s, "%s", argv[optind]);
           int valid_port = true;
           for(int i=0; i<strlen(s); i++){
             if(!isdigit(s[i])){
