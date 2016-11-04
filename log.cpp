@@ -354,7 +354,7 @@ int set_new_block_from_disk(int fd){
 //for use when writing a log.  Do nothing if current block is writable, otherwise call set_new_block_from_disk
 //return 1 on success, 0 on fail
 int set_writable_block_from_disk(int fd){
-  printf("Set writable block from disk\n");
+  printf("Set writable block from disk, fd: %d\n");
   //Load block to store superblock info
   Superblock *superblock = (Superblock *) load_block();
   read_superblock_from_disk(fd, superblock);
