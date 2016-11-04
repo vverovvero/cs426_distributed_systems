@@ -278,6 +278,9 @@ int main(int argc, char *argv[]) {
     // static const char *s_http_port = argv[1];
     // fd = open_disk(argv[2]);
 
+    static const char *s_http_port = 8000;
+    fd = open_disk("/dev/sdb");
+
     //Fetch all the arguments
     int c;
     int format_flag = 0;
@@ -289,10 +292,12 @@ int main(int argc, char *argv[]) {
           format_flag = 1;
         case '?':
           if(isdigit(optopt)){
-            static const char *s_http_port = optopt;
+            // static const char *s_http_port = optopt;
+            printf("Digit %d\n", optopt);
           }
           else{
-            fd = open_disk(optopt);
+            // fd = open_disk(atoi(optopt));
+            printf("Devfile: %c\n", optopt);
           }
         default:
           printf("Unknown option.\n");
