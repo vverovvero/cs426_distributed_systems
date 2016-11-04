@@ -283,14 +283,16 @@ int main(int argc, char *argv[]) {
     int format_flag = 0;
     int fd;
     static const char *s_http_port;
-    while((c = getopt(argc, argv, "f")) != -1){
-      switch (c) {
-        case 'f':
-          //set format flag
-          printf("Found format flag\n");
-          format_flag = 1;
-        default:
-          break;
+    while(optind < argc){
+      if((c = getopt(argc, argv, "f")) != -1){
+        switch (c) {
+          case 'f':
+            //set format flag
+            printf("Found format flag\n");
+            format_flag = 1;
+          default:
+            break;
+        }
       }
       else{
         //Handle regular arguments
@@ -305,7 +307,7 @@ int main(int argc, char *argv[]) {
         optind++;
       }
     }
-
+      
     if(format_flag == 1){
       printf("Format flag specified\n");
       format(fd);
