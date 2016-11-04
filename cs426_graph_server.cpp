@@ -278,7 +278,7 @@ int main(int argc, char *argv[]) {
     // static const char *s_http_port = argv[1];
     // fd = open_disk(argv[2]);
 
-    static const char *s_http_port = 8000;
+    static const char *s_http_port = "8000";
     fd = open_disk("/dev/sdb");
 
     //Fetch all the arguments
