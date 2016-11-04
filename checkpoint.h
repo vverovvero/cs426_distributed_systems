@@ -59,6 +59,8 @@ int ch_check_validity(int fd);
 
 uint32_t checkpoint_get_generation(int fd);
 
+void randomize_disk_checkpoint(int fd);
+
 
 #endif
 

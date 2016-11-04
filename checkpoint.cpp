@@ -77,8 +77,6 @@ const uint64_t Infinity = UINT64_MAX;
 
 #define CH_MAGIC_NUMBER (666)
 
-// int Checkpoint_Num_Slots = 0;  //global that is modified
-
 struct ch_superblock{
 	uint64_t checksum;
 	uint32_t generation;
@@ -87,19 +85,10 @@ struct ch_superblock{
 
 };
 
-// struct ch_block{
-// 	uint64_t slots[CH_BLOCK_NUM_SLOTS];
-// };
 
-//Checkpoint is just an array of uint64_t, of unknown size
-// struct checkpoint{
-// 	uint64_t checksum;
-// 	uint64_t slots[Checkpoint_Num_Slots];
-// };
-
-// typedef struct checkpoint Checkpoint;
 typedef struct ch_superblock Ch_Superblock;
-// typedef struct ch_block Ch_Block;
+
+//Checkpoint is just a uint64_t * pointer
 
 //////////////////////////////////////////////////////////////////
 /* Checkpoint virtual functions									*/
@@ -513,4 +502,32 @@ uint32_t checkpoint_get_generation(int fd){
 	return checkpoint_generation;
 }
 
+
+
+//////////////////////////////////////////////////////////////////
+/* Scramble functions	   									    */
+//////////////////////////////////////////////////////////////////
+
+//write giberish to devfile
+void randomize_disk_checkpoint(int fd){
+	int fd_random = open("/dev/urandom", O_RDONLY);
+	assert(fd_random != -1);
+
+	//iterate through all the blocks in checkpoint
+	uint32_t i;
+	for(i=0; i<CH_MAX_BLOCKS+1; i++){
+		//allocate block size
+		void *block = ch_load_block(CH_BLOCK_SIZE);
+		//read random bytes
+		int read_return = read(fd_random, block, CH_BLOCK_SIZE);
+		// printf("read_return: %d\n", read_return);
+		assert(read_return == LOG_SIZE);
+		// read_disk(fd_random, i, block);
+		//write random bytes to disk
+		ch_write_disk_block(fd, i, block);
+		//free block
+		free_block(block, CH_BLOCK_SIZE);
+	}
+	close(fd_random);
+}
 

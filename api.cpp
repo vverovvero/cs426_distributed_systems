@@ -335,7 +335,9 @@ void event_checkpoint(Graph *graph, struct mg_connection *nc, int fd){
 		//Increment generation
 		log_increment_generation(fd);
 		//For the log, fetch a new block
-		set_new_block_from_disk(fd);
+		// set_new_block_from_disk(fd);
+		//Reset the log tail
+		log_reset_tail(fd);
 		//Send checkpoint success reply
 		emit_json_start(nc, 200);
 		emit_json_header(nc, 200, "OK\n");

@@ -296,7 +296,8 @@ int main(int argc, char *argv[]) {
     //Else, log exists
 
     //testing only
-    // randomize_disk(fd); //!!!!! don't forget to remove this line!!!
+    randomize_disk_log(fd); //!!!!! don't forget to remove this line!!!
+    randomize_disk_checkpoint(fd); //remove this line too
 
     //Check for checkpoint, and set checkpoint generation
     uint32_t checkpoint_generation;

@@ -465,7 +465,7 @@ int check_validity_block(int fd, uint32_t block_num){
 
 
 //////////////////////////////////////////////////////////////////
-/* Functions to aid checkpointing                          */
+/* Functions to aid checkpointing  , formatting                 */
 //////////////////////////////////////////////////////////////////
 
 //return current generation
@@ -490,6 +490,25 @@ void log_increment_generation(int fd){
   write_disk(fd, 0, superblock);
   // printf("here4\n");
   free_block(superblock);
+}
+
+//reset start and size of log
+//Start is block 1 again.  Size is 0.
+//Would be called after checkpointing or formatting
+void log_reset_tail(int fd){
+  Superblock *superblock = (Superblock *) load_block();
+  read_disk(fd, 0, superblock);
+  //perform updates
+  uint32_t generation = superblock->generation;
+  uint32_t start = 1;
+  uint32_t size = 0;
+  write_superblock(superblock, generation, start, size);
+  // print_superblock(superblock);
+  // printf("here3\n");
+  write_disk(fd, 0, superblock);
+  // printf("here4\n");
+  free_block(superblock);
+
 }
 
 //////////////////////////////////////////////////////////////////
@@ -573,7 +592,7 @@ void play_log_from_disk(int fd, Graph *graph, uint32_t checkpoint_generation){
 //////////////////////////////////////////////////////////////////
 
 //write giberish to devfile
-void randomize_disk(int fd){
+void randomize_disk_log(int fd){
 	int fd_random = open("/dev/urandom", O_RDONLY);
 	assert(fd_random != -1);
 
