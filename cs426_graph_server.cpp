@@ -291,14 +291,11 @@ int main(int argc, char *argv[]) {
     s_http_server_opts.dav_document_root = ".";  // Allow access via WebDav
     s_http_server_opts.enable_directory_listing = "yes";
 
-    //Check for existence of checkpoint and log
-    //To check for log, look up superblock and compare the checksum
-    //If format flag is specified or invalid checksum, init a new log
-    //Else, log exists
-
     //testing only
+    printf("Randomizing log and checkpoint!\n");
     randomize_disk_log(fd); //!!!!! don't forget to remove this line!!!
     randomize_disk_checkpoint(fd); //remove this line too
+    printf("Finished randomizing!\n");
 
     //Look for format option
     int format_flag = 0;
@@ -349,34 +346,7 @@ int main(int argc, char *argv[]) {
       printf("Finished initializing log segment\n");  //why does init_log_segment sometimes fail?
     }
 
-    //test block
-    //check_validity_block(int fd, uint32_t block_num)
-
-    ///TESTING////////////////////////////////////
-    // graph.add_node(1);
-    // graph.add_node(2);
-    // graph.add_node(3);
-    // graph.add_node(4);
-    // graph.add_node(5);
-    // graph.add_node(6);
-    // graph.add_edge(1,2);
-    // graph.add_edge(2,3);
-    // graph.add_edge(1,4);
-    // graph.add_edge(1,6);
-    // graph.add_edge(1,5);
-    // graph.add_edge(5,3);
-    // graph.add_edge(4,6);
-    // graph.add_edge(2,6);
-    // graph.add_edge(3,4);
-
-    // printf("dumping checkpoint......\n");
-    // dump_checkpoint(fd, &graph, 5);
-
-    // print_checkpoint(fd);
-
-    // load_checkpoint(fd, &graph);
     ////////////////////////////////////////////////
-
 
     printf("Starting web server on port %s\n", s_http_port);
     for (;;) {

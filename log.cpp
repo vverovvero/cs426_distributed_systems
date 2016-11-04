@@ -620,12 +620,14 @@ void format(int fd){
 //////////////////////////////////////////////////////////////////
 
 //write giberish to devfile
+//randomize just the first blocK?
 void randomize_disk_log(int fd){
 	int fd_random = open("/dev/urandom", O_RDONLY);
 	assert(fd_random != -1);
 
 	uint32_t i;
-	for(i=0; i<MAX_ENTRIES+1; i++){
+  for(i=0; i<3; i++){
+	// for(i=0; i<MAX_ENTRIES+1; i++){
 		//allocate block size
 		Block *block = (Block *) load_block();
 		//read random bytes

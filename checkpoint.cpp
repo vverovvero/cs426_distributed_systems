@@ -509,13 +509,15 @@ uint32_t checkpoint_get_generation(int fd){
 //////////////////////////////////////////////////////////////////
 
 //write giberish to devfile
+//randomize first three blocks
 void randomize_disk_checkpoint(int fd){
 	int fd_random = open("/dev/urandom", O_RDONLY);
 	assert(fd_random != -1);
 
 	//iterate through all the blocks in checkpoint
 	uint32_t i;
-	for(i=0; i<CH_MAX_BLOCKS+1; i++){
+	for(i=0; i<3; i++){
+	// for(i=0; i<CH_MAX_BLOCKS+1; i++){
 		//allocate block size
 		void *block = ch_load_block(CH_BLOCK_SIZE);
 		//read random bytes
