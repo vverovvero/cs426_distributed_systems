@@ -236,7 +236,7 @@ void set_disk_offset(int fd, uint32_t block_num){
   printf("block_num: %d, offset: %d\n", block_num, offset);
   // printf("Setting to offset: %ld\n", offset);
   off_t lseek_return = lseek(fd, offset, SEEK_SET);
-  assert(lseek_return != -1);
+  // assert(lseek_return != -1);
 }
 
 //writes a block (LOG_SIZE) to the disk, addr is start of virtual block
