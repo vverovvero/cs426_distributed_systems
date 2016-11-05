@@ -9,9 +9,8 @@ do
 done
 
 #Add edges
-for i in {1..200}
+for i in {1..200} j in {2..201}
 do
-	j = i+1
 	curl -H "Content-Type: application/json" -X POST -d '{"node_a_id":'$i', "node_b_id":'$j'}' http://127.0.0.1:8000/api/v1/add_edge
 done
 
@@ -23,9 +22,8 @@ do
 done
 
 #remove edges
-for i in {1..10}
+for i in {1..10} j in {2..11}
 do
-	j = i+1
 	curl -H "Content-Type: application/json" -X POST -d '{"node_a_id":'$i', "node_b_id":'$j'}' http://127.0.0.1:8000/api/v1/remove_edge
 done
 
