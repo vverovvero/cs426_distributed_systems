@@ -346,6 +346,7 @@ int main(int argc, char *argv[]) {
     uint32_t checkpoint_generation;
     if(ch_check_validity(fd)){
       //Checkpoint exists and was valid
+      printf("Checkpoint exists.  Rebuild it.\n");
       //load checkpoint
       load_checkpoint(fd, &graph);
       //get checkpoint generation
@@ -353,6 +354,7 @@ int main(int argc, char *argv[]) {
 
     }
     else{
+      printf("Checkpoint doesn't exist.\n");
       checkpoint_generation = 0;
       //do I need to exit here, if checkpoint was invalid?
     }

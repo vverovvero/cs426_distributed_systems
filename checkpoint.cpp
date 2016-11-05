@@ -346,6 +346,7 @@ int load_checkpoint(int fd, Graph *graph){
 		uint64_t node_id = (*checkpoint_cur);
 		checkpoint_cur++;
 		(*graph).add_node(node_id);
+		printf("Adding node: %llu\n", (unsigned long long) node_id);
 		//Get neighbors
 		uint64_t num_neighbors = (*checkpoint_cur);
 		checkpoint_cur++;
@@ -356,6 +357,7 @@ int load_checkpoint(int fd, Graph *graph){
 			checkpoint_cur++;
 			(*graph).add_node(neighbor_id);
 			(*graph).add_edge(node_id, neighbor_id);
+			printf("Adding neighbor: %llu\n", (unsigned long long) neighbor_id);
 			//Finished reading neighbor.  Increment.
 			read_neighbors++;
 		}
