@@ -366,6 +366,7 @@ int set_writable_block_from_disk(int fd){
   else{
     Block *block = (Block *) load_block();
     uint32_t num_entries = block->num_entries;
+    printf("Current block has %d entries\n", block->num_entries);
     //if current block has not reached max_entries, do nothing
     if(num_entries < MAX_ENTRIES){
       printf("Current block has space\n");
