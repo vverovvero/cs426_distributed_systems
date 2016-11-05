@@ -338,7 +338,7 @@ int main(int argc, char *argv[]) {
     if(format_flag == 1){
       printf("Format flag specified\n");
       format(fd);
-      log_reset_tail(fd);
+      // log_reset_tail(fd);
     }
 
     //Check for checkpoint, and set checkpoint generation
