@@ -39,14 +39,6 @@
 
 #define MAGIC_NUMBER (666)
 
-//QUESTIONS:
-
-//TODO:
-//Finish log functions
-//Finish read_log and play_log (for calling graph functions)
-//Finish print_log (sanity check)
-
-
 //Be consistent on what means success (from graph.cpp)
 // 1 is success
 // 0 is fail
@@ -114,10 +106,6 @@ void print_block(Block *block){
     printf("Node_b_id: %llu\n", (long long unsigned int) entry.node_b_id);
   }
 }
-
-// //sanity check function, printing the whole log
-// void print_log(void *addr);
-
 
 /////////////////////////////////////////////////////////////////////////////////////
 /* Writing to virtual memory                                                       */
@@ -199,6 +187,7 @@ void write_block(Block *block, uint32_t generation, uint32_t num_entries){
 //call write_log on pre-existing block
 void write_log(Block *block, uint32_t opcode, uint64_t node_a_id, uint64_t node_b_id){
   printf("write_log called on: addr=%u, opcode=%lu, node_a_id=%llu, node_b_id=%llu\n", block, (unsigned long) opcode, (unsigned long long) node_a_id, (unsigned long long) node_b_id);
+  printf("Writing to index: %u\n", block->num_entries);
   //do edits on block
   assert(block->num_entries < MAX_ENTRIES);
   //Update entry
@@ -230,10 +219,10 @@ int open_disk(const char *devfile){
 
 //move the file offset to appropriate block number
 void set_disk_offset(int fd, uint32_t block_num){
-  printf("set disk offset, fd: %d\n", fd);
+  // printf("set disk offset, fd: %d\n", fd);
   //Set the write position to correct block offset
   off_t offset = block_num * LOG_SIZE;
-  printf("block_num: %d, offset: %d\n", block_num, offset);
+  // printf("block_num: %d, offset: %d\n", block_num, offset);
   // printf("Setting to offset: %ld\n", offset);
   off_t lseek_return = lseek(fd, offset, SEEK_SET);
   assert(lseek_return != -1);
@@ -251,7 +240,7 @@ void write_disk(int fd, uint32_t block_num, const void *addr){
 
 //read from disk into the buffer (addr is the block)
 void read_disk(int fd, uint32_t block_num, void *addr){
-  printf("Reading from disk\n");
+  // printf("Reading from disk\n");
   //Set the write position to correct block offset
   set_disk_offset(fd, block_num);
   //read information into the buffer
@@ -272,7 +261,7 @@ void close_disk(int fd){
 
 //read into virtual buffer; user needs to load_block and free_block
 void read_superblock_from_disk(int fd, void *addr){
-  printf("read superblock from disk\n");
+  // printf("read superblock from disk\n");
   read_disk(fd, 0, addr);
 }
 
