@@ -28,7 +28,8 @@
 #include "graph.h"
 
 
-#define MAX_ENTRIES (204) //entries 0 - 203, each 20 bytes
+// #define MAX_ENTRIES (204) //entries 0 - 203, each 20 bytes
+#define MAX_ENTRIES (170)  //why are entries after 170 corrupted?
 #define LOG_SIZE (4096) //4000 bytes
 #define LOG_ENTRY (20) //20 bytes
 
