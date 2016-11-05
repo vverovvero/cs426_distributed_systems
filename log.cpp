@@ -542,8 +542,8 @@ void rebuild_entry(Graph *graph, uint32_t opcode, uint64_t node_a_id, uint64_t n
   }
   else{
     //Invalid opcode
-    // assert(false);
     printf("Invalid opcode: %u, node_a_id: %u, node_b_id: %u\n", opcode, node_a_id, node_b_id);
+    assert(false);
   }
 }
 
