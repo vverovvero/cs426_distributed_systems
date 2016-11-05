@@ -9,9 +9,12 @@ do
 done
 
 #Add edges
-for i in {1..200} j in {2..201}
+for i in {1..200} 
 do
-	curl -H "Content-Type: application/json" -X POST -d '{"node_a_id":'$i', "node_b_id":'$j'}' http://127.0.0.1:8000/api/v1/add_edge
+	for j in {2..201}
+	do
+		curl -H "Content-Type: application/json" -X POST -d '{"node_a_id":'$i', "node_b_id":'$j'}' http://127.0.0.1:8000/api/v1/add_edge
+	done
 done
 
 
@@ -22,9 +25,12 @@ do
 done
 
 #remove edges
-for i in {1..10} j in {2..11}
+for i in {1..10} 
 do
-	curl -H "Content-Type: application/json" -X POST -d '{"node_a_id":'$i', "node_b_id":'$j'}' http://127.0.0.1:8000/api/v1/remove_edge
+	for j in j in {2..11}
+	do
+		curl -H "Content-Type: application/json" -X POST -d '{"node_a_id":'$i', "node_b_id":'$j'}' http://127.0.0.1:8000/api/v1/remove_edge
+	done
 done
 
 #curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://127.0.0.1:8000/api/v1/checkpoint
