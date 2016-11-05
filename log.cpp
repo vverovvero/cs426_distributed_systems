@@ -413,6 +413,8 @@ int write_log_to_disk(int fd, uint32_t opcode, uint64_t node_a_id, uint64_t node
   read_disk(fd, block_num, block);
   //find the empty entry and modify it (this should also update the log block header)
   write_log(block, opcode, node_a_id, node_b_id);
+  //write the block the log lives on
+  write_block_to_disk(fd, block_num, block->generation, block->num_entries);
   //write_disk
   write_disk(fd, block_num, block);
   //free_block
