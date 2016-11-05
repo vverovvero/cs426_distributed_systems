@@ -321,6 +321,8 @@ void write_block_to_disk(int fd, uint32_t block_num, uint32_t generation, uint32
 int set_new_block_from_disk(int fd){
   //load block to store superblock info
   Superblock *superblock = (Superblock *) load_block();
+  //read_superblock_from_disk to get old values
+  read_superblock_from_disk(fd, superblock);
   //get current block, and increment the number
   uint32_t block_num = superblock->size;
   block_num++;
@@ -329,8 +331,8 @@ int set_new_block_from_disk(int fd){
   	free_block(superblock);
   	return 0;
   }
-  //read_superblock_from_disk to get old values
-  read_superblock_from_disk(fd, superblock);
+  // // read_superblock_from_disk to get old values
+  // read_superblock_from_disk(fd, superblock);
   //write_superblock_to_disk to perform update (size has been incremented)
   write_superblock_to_disk(fd, superblock->generation, superblock->start, block_num);
   //write_block_to_disk for new block
