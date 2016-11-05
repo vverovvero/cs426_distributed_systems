@@ -365,12 +365,16 @@ int set_writable_block_from_disk(int fd){
   //else, load the current block
   else{
     Block *block = (Block *) load_block();
+    //read the block
+    read_block_from_disk(fd, size, block);
+    //look up number entries
     uint32_t num_entries = block->num_entries;
     printf("Current block has %d entries\n", block->num_entries);
     //if current block has not reached max_entries, do nothing
     if(num_entries < MAX_ENTRIES){
       printf("Current block has space\n");
       free_block(block);
+      free_block(superblock);
       return 1;
     }
     //else, if current block is full, then set_new_block_from_disk
@@ -379,16 +383,19 @@ int set_writable_block_from_disk(int fd){
       if(size < LOG_SEGMENT_MAX_BLOCKS){
         if(set_new_block_from_disk(fd)){
       	 free_block(block);
+         free_block(superblock);
       	 return 1;
         }
         else{
       	 free_block(block);
+         free_block(superblock);
       	 return 0;
         }
       } 
       else{
         //log segment is completely full
         free_block(block);
+        free_block(superblock);
         return 0;
       }
     }
@@ -413,8 +420,6 @@ int write_log_to_disk(int fd, uint32_t opcode, uint64_t node_a_id, uint64_t node
   read_disk(fd, block_num, block);
   //find the empty entry and modify it (this should also update the log block header)
   write_log(block, opcode, node_a_id, node_b_id);
-  //write the block the log lives on
-  write_block_to_disk(fd, block_num, block->generation, block->num_entries);
   //write_disk
   write_disk(fd, block_num, block);
   //free_block
