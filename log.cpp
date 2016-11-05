@@ -557,6 +557,7 @@ void play_log_from_disk(int fd, Graph *graph, uint32_t checkpoint_generation){
   //Fetch info for looping through blocks
   uint32_t start = superblock->start;
   uint32_t size = superblock->size;
+  printf("Playing log from disk!  There are %d blocks\n", size);
   //Do nothing if no blocks
   if(size == 0){
     return;
@@ -573,6 +574,7 @@ void play_log_from_disk(int fd, Graph *graph, uint32_t checkpoint_generation){
     }
     uint32_t generation = block->generation;
     uint32_t num_entries = block->num_entries;
+    printf("Block %d has %d entries\n", block_num, num_entries);
     //Do nothing if generation is old, or no entries
     if((generation <= checkpoint_generation) || (num_entries == 0)){
       free_block(block);
