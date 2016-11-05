@@ -373,21 +373,22 @@ int set_writable_block_from_disk(int fd){
     }
     //else, if current block is full, then set_new_block_from_disk
     else{
-     if(size < LOG_SEGMENT_MAX_BLOCKS){
-      if(set_new_block_from_disk(fd)){
-      	free_block(block);
-      	return 1;
-      }
+      printf("Current block %u is full!\n", superblock->size);
+      if(size < LOG_SEGMENT_MAX_BLOCKS){
+        if(set_new_block_from_disk(fd)){
+      	 free_block(block);
+      	 return 1;
+        }
+        else{
+      	 free_block(block);
+      	 return 0;
+        }
+      } 
       else{
-      	free_block(block);
-      	return 0;
+        //log segment is completely full
+        free_block(block);
+        return 0;
       }
-     } 
-     else{
-      //log segment is completely full
-      free_block(block);
-      return 0;
-     }
     }
   }
 }
