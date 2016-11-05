@@ -232,7 +232,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             }
           }
           else if(is_equal(&key, &key_checkpoint)){
-            printf("KEY was checkpoint!\n");
+            // printf("KEY was checkpoint!\n");
             event_checkpoint(&graph, nc, fd);
           }
           else{
@@ -286,12 +286,12 @@ int main(int argc, char *argv[]) {
         switch (c) {
           case 'f':
             //set format flag
-            printf("Found format flag\n");
+            // printf("Found format flag\n");
             format_flag = 1;
             break;
           case 'r':
             //reset disk by randomizing
-            printf("Found reset flag\n");
+            // printf("Found reset flag\n");
             reset_flag = 1;
             break;
           default:
@@ -313,13 +313,13 @@ int main(int argc, char *argv[]) {
             }
           }
           if(valid_port){
-            printf("Found port\n");
+            // printf("Found port\n");
             s_http_port = argv[optind];
           }
           else{
-            printf("Found devfile\n");
+            // printf("Found devfile\n");
             fd = open_disk(argv[optind]);
-            printf("fd: %d\n", fd);
+            // printf("fd: %d\n", fd);
           }
           optind++;
         }
@@ -329,15 +329,15 @@ int main(int argc, char *argv[]) {
       
     if(reset_flag == 1){
       //testing only
-      printf("Randomizing log and checkpoint!\n");
+      // printf("Randomizing log and checkpoint!\n");
       randomize_disk_log(fd); //!!!!! don't forget to remove this line!!!
       randomize_disk_checkpoint(fd); //remove this line too
-      printf("Finished randomizing!\n");
+      // printf("Finished randomizing!\n");
 
     }
 
     if(format_flag == 1){
-      printf("Format flag specified\n");
+      // printf("Format flag specified\n");
       format(fd);
       // log_reset_tail(fd);
     }
@@ -346,7 +346,7 @@ int main(int argc, char *argv[]) {
     uint32_t checkpoint_generation;
     if(ch_check_validity(fd)){
       //Checkpoint exists and was valid
-      printf("Checkpoint exists.  Rebuild it.\n");
+      // printf("Checkpoint exists.  Rebuild it.\n");
       //load checkpoint
       load_checkpoint(fd, &graph);
       //get checkpoint generation
@@ -354,7 +354,7 @@ int main(int argc, char *argv[]) {
 
     }
     else{
-      printf("Checkpoint doesn't exist.\n");
+      // printf("Checkpoint doesn't exist.\n");
       checkpoint_generation = 0;
       //do I need to exit here, if checkpoint was invalid?
     }
@@ -362,14 +362,14 @@ int main(int argc, char *argv[]) {
     //Check for log
     if(check_validity_superblock(fd)){
       //log exists, load it
-      printf("Log exists.  Play log for all entries with gen number > checkpoint_generation\n");
+      // printf("Log exists.  Play log for all entries with gen number > checkpoint_generation\n");
       play_log_from_disk(fd, &graph, checkpoint_generation);
     }
     else{
       //log does not exist yet, create it
-      printf("Created new log\n");
+      // printf("Created new log\n");
       init_log_segment(fd);
-      printf("Finished initializing log segment\n");  //why does init_log_segment sometimes fail?
+      // printf("Finished initializing log segment\n");  //why does init_log_segment sometimes fail?
     }
 
     ////////////////////////////////////////////////

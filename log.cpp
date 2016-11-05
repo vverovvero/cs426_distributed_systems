@@ -187,8 +187,8 @@ void write_block(Block *block, uint32_t generation, uint32_t num_entries){
 //given appropriate block address, update the log in the block and copy back
 //call write_log on pre-existing block
 void write_log(Block *block, uint32_t opcode, uint64_t node_a_id, uint64_t node_b_id){
-  printf("write_log called on: addr=%u, opcode=%lu, node_a_id=%llu, node_b_id=%llu\n", block, (unsigned long) opcode, (unsigned long long) node_a_id, (unsigned long long) node_b_id);
-  printf("Writing to index: %u\n", block->num_entries);
+  // printf("write_log called on: addr=%u, opcode=%lu, node_a_id=%llu, node_b_id=%llu\n", block, (unsigned long) opcode, (unsigned long long) node_a_id, (unsigned long long) node_b_id);
+  // printf("Writing to index: %u\n", block->num_entries);
   //do edits on block
   assert(block->num_entries < MAX_ENTRIES);
   //Update entry
@@ -285,7 +285,7 @@ void write_superblock_to_disk(int fd, uint32_t generation, uint32_t start, uint3
 
 //called before any logging happens
 void init_log_segment(int fd){
-  printf("Calling init_log_segment!\n");
+  // printf("Calling init_log_segment!\n");
   //superblock starts at generation = 1, start = 1, size = 0;
   //Starts at gen 1 for checkpoint reason
   write_superblock_to_disk(fd, 1, 1, 0);
@@ -346,7 +346,7 @@ int set_new_block_from_disk(int fd){
 //for use when writing a log.  Do nothing if current block is writable, otherwise call set_new_block_from_disk
 //return 1 on success, 0 on fail
 int set_writable_block_from_disk(int fd){
-  printf("Set writable block from disk, fd: %d\n", fd);
+  // printf("Set writable block from disk, fd: %d\n", fd);
   //Load block to store superblock info
   Superblock *superblock = (Superblock *) load_block();
   read_superblock_from_disk(fd, superblock);
@@ -372,17 +372,17 @@ int set_writable_block_from_disk(int fd){
     read_block_from_disk(fd, size, block);
     //look up number entries
     uint32_t num_entries = block->num_entries;
-    printf("Current block has %d entries\n", block->num_entries);
+    // printf("Current block has %d entries\n", block->num_entries);
     //if current block has not reached max_entries, do nothing
     if(num_entries < MAX_ENTRIES){
-      printf("Current block has space\n");
+      // printf("Current block has space\n");
       free_block(block);
       free_block(superblock);
       return 1;
     }
     //else, if current block is full, then set_new_block_from_disk
     else{
-      printf("Current block %u is full!\n", superblock->size);
+      // printf("Current block %u is full!\n", superblock->size);
       if(size < LOG_SEGMENT_MAX_BLOCKS){
         if(set_new_block_from_disk(fd)){
       	 free_block(block);
@@ -409,7 +409,7 @@ int set_writable_block_from_disk(int fd){
 //calls set_writable_block.  Updates log and block.
 //return 1 on success, else return 0
 int write_log_to_disk(int fd, uint32_t opcode, uint64_t node_a_id, uint64_t node_b_id){
-  printf("Write_log_to_disk, fd: %d\n", fd);
+  // printf("Write_log_to_disk, fd: %d\n", fd);
   //set_writable_block_from_disk
   if(set_writable_block_from_disk(fd) == 0){
   	//failed!  no space
@@ -444,7 +444,7 @@ int check_validity_superblock(int fd){
 	read_superblock_from_disk(fd, superblock);
 	original_checksum = superblock->checksum;
 	current_checksum = set_checksum(superblock);
-	printf("Validity check.  Original_checksum=%llu, current_checksum=%llu\n", (unsigned long long) original_checksum, (unsigned long long) current_checksum);
+	// printf("Validity check.  Original_checksum=%llu, current_checksum=%llu\n", (unsigned long long) original_checksum, (unsigned long long) current_checksum);
 	free_block(superblock);
 	if(original_checksum == current_checksum){
 		return 1;
@@ -525,24 +525,24 @@ void log_reset_tail(int fd){
 //given graph and entry info, call appropriate graph function
 void rebuild_entry(Graph *graph, uint32_t opcode, uint64_t node_a_id, uint64_t node_b_id){
   if(opcode == 0){
-    printf("Rebuild add_node: %u\n", node_a_id);
+    // printf("Rebuild add_node: %u\n", node_a_id);
     (*graph).add_node(node_a_id);
   }
   else if(opcode == 1){
-    printf("Rebuild add_edge: %u, %u\n", node_a_id, node_b_id);
+    // printf("Rebuild add_edge: %u, %u\n", node_a_id, node_b_id);
     (*graph).add_edge(node_a_id, node_b_id);
   }
   else if(opcode == 2){
-    printf("Rebuild remove_node: %u\n", node_a_id);
+    // printf("Rebuild remove_node: %u\n", node_a_id);
     (*graph).remove_node(node_a_id);
   }
   else if(opcode == 3){
-    printf("Rebuild remove_edge: %u, %u\n", node_a_id, node_b_id);
+    // printf("Rebuild remove_edge: %u, %u\n", node_a_id, node_b_id);
     (*graph).remove_edge(node_a_id, node_b_id);
   }
   else{
     //Invalid opcode
-    printf("Invalid opcode: %u, node_a_id: %u, node_b_id: %u\n", opcode, node_a_id, node_b_id);
+    // printf("Invalid opcode: %u, node_a_id: %u, node_b_id: %u\n", opcode, node_a_id, node_b_id);
     assert(false);
   }
 }
@@ -559,7 +559,7 @@ void play_log_from_disk(int fd, Graph *graph, uint32_t checkpoint_generation){
   //Fetch info for looping through blocks
   uint32_t start = superblock->start;
   uint32_t size = superblock->size;
-  printf("Playing log from disk!  There are %d blocks\n", size);
+  // printf("Playing log from disk!  There are %d blocks\n", size);
   //Do nothing if no blocks
   if(size == 0){
     return;
@@ -576,7 +576,7 @@ void play_log_from_disk(int fd, Graph *graph, uint32_t checkpoint_generation){
     }
     uint32_t generation = block->generation;
     uint32_t num_entries = block->num_entries;
-    printf("Block %d has %d entries\n", block_num, num_entries);
+    // printf("Block %d has %d entries\n", block_num, num_entries);
     //Do nothing if generation is old, or no entries
     if((generation <= checkpoint_generation) || (num_entries == 0)){
       free_block(block);
@@ -613,9 +613,10 @@ void format(int fd){
   if(check_validity_superblock(fd)){
     uint32_t new_generation = superblock->generation + 1;
     write_superblock_to_disk(fd, new_generation, superblock->start, superblock->size);
-    //also increase size?  new block
-    // set_new_block_from_disk(fd);
-    printf("Format, new generation: %u\n", new_generation);
+    //DON'T set new writeable block
+    ////also increase size?  new block
+    //// set_new_block_from_disk(fd);
+    // printf("Format, new generation: %u\n", new_generation);
 
   }
   else{
@@ -653,97 +654,3 @@ void randomize_disk_log(int fd){
 	close(fd_random);
 }
 
-//////////////////////////////////////////////////////////////////
-
-
-// int main(int argc, char *argv[])
-// {
-//   assert(argc == 2);
-
-//   int fd;
-//   void * addr;
-//   int s;
-
-//   //Get the fd to the "/dev/sdb" disk
-//   fd = open_disk(argv[1]);
-//   printf("fd: %d\n", fd);
-
-//   // // Testing virtual functions and physical functions
-//   // Superblock *superblock = (Superblock *) load_block();
-//   // Superblock *new_superblock = (Superblock *) load_block();
-//   // write_superblock(superblock, 0, 1, 0);
-//   // print_superblock(superblock);
-//   // //Testing writing to disk
-//   // write_disk(fd, 0, superblock);
-//   // read_disk(fd, 0, new_superblock);
-//   // print_superblock(new_superblock);
-
-//   // Block *block = (Block *) load_block();
-//   // Block *new_block = (Block *) load_block();
-//   // write_block(block, superblock->generation, 0);
-//   // //Test block
-//   // write_disk(fd, 1, block);
-//   // read_disk(fd, 1, new_block);
-//   // print_block(new_block);
-//   // //Write to the log
-//   // write_log(block, 0, 0, 0);
-//   // write_log(block, 0, 555, 0);
-//   // write_log(block, 0, 666, 0);
-//   // write_log(block, 1, 555, 666);
-//   // print_block(block);
-//   // //Testing writing to disk
-//   // write_disk(fd, 1, block);
-//   // read_disk(fd, 1, new_block);
-//   // print_block(new_block);
-
-//   // //Free everything
-//   // free_block(superblock);
-//   // free_block(new_superblock);
-//   // free_block(block);
-//   // free_block(new_block);
-
-//   ///////
-
-
-//   //Testing the integrated functions
-//   //Initalize the superblock
-//   init_log_segment(fd);
-
-//   //Testing superblock
-//   printf("Sanity check superblock initialization\n");
-//   Superblock *superblock = (Superblock *) load_block();
-//   read_superblock_from_disk(fd, superblock);
-//   print_superblock(superblock);
-
-//   //Testing block
-//   // printf("Sanity check for writing a fresh block\n");
-//   // write_block_to_disk(fd, 1, 0, 0);
-//   // Block *block = (Block *) load_block();
-//   // read_block_from_disk(fd, 1, block);
-//   // print_block(block);
-
-//   //Write a log
-//   printf("WRITING EXAMPLES TO LOG\n");
-//   write_log_to_disk(fd, 0, 555, 0);
-//   write_log_to_disk(fd, 0, 666, 0);
-//   write_log_to_disk(fd, 1, 555, 666);
-//   write_log_to_disk(fd, 3, 666, 555);
-//   write_log_to_disk(fd, 2, 666, 0);
-//   write_log_to_disk(fd, 2, 555, 0);
-
-//   printf("Sanity check block 1\n");
-//   Block *block = (Block *) load_block();
-//   read_block_from_disk(fd, 1, block);
-//   print_block(block);
-
-
-//   //Free everything
-//   free_block(superblock);
-//   free_block(block);
-
-
-//   //cleanup
-//   close_disk(fd);
-  
-//   return 0;
-// }
