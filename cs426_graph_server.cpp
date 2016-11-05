@@ -288,11 +288,12 @@ int main(int argc, char *argv[]) {
             //set format flag
             printf("Found format flag\n");
             format_flag = 1;
+            break;
           case 'r':
             //reset disk by randomizing
             printf("Found reset flag\n");
             reset_flag = 1;
-
+            break;
           default:
             break;
         }
