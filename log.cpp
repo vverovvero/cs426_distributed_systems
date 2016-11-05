@@ -614,7 +614,7 @@ void format(int fd){
     uint32_t new_generation = superblock->generation + 1;
     write_superblock_to_disk(fd, new_generation, superblock->start, superblock->size);
     //also increase size?  new block
-    set_new_block_from_disk(fd);
+    // set_new_block_from_disk(fd);
     printf("Format, new generation: %u\n", new_generation);
 
   }
