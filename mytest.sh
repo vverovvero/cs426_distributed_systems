@@ -11,7 +11,7 @@ done
 #Add edges
 for i in {1..200}
 do
-	local j = i+1
+	j = i+1
 	curl -H "Content-Type: application/json" -X POST -d '{"node_a_id":'$i', "node_b_id":'$j'}' http://127.0.0.1:8000/api/v1/add_edge
 done
 
@@ -25,7 +25,7 @@ done
 #remove edges
 for i in {1..10}
 do
-	local j = i+1
+	j = i+1
 	curl -H "Content-Type: application/json" -X POST -d '{"node_a_id":'$i', "node_b_id":'$j'}' http://127.0.0.1:8000/api/v1/remove_edge
 done
 
