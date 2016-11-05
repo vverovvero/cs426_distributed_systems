@@ -275,7 +275,7 @@ void write_superblock_to_disk(int fd, uint32_t generation, uint32_t start, uint3
   read_disk(fd, 0, superblock);
   // printf("here2\n");
   write_superblock(superblock, generation, start, size);
-  print_superblock(superblock);
+  // print_superblock(superblock);
   // printf("here3\n");
   write_disk(fd, 0, superblock);
   // printf("here4\n");

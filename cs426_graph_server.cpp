@@ -301,7 +301,7 @@ int main(int argc, char *argv[]) {
       else{
         while(optind < argc){
            //Handle regular arguments
-          printf("%s\n", argv[optind]);
+          // printf("%s\n", argv[optind]);
           //Check for port
           char s[100];
           sprintf(s, "%s", argv[optind]);
