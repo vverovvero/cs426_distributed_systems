@@ -32,10 +32,8 @@ class Graph
 		uint64_t Dijkstra_get_min_distance_unvisited_node(set<uint64_t> unvisited, map<uint64_t, uint64_t> distance);
 		set<uint64_t> Dijkstra_get_unvisited_neighbors(set<uint64_t> unvisited, uint64_t node);
 
-		uint64_t get_num_nodes();
-		// map<uint64_t, set<uint64_t> >::iterator Graph::get_node_iterator();
-		map<uint64_t, set<uint64_t> > get_graph();
-		// uint64_t Graph::get_size_neighbor_set(set<uint64_t> neighbors);
+		// uint64_t get_num_nodes();
+		// map<uint64_t, set<uint64_t> > get_graph();
 };
 
 #endif

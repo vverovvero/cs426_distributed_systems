@@ -9,14 +9,11 @@
 #include "mongoose.h"
 #include "api.h"
 #include "graph.h"
-#include "log.h"
-#include "checkpoint.h"
 
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h> //has atoll, has exit
 #include <iostream>
-// #include <cstdint> //has type 'uint64_t'
 #include <vector>
 #include <utility> //has type 'pair'
 #include <unistd.h> //getopt
@@ -40,12 +37,12 @@ static const struct mg_str key_get_node = MG_STR("/get_node");
 static const struct mg_str key_get_edge = MG_STR("/get_edge");
 static const struct mg_str key_get_neighbors = MG_STR("/get_neighbors");
 static const struct mg_str key_shortest_path = MG_STR("/shortest_path");
-static const struct mg_str key_checkpoint = MG_STR("/checkpoint");
 
 static const vector<uint64_t> EmptyVector; //if no node id's found
 
 Graph graph; //global graph
-int fd; //global file descriptor
+static const char *s_http_port; //global port
+unsigned int ipaddress; //global ipaddress (for RPC)
 
 //////// my helper print functions////////////
 void print_flush(char * string){
@@ -155,7 +152,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             //Call wrapper, which edits graph and returns HTTP reply
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
-              event_add_node(&graph, nc, result.second[0], fd);
+              event_add_node(&graph, nc, result.second[0]);
             }
             else {
               error = 1;
@@ -165,7 +162,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             // print_flush("KEY was add_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
-              event_add_edge(&graph, nc, result.second[0], result.second[1], fd);
+              event_add_edge(&graph, nc, result.second[0], result.second[1]);
             }
             else {
               error = 1;
@@ -175,7 +172,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             // print_flush("KEY was remove_node");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
-              event_remove_node(&graph, nc, result.second[0], fd);
+              event_remove_node(&graph, nc, result.second[0]);
             }
             else {
               error = 1;
@@ -185,7 +182,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             // print_flush("KEY was remove_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
-              event_remove_edge(&graph, nc, result.second[0], result.second[1], fd);
+              event_remove_edge(&graph, nc, result.second[0], result.second[1]);
             }
             else {
               error = 1;
@@ -230,10 +227,6 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             else {
               error = 1;
             }
-          }
-          else if(is_equal(&key, &key_checkpoint)){
-            // printf("KEY was checkpoint!\n");
-            event_checkpoint(&graph, nc, fd);
           }
           else{
             // print_flush("KEY was not recognized!");
@@ -280,7 +273,7 @@ int main(int argc, char *argv[]) {
     int c;
     int format_flag = 0;
     int reset_flag = 0;
-    static const char *s_http_port;
+    // static const char *s_http_port;
     while(optind < argc){
       if((c = getopt(argc, argv, "fr")) != -1){
         switch (c) {
@@ -318,7 +311,7 @@ int main(int argc, char *argv[]) {
           }
           else{
             // printf("Found devfile\n");
-            fd = open_disk(argv[optind]);
+            // fd = open_disk(argv[optind]);
             // printf("fd: %d\n", fd);
           }
           optind++;
@@ -327,50 +320,6 @@ int main(int argc, char *argv[]) {
       }
     }
       
-    if(reset_flag == 1){
-      //testing only
-      // printf("Randomizing log and checkpoint!\n");
-      randomize_disk_log(fd); //!!!!! don't forget to remove this line!!!
-      randomize_disk_checkpoint(fd); //remove this line too
-      // printf("Finished randomizing!\n");
-
-    }
-
-    if(format_flag == 1){
-      // printf("Format flag specified\n");
-      format(fd);
-      // log_reset_tail(fd);
-    }
-
-    //Check for checkpoint, and set checkpoint generation
-    uint32_t checkpoint_generation;
-    if(ch_check_validity(fd)){
-      //Checkpoint exists and was valid
-      // printf("Checkpoint exists.  Rebuild it.\n");
-      //load checkpoint
-      load_checkpoint(fd, &graph);
-      //get checkpoint generation
-      checkpoint_generation = checkpoint_get_generation(fd);
-
-    }
-    else{
-      // printf("Checkpoint doesn't exist.\n");
-      checkpoint_generation = 0;
-      //do I need to exit here, if checkpoint was invalid?
-    }
-
-    //Check for log
-    if(check_validity_superblock(fd)){
-      //log exists, load it
-      // printf("Log exists.  Play log for all entries with gen number > checkpoint_generation\n");
-      play_log_from_disk(fd, &graph, checkpoint_generation);
-    }
-    else{
-      //log does not exist yet, create it
-      // printf("Created new log\n");
-      init_log_segment(fd);
-      // printf("Finished initializing log segment\n");  //why does init_log_segment sometimes fail?
-    }
 
     ////////////////////////////////////////////////
     //Set up the server

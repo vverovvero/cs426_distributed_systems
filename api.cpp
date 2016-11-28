@@ -49,19 +49,10 @@ void emit_json_end(struct mg_connection *nc){
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-void event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id, int fd){
+void event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	//Call graph function
 	int result = (*graph).add_node(node_id);
-	//Log the request
-	int log_result = write_log_to_disk(fd, 0, node_id, 0);
 
-	//error if the log failed.  checkpoint required
-	if(log_result == 0){
-		emit_json_start(nc, 507);
-		emit_json_header(nc, 507, "Log is full\n");
-		emit_json_end(nc);
-		return;
-	}
 	//Send HTTP reply
 	if(result == 1){
 		emit_json_start(nc, 200);
@@ -78,19 +69,10 @@ void event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id, in
 	}
 }
 
-void event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id, int fd){
+void event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
 	//Call graph function
 	int result = (*graph).add_edge(node_a_id, node_b_id);
-	//Log the request
-	int log_result = write_log_to_disk(fd, 1, node_a_id, node_b_id);
 
-	//error if the log failed.  checkpoint required
-	if(log_result == 0){
-		emit_json_start(nc, 507);
-		emit_json_header(nc, 507, "Log is full\n");
-		emit_json_end(nc);
-		return;
-	}
 	//Send HTTP reply
 	if(result == 1){
 		emit_json_start(nc, 200);
@@ -112,19 +94,10 @@ void event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, 
 	}
 }
 
-void event_remove_node(Graph *graph, struct mg_connection *nc, uint64_t node_id, int fd){
+void event_remove_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	//Call graph function
 	int result = (*graph).remove_node(node_id);
-	//Log the request
-	int log_result = write_log_to_disk(fd, 2, node_id, 0);
 
-	//error if the log failed.  checkpoint required
-	if(log_result == 0){
-		emit_json_start(nc, 507);
-		emit_json_header(nc, 507, "Log is full\n");
-		emit_json_end(nc);
-		return;
-	}
 	//Send HTTP reply
 	if(result == 1){
 		emit_json_start(nc, 200);
@@ -141,19 +114,9 @@ void event_remove_node(Graph *graph, struct mg_connection *nc, uint64_t node_id,
 	}
 }
 
-void event_remove_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id, int fd){
+void event_remove_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
 	//Call graph function
 	int result = (*graph).remove_edge(node_a_id, node_b_id);
-	//Log the request
-	int log_result = write_log_to_disk(fd, 3, node_a_id, node_b_id);
-
-	//error if the log failed.  checkpoint required
-	if(log_result == 0){
-		emit_json_start(nc, 507);
-		emit_json_header(nc, 507, "Log is full\n");
-		emit_json_end(nc);
-		return;
-	}
 
 	//Send HTTP reply
 	if(result == 1){
@@ -214,46 +177,6 @@ void event_get_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, 
 		emit_json_end(nc);
 	}
 }
-
-//verion of get_neighbors that uses string
-// void event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_id){
-// 	//Call graph function
-// 	pair<int, set<uint64_t> > result = (*graph).get_neighbors(node_id);
-
-// 	//Send HTTP reply
-// 	if(result.first == 1){
-// 		set<uint64_t> neighbors = result.second;
-// 		string neighbor_list = "";
-
-// 		if(!neighbors.empty()){
-// 	   		for(set<uint64_t>::iterator i = neighbors.begin(); i != neighbors.end(); i++){
-// 				uint64_t neighbor = *i;
-// 				neighbor_list += std::to_string(neighbor);
-// 				neighbor_list += ", ";
-// 			}
-// 			//Delete last ", "
-// 			neighbor_list.pop_back();
-// 			neighbor_list.pop_back();
-// 		}
-
-// 		//Convert string to C-style char *
-// 		char *c_neighbor_list = new char[neighbor_list.length() + 1];
-// 		strcpy(c_neighbor_list, neighbor_list.c_str());
-
-// 		//Send list of neighbors
-// 		emit_json_start(nc, 200);
-// 		emit_json_header(nc, 200, "OK\n");
-// 	    char buf[1000];
-// 	    int size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: [S]\n}\n", "node_id", node_id, "neighbors", c_neighbor_list);
-// 	    emit_json_body(nc, buf, size);
-// 	    emit_json_end(nc);
-// 	}
-// 	else{
-// 		emit_json_start(nc, 400);
-// 		emit_json_header(nc, 400, "Bad Request\n");
-// 		emit_json_end(nc);
-// 	}
-// }
 
 //version of get_neighbors without string
 void event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_id){
@@ -324,32 +247,6 @@ void event_shortest_path(Graph *graph, struct mg_connection *nc, uint64_t node_a
 	}
 }
 
-
-void event_checkpoint(Graph *graph, struct mg_connection *nc, int fd){
-	//Fetch the generation
-	uint32_t generation = log_get_generation(fd);
-	//Dump the checkpoint
-	int checkpoint_result = dump_checkpoint(fd, graph, generation);
-
-	if(checkpoint_result == 1){
-		//Increment generation
-		log_increment_generation(fd);
-		//For the log, fetch a new block
-		// set_new_block_from_disk(fd);
-		//Reset the log tail
-		log_reset_tail(fd);
-		//Send checkpoint success reply
-		emit_json_start(nc, 200);
-		emit_json_header(nc, 200, "OK\n");
-		emit_json_end(nc);
-	}
-	else{
-		//Checkpoint failed
-		emit_json_start(nc, 507);
-		emit_json_header(nc, 507, "Insufficient space for checkpoint\n");
-		emit_json_end(nc);
-	}
-}
 
 
 
