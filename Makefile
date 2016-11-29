@@ -1,4 +1,4 @@
-# CC      = g++
+CC      = g++
 CFLAGS = -Werror -Wall -g -std=c++11
 # RM      = rm -f
 
@@ -36,7 +36,7 @@ greeter_server: helloworld.pb.o helloworld.grpc.pb.o greeter_server.o
 	$(PROTOC) -I $(PROTOS_PATH) --cpp_out=. $<
 
 cs426_graph_server: mongoose.o api.o graph.o cs426_graph_server.o 
-	${CXX} ${CFLAGS} -o $@ $^
+	${CC} ${CFLAGS} -o $@ $^
 
 cs426_graph_server.o: cs426_graph_server.cpp
 
