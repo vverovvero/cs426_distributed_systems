@@ -1,6 +1,6 @@
 CC      = g++
 CFLAGS = -Werror -Wall -g -std=c++11
-CFLAGS = -openmp
+CFLAGS = -fopenmp
 # RM      = rm -f
 
 CXX = g++
@@ -46,6 +46,9 @@ mongoose.o: mongoose.c
 api.o: api.cpp
 
 graph.o: graph.cpp
+
+# .c.o:
+# 	$(CC) $(CFLAGS) -c $<
 
 clean:
 	rm -f *.o *.pb.cc *.pb.h greeter_client greeter_server cs426_graph_server 
