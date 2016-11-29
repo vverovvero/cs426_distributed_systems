@@ -6,9 +6,6 @@
 // Copyright (c) 2015 Cesanta Software Limited
 // All rights reserved
 
-//multithreaded server
-#include <omp.h>
-
 #include "mongoose.h"
 #include "api.h"
 #include "graph.h"
@@ -21,9 +18,11 @@
 #include <utility> //has type 'pair'
 #include <unistd.h> //getopt
 #include <ctype.h> //isdigit
+#include <thread> //multithreaded server
 
 using std::pair;
 using std::vector;
+using std::thread;
 
 // static const char *s_http_port = "8000";
 static struct mg_serve_http_opts s_http_server_opts;
@@ -73,7 +72,6 @@ void print_json_token(struct json_token * token){
   printf("\n");
   fflush(stdout);
 }
-
 
 ////////////////////////////////////////////////////////
 //for fetching node id's and returning them as a uint64_t
@@ -268,6 +266,16 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
 }
 
 
+///////////helper multithreaded server functions//////////////
+void call_from_thread(){
+  std::cout << "Hello, World" << std::endl;
+}
+
+
+
+
+
+/////////////////////////////////////////
 int main(int argc, char *argv[]) {
   //Need at least port and devfile
   if(argc >= 2){
@@ -303,43 +311,33 @@ int main(int argc, char *argv[]) {
     printf("port: %s\n", s_http_port);
     printf("ipaddress (from -b): %u\n", ipaddress);
 
-    //Split into two threads, one for each server
-    static int tid;
-    #pragma omp threadprivate(tid)
+    ////////////////////////////////////////////////
+    //Launch a thread for the rpc server
+    thread t1(call_from_thread);
 
-    omp_set_num_threads(2);
-    #pragma omp parallel
-    {
-      tid = omp_get_thread_num();
-      printf("Hello world! from thread %d of %d\n", tid, omp_get_num_threads());
-      if(tid == 0){
-        printf("thread id %d will run the rpc server\n", omp_get_thread_num());  
-        ////////////////////////////////////////////////
-        //Set up the RPC server
-      }
-      else{
-        printf("thread id %d will run the mongoose http server\n", omp_get_thread_num());
-        ////////////////////////////////////////////////
-        //Set up the http server
-        // struct mg_mgr mgr;
-        // struct mg_connection *nc;
 
-        // mg_mgr_init(&mgr, NULL);
-        // nc = mg_bind(&mgr, s_http_port, ev_handler);
 
-        // // Set up HTTP server parameters
-        // mg_set_protocol_http_websocket(nc);
-        // s_http_server_opts.document_root = ".";      // Serve current directory
-        // s_http_server_opts.dav_document_root = ".";  // Allow access via WebDav
-        // s_http_server_opts.enable_directory_listing = "yes";
+    ////////////////////////////////////////////////
+    // Set up the http server
+    struct mg_mgr mgr;
+    struct mg_connection *nc;
 
-        // printf("Starting web server on port %s\n", s_http_port);
-        // for (;;) {
-        //   mg_mgr_poll(&mgr, 1000);
-        // }
-        // mg_mgr_free(&mgr);
-      }
+    mg_mgr_init(&mgr, NULL);
+    nc = mg_bind(&mgr, s_http_port, ev_handler);
+
+    // Set up HTTP server parameters
+    mg_set_protocol_http_websocket(nc);
+    s_http_server_opts.document_root = ".";      // Serve current directory
+    s_http_server_opts.dav_document_root = ".";  // Allow access via WebDav
+    s_http_server_opts.enable_directory_listing = "yes";
+
+    printf("Starting web server on port %s\n", s_http_port);
+    for (;;) {
+      mg_mgr_poll(&mgr, 1000);
     }
+    mg_mgr_free(&mgr);
+    //join the thread
+    t1.join();
   }
   else{
     std::cout << "Specify port by : './cs426_graph_server <optional -b ipaddress> <port> '" << std::endl;
