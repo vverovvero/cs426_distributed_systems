@@ -47,9 +47,6 @@ api.o: api.cpp
 
 graph.o: graph.cpp
 
-# .c.o:
-# 	$(CC) $(CFLAGS) -c $<
-
 clean:
 	rm -f *.o *.pb.cc *.pb.h greeter_client greeter_server cs426_graph_server 
 

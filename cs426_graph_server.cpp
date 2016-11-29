@@ -313,40 +313,36 @@ int main(int argc, char *argv[]) {
       tid = omp_get_thread_num();
       printf("Hello world! from thread %d of %d\n", tid, omp_get_num_threads());
       if(tid == 0){
-        printf("thread id %d will run the rpc server\n", omp_get_thread_num());
+        printf("thread id %d will run the rpc server\n", omp_get_thread_num());  
+        ////////////////////////////////////////////////
+        //Set up the RPC server
       }
       else{
         printf("thread id %d will run the mongoose http server\n", omp_get_thread_num());
+        ////////////////////////////////////////////////
+        //Set up the http server
+        // struct mg_mgr mgr;
+        // struct mg_connection *nc;
+
+        // mg_mgr_init(&mgr, NULL);
+        // nc = mg_bind(&mgr, s_http_port, ev_handler);
+
+        // // Set up HTTP server parameters
+        // mg_set_protocol_http_websocket(nc);
+        // s_http_server_opts.document_root = ".";      // Serve current directory
+        // s_http_server_opts.dav_document_root = ".";  // Allow access via WebDav
+        // s_http_server_opts.enable_directory_listing = "yes";
+
+        // printf("Starting web server on port %s\n", s_http_port);
+        // for (;;) {
+        //   mg_mgr_poll(&mgr, 1000);
+        // }
+        // mg_mgr_free(&mgr);
       }
-
     }
-
-    ////////////////////////////////////////////////
-    //Set up the RPC server
-
-    ////////////////////////////////////////////////
-    //Set up the http server
-    struct mg_mgr mgr;
-    struct mg_connection *nc;
-
-    mg_mgr_init(&mgr, NULL);
-    nc = mg_bind(&mgr, s_http_port, ev_handler);
-
-    // Set up HTTP server parameters
-    mg_set_protocol_http_websocket(nc);
-    s_http_server_opts.document_root = ".";      // Serve current directory
-    s_http_server_opts.dav_document_root = ".";  // Allow access via WebDav
-    s_http_server_opts.enable_directory_listing = "yes";
-
-    printf("Starting web server on port %s\n", s_http_port);
-    for (;;) {
-      mg_mgr_poll(&mgr, 1000);
-    }
-    mg_mgr_free(&mgr);
-
-    return 0;
   }
   else{
     std::cout << "Specify port by : './cs426_graph_server <optional -b ipaddress> <port> '" << std::endl;
   }
+  return 0;
 }
