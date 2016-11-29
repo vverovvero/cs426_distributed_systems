@@ -267,7 +267,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
 
 int main(int argc, char *argv[]) {
   //Need at least port and devfile
-  if(argc >= 3){
+  if(argc >= 2){
     //Fetch all the arguments
     //If format flag, then the format option flag must come first
     int c;
@@ -323,6 +323,6 @@ int main(int argc, char *argv[]) {
     return 0;
   }
   else{
-    std::cout << "Specify port by : './cs426_graph_server <optional -f> <port> <devfile> '" << std::endl;
+    std::cout << "Specify port by : './cs426_graph_server <optional -b ipaddress> <port> '" << std::endl;
   }
 }
