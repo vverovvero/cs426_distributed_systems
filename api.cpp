@@ -8,8 +8,6 @@
 #include "graph.h"
 #include "mongoose.h"
 #include "stdint.h"
-#include "log.h"
-#include "checkpoint.h"
 
 #include <utility>
 #include <map>
