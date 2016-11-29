@@ -22,6 +22,17 @@ default: all
 
 all: system-check greeter_client cs426_graph_server
 
+cs426_graph_server: mongoose.o api.o graph.o helloworld.pb.o helloworld.grpc.pb.o greeter_server.o cs426_graph_server.o 
+	${CC} ${CFLAGS} -o $@ $^
+
+cs426_graph_server.o: cs426_graph_server.cpp
+
+mongoose.o: mongoose.c
+
+api.o: api.cpp
+
+graph.o: graph.cpp
+
 greeter_client: helloworld.pb.o helloworld.grpc.pb.o greeter_client.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
@@ -33,16 +44,7 @@ greeter_client: helloworld.pb.o helloworld.grpc.pb.o greeter_client.o
 %.pb.cc: %.proto
 	$(PROTOC) -I $(PROTOS_PATH) --cpp_out=. $<
 
-cs426_graph_server: mongoose.o api.o graph.o cs426_graph_server.o 
-	${CC} ${CFLAGS} -o $@ $^
 
-cs426_graph_server.o: cs426_graph_server.cpp
-
-mongoose.o: mongoose.c
-
-api.o: api.cpp
-
-graph.o: graph.cpp
 
 clean:
 	rm -f *.o *.pb.cc *.pb.h greeter_client greeter_server cs426_graph_server 
