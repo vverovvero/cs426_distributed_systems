@@ -20,6 +20,8 @@
 #include <ctype.h> //isdigit
 #include <thread> //multithreaded server
 
+#include "greeter_server.cc"
+
 using std::pair;
 using std::vector;
 using std::thread;
@@ -267,8 +269,9 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
 
 
 ///////////helper multithreaded server functions//////////////
-void call_from_thread(){
-  std::cout << "Hello, World" << std::endl;
+void serve_rpc(){
+  std::cout << "Hello, World from rpc server" << std::endl;
+  RunServer();
 }
 
 
@@ -313,9 +316,7 @@ int main(int argc, char *argv[]) {
 
     ////////////////////////////////////////////////
     //Launch a thread for the rpc server
-    thread t1(call_from_thread);
-
-
+    thread t1(serve_rpc);
 
     ////////////////////////////////////////////////
     // Set up the http server
