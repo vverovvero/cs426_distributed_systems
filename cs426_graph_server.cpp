@@ -41,8 +41,8 @@ static const struct mg_str key_shortest_path = MG_STR("/shortest_path");
 static const vector<uint64_t> EmptyVector; //if no node id's found
 
 Graph graph; //global graph
-static const char *s_http_port; //global port
-unsigned int ipaddress; //global ipaddress (for RPC)
+static const char *s_http_port = 666; //global port
+unsigned int ipaddress = 666; //global ipaddress (for RPC)
 
 //////// my helper print functions////////////
 void print_flush(char * string){
@@ -271,21 +271,16 @@ int main(int argc, char *argv[]) {
     //Fetch all the arguments
     //If format flag, then the format option flag must come first
     int c;
-    int format_flag = 0;
-    int reset_flag = 0;
+    int b_flag = 0;
     // static const char *s_http_port;
     while(optind < argc){
-      if((c = getopt(argc, argv, "fr")) != -1){
+      if((c = getopt(argc, argv, "b:")) != -1){
         switch (c) {
-          case 'f':
+          case 'b':
             //set format flag
             // printf("Found format flag\n");
-            format_flag = 1;
-            break;
-          case 'r':
-            //reset disk by randomizing
-            // printf("Found reset flag\n");
-            reset_flag = 1;
+            b_flag = 1;
+            ipaddress = atoi(optarg);
             break;
           default:
             break;
@@ -294,32 +289,16 @@ int main(int argc, char *argv[]) {
       else{
         while(optind < argc){
            //Handle regular arguments
-          // printf("%s\n", argv[optind]);
-          //Check for port
-          char s[100];
-          sprintf(s, "%s", argv[optind]);
-          int valid_port = true;
-          for(int i=0; i<strlen(s); i++){
-            if(!isdigit(s[i])){
-              valid_port = false;
-              break;
-            }
-          }
-          if(valid_port){
-            // printf("Found port\n");
-            s_http_port = argv[optind];
-          }
-          else{
-            // printf("Found devfile\n");
-            // fd = open_disk(argv[optind]);
-            // printf("fd: %d\n", fd);
-          }
+          s_http_port = argv[optind];
           optind++;
         }
         break;
       }
     }
       
+    //Sanity check the arguments
+    printf("port: %s\n", s_http_port);
+    printf("ipaddress (from -b): %u\n", ipaddress);
 
     ////////////////////////////////////////////////
     //Set up the server
