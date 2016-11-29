@@ -1,5 +1,6 @@
 CC      = g++
 CFLAGS = -Werror -Wall -g -std=c++11
+CFLAGS = -openmp
 # RM      = rm -f
 
 CXX = g++
