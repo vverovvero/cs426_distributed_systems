@@ -1,4 +1,9 @@
 Lab3, Wendy Chen
 
 Implementation details:
-//
+//Installed grpc on Linux VM hosted on Google Cloud.
+//Making the proto file only works assuming grpc has been correctly installed.
+//grpc has dependendencies beyond these files in the lab.  Grpc has been installed
+//at ~/grpc.
+
+//Mongoose used in this lab has no known dependencies beyond the included files.
