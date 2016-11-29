@@ -6,6 +6,9 @@
 // Copyright (c) 2015 Cesanta Software Limited
 // All rights reserved
 
+//multithreaded server
+#include <omp.h>
+
 #include "mongoose.h"
 #include "api.h"
 #include "graph.h"
@@ -300,8 +303,29 @@ int main(int argc, char *argv[]) {
     printf("port: %s\n", s_http_port);
     printf("ipaddress (from -b): %u\n", ipaddress);
 
+    //Split into two threads, one for each server
+    static int tid;
+    #pragma omp threadprivate(tid)
+
+    omp_set_num_threads(2);
+    #pragma omp parallel
+    {
+      tid = omp_get_thread_num();
+      printf("Hello world! from thread %d of %d\n", tid, omp_get_num_threads());
+      if(tid == 0){
+        printf("thread id %d will run the rpc server\n", omp_get_thread_num());
+      }
+      else{
+        printf("thread id %d will run the mongoose http server\n", omp_get_thread_num());
+      }
+
+    }
+
     ////////////////////////////////////////////////
-    //Set up the server
+    //Set up the RPC server
+
+    ////////////////////////////////////////////////
+    //Set up the http server
     struct mg_mgr mgr;
     struct mg_connection *nc;
 

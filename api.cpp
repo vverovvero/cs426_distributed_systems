@@ -48,6 +48,12 @@ void emit_json_end(struct mg_connection *nc){
 
 //////////////////////////////////////////////////////////////////////////////////
 void event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
+	//whoami
+
+	//Send RPC request
+
+	//Receive RPC ack
+
 	//Call graph function
 	int result = (*graph).add_node(node_id);
 
@@ -68,6 +74,12 @@ void event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 }
 
 void event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
+	//whoami
+
+	//Send RPC request
+
+	//Receive RPC ack
+
 	//Call graph function
 	int result = (*graph).add_edge(node_a_id, node_b_id);
 
@@ -93,6 +105,12 @@ void event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, 
 }
 
 void event_remove_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
+	//whoami
+
+	//Send RPC request
+
+	//Receive RPC ack
+
 	//Call graph function
 	int result = (*graph).remove_node(node_id);
 
@@ -113,6 +131,13 @@ void event_remove_node(Graph *graph, struct mg_connection *nc, uint64_t node_id)
 }
 
 void event_remove_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
+	//whoami
+
+	//Send RPC request
+
+	//Receive RPC ack
+
+	
 	//Call graph function
 	int result = (*graph).remove_edge(node_a_id, node_b_id);
 
