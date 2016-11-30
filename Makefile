@@ -28,16 +28,9 @@ greeter_client: helloworld.pb.o helloworld.grpc.pb.o greeter_client.o
 greeter_server: helloworld.pb.o helloworld.grpc.pb.o greeter_server.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
-.PRECIOUS: %.grpc.pb.cc
-%.grpc.pb.cc: %.proto
-	$(PROTOC) -I $(PROTOS_PATH) --grpc_out=. --plugin=protoc-gen-grpc=$(GRPC_CPP_PLUGIN_PATH) $<
-
-.PRECIOUS: %.pb.cc
-%.pb.cc: %.proto
-	$(PROTOC) -I $(PROTOS_PATH) --cpp_out=. $<
-
 cs426_graph_server: mongoose.o api.o graph.o cs426_graph_server.o 
-	${CC} ${CFLAGS} $(LDFLAGS) -o $@ $^
+#	${CC} ${CFLAGS} -o $@ $^
+	$(CXX) $^ $(LDFLAGS) -o $@
 
 cs426_graph_server.o: cs426_graph_server.cpp
 
@@ -46,6 +39,16 @@ mongoose.o: mongoose.c
 api.o: api.cpp
 
 graph.o: graph.cpp
+
+.PRECIOUS: %.grpc.pb.cc
+%.grpc.pb.cc: %.proto
+	$(PROTOC) -I $(PROTOS_PATH) --grpc_out=. --plugin=protoc-gen-grpc=$(GRPC_CPP_PLUGIN_PATH) $<
+
+.PRECIOUS: %.pb.cc
+%.pb.cc: %.proto
+	$(PROTOC) -I $(PROTOS_PATH) --cpp_out=. $<
+
+
 
 clean:
 	rm -f *.o *.pb.cc *.pb.h greeter_client greeter_server cs426_graph_server 
