@@ -21,11 +21,19 @@
 #include <thread> //multithreaded server
 
 // #include <iostream>
-// #include <memory>
-// #include <string>
-// #include <grpc++/grpc++.h>
-// #include "helloworld.grpc.pb.h"
+#include <memory>
+#include <string>
+#include <grpc++/grpc++.h>
+#include "helloworld.grpc.pb.h"
 #include "greeter_server.h"
+
+using grpc::Server;
+using grpc::ServerBuilder;
+using grpc::ServerContext;
+using grpc::Status;
+using helloworld::HelloRequest;
+using helloworld::HelloReply;
+using helloworld::Greeter;
 
 using std::pair;
 using std::vector;
