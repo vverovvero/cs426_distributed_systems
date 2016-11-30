@@ -20,7 +20,7 @@
 #include <ctype.h> //isdigit
 #include <thread> //multithreaded server
 
-#include "greeter_server.cc"
+// #include "greeter_server.cc"
 
 using std::pair;
 using std::vector;
