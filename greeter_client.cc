@@ -48,9 +48,6 @@ using helloworld::HelloReply;
 using helloworld::Greeter;
 
 
-GreeterClient(std::shared_ptr<Channel> channel)
-  : stub_(Greeter::NewStub(channel)) {}
-
 // Assambles the client's payload, sends it and presents the response back
 // from the server.
 std::string GreeterClient::SayHello(const std::string& user) {

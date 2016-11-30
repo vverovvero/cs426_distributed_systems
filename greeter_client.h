@@ -23,7 +23,9 @@ using helloworld::Greeter;
 
 class GreeterClient {
  public:
-  GreeterClient(std::shared_ptr<Channel> channel);
+  GreeterClient(std::shared_ptr<Channel> channel)
+  	: stub_(Greeter::NewStub(channel)) {}
+  	
   std::string SayHello(const std::string& user);
   std::string SayHelloAgain(const std::string& user);
  private:
