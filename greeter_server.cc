@@ -37,6 +37,7 @@
 
 #include <grpc++/grpc++.h>
 
+#include "greeter_server.h"
 #include "helloworld.grpc.pb.h"
 
 using grpc::Server;
