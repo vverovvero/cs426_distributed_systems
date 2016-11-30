@@ -40,6 +40,7 @@ class GreeterServiceImpl final : public Greeter::Service {
 };
 
 void RunServer(void);
+void RunThreadedServer(void);
 
 
 // int main(int argc, char** argv);
