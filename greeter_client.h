@@ -32,6 +32,6 @@ class GreeterClient {
   std::unique_ptr<Greeter::Stub> stub_;
 };
 
-int main(int argc, char** argv);
+// int main(int argc, char** argv);
 
 #endif
