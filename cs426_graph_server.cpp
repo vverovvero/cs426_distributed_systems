@@ -20,6 +20,11 @@
 #include <ctype.h> //isdigit
 #include <thread> //multithreaded server
 
+// #include <iostream>
+#include <memory>
+#include <string>
+#include <grpc++/grpc++.h>
+#include "helloworld.grpc.pb.h"
 #include "greeter_server.h"
 
 using std::pair;
