@@ -20,9 +20,12 @@ vpath %.proto $(PROTOS_PATH)
 
 default: all
 
-all: system-check greeter_client cs426_graph_server
+all: system-check greeter_client greeter_server cs426_graph_server
 
 greeter_client: helloworld.pb.o helloworld.grpc.pb.o greeter_client.o
+	$(CXX) $^ $(LDFLAGS) -o $@
+
+greeter_server: helloworld.pb.o helloworld.grpc.pb.o greeter_server.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
 .PRECIOUS: %.grpc.pb.cc
@@ -33,10 +36,10 @@ greeter_client: helloworld.pb.o helloworld.grpc.pb.o greeter_client.o
 %.pb.cc: %.proto
 	$(PROTOC) -I $(PROTOS_PATH) --cpp_out=. $<
 
-cs426_graph_server: mongoose.o api.o graph.o helloworld.pb.o helloworld.grpc.pb.o greeter_server.o cs426_graph_server.o 
+cs426_graph_server: mongoose.o api.o graph.o cs426_graph_server.o 
 	${CC} ${CFLAGS} -o $@ $^
 
-cs426_graph_server.o: cs426_graph_server.cpp greeter_server.cc
+cs426_graph_server.o: cs426_graph_server.cpp
 
 mongoose.o: mongoose.c
 
@@ -45,7 +48,7 @@ api.o: api.cpp
 graph.o: graph.cpp
 
 clean:
-	rm -f *.o *.pb.cc *.pb.h greeter_client cs426_graph_server 
+	rm -f *.o *.pb.cc *.pb.h greeter_client greeter_server cs426_graph_server 
 
 
 # The following is to test your system and ensure a smoother experience.

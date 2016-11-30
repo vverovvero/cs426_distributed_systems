@@ -37,6 +37,7 @@
 
 #include <grpc++/grpc++.h>
 
+#include "greeter_client.h"
 #include "helloworld.grpc.pb.h"
 
 using grpc::Channel;
@@ -46,59 +47,55 @@ using helloworld::HelloRequest;
 using helloworld::HelloReply;
 using helloworld::Greeter;
 
-class GreeterClient {
- public:
-  GreeterClient(std::shared_ptr<Channel> channel)
-      : stub_(Greeter::NewStub(channel)) {}
 
-  // Assambles the client's payload, sends it and presents the response back
-  // from the server.
-  std::string SayHello(const std::string& user) {
-    // Data we are sending to the server.
-    HelloRequest request;
-    request.set_name(user);
+GreeterClient(std::shared_ptr<Channel> channel)
+  : stub_(Greeter::NewStub(channel)) {}
 
-    // Container for the data we expect from the server.
-    HelloReply reply;
+// Assambles the client's payload, sends it and presents the response back
+// from the server.
+std::string GreeterClient::SayHello(const std::string& user) {
+  // Data we are sending to the server.
+  HelloRequest request;
+  request.set_name(user);
 
-    // Context for the client. It could be used to convey extra information to
-    // the server and/or tweak certain RPC behaviors.
-    ClientContext context;
+  // Container for the data we expect from the server.
+  HelloReply reply;
 
-    // The actual RPC.
-    Status status = stub_->SayHello(&context, request, &reply);
+  // Context for the client. It could be used to convey extra information to
+  // the server and/or tweak certain RPC behaviors.
+  ClientContext context;
 
-    // Act upon its status.
-    if (status.ok()) {
-      return reply.message();
-    } else {
-      std::cout << status.error_code() << ": " << status.error_message()
-                << std::endl;
-      return "RPC failed";
-    }
+  // The actual RPC.
+  Status status = stub_->SayHello(&context, request, &reply);
+
+  // Act upon its status.
+  if (status.ok()) {
+    return reply.message();
+  } else {
+    std::cout << status.error_code() << ": " << status.error_message()
+              << std::endl;
+    return "RPC failed";
   }
+}
 
-  std::string SayHelloAgain(const std::string& user) {
-    //Follows the same pattern as SayHello.
-    HelloRequest request;
-    request.set_name(user);
-    HelloReply reply;
-    ClientContext context;
+std::string GreeterClient::SayHelloAgain(const std::string& user) {
+  //Follows the same pattern as SayHello.
+  HelloRequest request;
+  request.set_name(user);
+  HelloReply reply;
+  ClientContext context;
 
-    //Here we can use the stub's newly available method we just added.
-    Status status = stub_->SayHelloAgain(&context, request, &reply);
-    if(status.ok()){
-      return reply.message();
-    } else {
-      std::cout << status.error_code() << ": " << status.error_message()
-                << std::endl;
-      return "RPC failed";
-    }
+  //Here we can use the stub's newly available method we just added.
+  Status status = stub_->SayHelloAgain(&context, request, &reply);
+  if(status.ok()){
+    return reply.message();
+  } else {
+    std::cout << status.error_code() << ": " << status.error_message()
+              << std::endl;
+    return "RPC failed";
   }
+}
 
- private:
-  std::unique_ptr<Greeter::Stub> stub_;
-};
 
 int main(int argc, char** argv) {
   // Instantiate the client. It requires a channel, out of which the actual RPCs
