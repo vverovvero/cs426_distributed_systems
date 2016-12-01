@@ -95,24 +95,44 @@ std::string GreeterClient::SayHelloAgain(const std::string& user) {
   }
 }
 
-std::string GreeterClient::WriteRequest(const std::string& user){
+std::string GreeterClient::WriteRequest(const std::string& user) {
+  //Follows the same pattern as SayHello.
   WriteRequest request;
   request.set_command(1);
   request.set_node_a_id(777);
-  request.set_node_b_id(888);
+  request.set_node_b_id(666);
   WriteAck reply;
   ClientContext context;
 
-  //Here, use stub
+  //Here we can use the stub's newly available method we just added.
   Status status = stub_->WriteRequest(&context, request, &reply);
   if(status.ok()){
-    return reply.message();
+    return reply.ack();
   } else {
     std::cout << status.error_code() << ": " << status.error_message()
               << std::endl;
     return "RPC failed";
   }
 }
+
+// std::string GreeterClient::WriteRequest(const std::string& user){
+//   WriteRequest request;
+//   request.set_command(1);
+//   request.set_node_a_id(777);
+//   request.set_node_b_id(888);
+//   WriteAck reply;
+//   ClientContext context;
+
+//   //Here, use stub
+//   Status status = stub_->WriteRequest(&context, request, &reply);
+//   if(status.ok()){
+//     return reply.message();
+//   } else {
+//     std::cout << status.error_code() << ": " << status.error_message()
+//               << std::endl;
+//     return "RPC failed";
+//   }
+// }
 
 
 int main(int argc, char** argv) {
