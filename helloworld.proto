@@ -70,8 +70,8 @@ message WriteRequest{
 
 //Acknowledgement
 message WriteAck{
-	string message = 1;
 	uint32 ack = 1;
+	string message = 2;
 }
 
 
