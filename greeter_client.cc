@@ -106,7 +106,7 @@ std::string GreeterClient::ForwardRequest(const std::string& user) {
   ClientContext context;
 
   //Here we can use the stub's newly available method we just added.
-  Status status = stub_->WriteRequest(&context, request, &reply);
+  Status status = stub_->ForwardRequest(&context, request, &reply);
   if(status.ok()){
     return reply.message();
   } else {
