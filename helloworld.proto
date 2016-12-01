@@ -63,14 +63,14 @@ message WriteRequest{
 	    REMOVE_NODE = 2;
 	    REMOVE_EDGE = 3;
 	}
-	required Command command = 0 [default = ADD_NODE];
-	optional uint32 node_a_id = 2;
-	optional uint32 node_b_id = 3;
+	Command command = 0 [default = ADD_NODE];
+	uint32 node_a_id = 2;
+	uint32 node_b_id = 3;
 }
 
 //Acknowledgement
 message WriteAck{
-	optional uint32 ack = 1;
+	uint32 ack = 1;
 }
 
 
