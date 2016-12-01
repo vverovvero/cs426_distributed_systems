@@ -95,7 +95,7 @@ std::string GreeterClient::SayHelloAgain(const std::string& user) {
   }
 }
 
-std::string GreeterClient::WriteRequest(const std::string& user) {
+std::string GreeterClient::ForwardRequest(const std::string& user) {
   //Follows the same pattern as SayHello.
   WriteRequest request;
   request.set_command(1);

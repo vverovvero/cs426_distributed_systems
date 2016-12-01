@@ -30,7 +30,7 @@ class GreeterClient {
 
   std::string SayHello(const std::string& user);
   std::string SayHelloAgain(const std::string& user);
-  std::string WriteRequest(const std::string& user);
+  std::string ForwardRequest(const std::string& user);
  private:
   std::unique_ptr<Greeter::Stub> stub_;
 };
