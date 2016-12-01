@@ -98,6 +98,7 @@ std::string GreeterClient::SayHelloAgain(const std::string& user) {
 std::string GreeterClient::ForwardRequest(const std::string& user) {
   //Follows the same pattern as SayHello.
   WriteRequest request;
+  helloworld::WriteRequest_Command ADD_NODE;
   request.set_command(ADD_NODE);
   request.set_node_a_id(777);
   request.set_node_b_id(666);
