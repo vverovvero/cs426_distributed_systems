@@ -107,7 +107,7 @@ std::string GreeterClient::WriteRequest(const std::string& user) {
   //Here we can use the stub's newly available method we just added.
   Status status = stub_->WriteRequest(&context, request, &reply);
   if(status.ok()){
-    return reply.ack();
+    return reply.message();
   } else {
     std::cout << status.error_code() << ": " << status.error_message()
               << std::endl;
