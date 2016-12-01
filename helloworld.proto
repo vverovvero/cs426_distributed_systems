@@ -57,14 +57,14 @@ message HelloReply {
 
 //WriteRequest contains three unsigned ints
 message WriteRequest{
-	unsigned int command = 1;
-	unsigned int node_a_id = 1;
-	unsigned int node_b_id = 1;
+	uint32 command = 1;
+	uint32 node_a_id = 1;
+	uint32 node_b_id = 1;
 }
 
 //Acknowledgement
 message WriteAck{
-	unsigned int ack = 1;
+	uint32 ack = 1;
 }
 
 
