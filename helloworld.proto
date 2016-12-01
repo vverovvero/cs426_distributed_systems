@@ -58,12 +58,12 @@ message HelloReply {
 //WriteRequest contains three unsigned ints
 message WriteRequest{
 	enum Command {
-	    ADD_NODE = 0;
-	    ADD_EDGE = 1;
-	    REMOVE_NODE = 2;
-	    REMOVE_EDGE = 3;
+	    ADD_NODE = 1;
+	    ADD_EDGE = 2;
+	    REMOVE_NODE = 3;
+	    REMOVE_EDGE = 4;
 	}
-	Command command = 0 [default = ADD_NODE];
+	Command command = 1 [default = ADD_NODE];
 	uint32 node_a_id = 2;
 	uint32 node_b_id = 3;
 }
