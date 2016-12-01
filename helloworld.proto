@@ -63,7 +63,7 @@ message WriteRequest{
 	    REMOVE_NODE = 2;
 	    REMOVE_EDGE = 3;
 	}
-	Command command = ADD_NODE;
+	Command command = 1;
 	uint32 node_a_id = 2;
 	uint32 node_b_id = 3;
 }
