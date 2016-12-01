@@ -93,6 +93,25 @@ std::string GreeterClient::SayHelloAgain(const std::string& user) {
   }
 }
 
+std::string GreeterClient::WriteRequest(const std::string& user){
+  WriteRequest request;
+  request.set_command(666);
+  request.set_node_a_id(777);
+  request.set_node_b_id(888);
+  WriteAck reply;
+  ClientContext context;
+
+  //Here, use stub
+  Status status = stub_->WriteRequest(&context, request, &reply);
+  if(status.ok()){
+    return reply.message();
+  } else {
+    std::cout << status.error_code() << ": " << status.error_message()
+              << std::endl;
+    return "RPC failed";
+  }
+}
+
 
 int main(int argc, char** argv) {
   // Instantiate the client. It requires a channel, out of which the actual RPCs
@@ -102,10 +121,13 @@ int main(int argc, char** argv) {
   GreeterClient greeter(grpc::CreateChannel(
       "localhost:50051", grpc::InsecureChannelCredentials()));
   std::string user("world");
-  std::string reply = greeter.SayHello(user);
-  std::cout << "Greeter received: " << reply << std::endl;
+  // std::string reply = greeter.SayHello(user);
+  // std::cout << "Greeter received: " << reply << std::endl;
   
-  reply = greeter.SayHelloAgain(user);
+  // reply = greeter.SayHelloAgain(user);
+  // std::cout << "Greeter received: " << reply << std::endl;
+
+  reply = greeter.WriteRequest(user);
   std::cout << "Greeter received: " << reply << std::endl;
 
 

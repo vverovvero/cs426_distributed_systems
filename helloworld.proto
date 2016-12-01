@@ -41,6 +41,7 @@ service Greeter {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply) {}
   rpc SayHelloAgain (HelloRequest) returns (HelloReply) {}
+  rpc ForwardRequest (WriteRequest) return (WriteAck) {}
 }
 
 
@@ -53,3 +54,17 @@ message HelloRequest {
 message HelloReply {
   string message = 1;
 }
+
+//WriteRequest contains three unsigned ints
+message WriteRequest{
+	unsigned int command = 1;
+	unsigned int node_a_id = 1;
+	unsigned int node_b_id = 1;
+}
+
+//Acknowledgement
+message WriteAck{
+	unsigned int ack = 1;
+}
+
+
