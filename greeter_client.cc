@@ -98,7 +98,7 @@ std::string GreeterClient::SayHelloAgain(const std::string& user) {
 std::string GreeterClient::ForwardRequest(const std::string& user) {
   //Follows the same pattern as SayHello.
   WriteRequest request;
-  request.set_command(1);
+  request.set_command(ADD_NODE);
   request.set_node_a_id(777);
   request.set_node_b_id(666);
   WriteAck reply;
@@ -149,7 +149,7 @@ int main(int argc, char** argv) {
   // reply = greeter.SayHelloAgain(user);
   // std::cout << "Greeter received: " << reply << std::endl;
 
-  reply = greeter.WriteRequest(user);
+  reply = greeter.ForwardRequest(user);
   std::cout << "Greeter received: " << reply << std::endl;
 
 
