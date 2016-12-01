@@ -66,6 +66,7 @@ message WriteRequest{
 	Command command = 1;
 	uint32 node_a_id = 2;
 	uint32 node_b_id = 3;
+	string name = 4;
 }
 
 //Acknowledgement

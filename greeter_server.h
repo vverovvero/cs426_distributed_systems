@@ -45,7 +45,7 @@ class GreeterServiceImpl final : public Greeter::Service {
                         WriteAck* reply) override {
     //in here, need to send HTTP Request.  using mongoose?
     std::string prefix("Write ");
-    reply->set_message(prefix + request->command());
+    reply->set_message(prefix + request->name());
   }
 };
 
