@@ -95,7 +95,7 @@ std::string GreeterClient::SayHelloAgain(const std::string& user) {
 
 std::string GreeterClient::WriteRequest(const std::string& user){
   WriteRequest request;
-  request.set_command(666);
+  request.set_command(1);
   request.set_node_a_id(777);
   request.set_node_b_id(888);
   WriteAck reply;
