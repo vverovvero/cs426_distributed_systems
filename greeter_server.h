@@ -45,15 +45,13 @@ class GreeterServiceImpl final : public Greeter::Service {
       std::cout << "Server should add node: " << node_a_id << std::endl;
     }
     else if(command == 2){
-      std::cout << "Server should add edge: " << node_a_id << 
-      << " " << node_b_id << std::endl;
+      std::cout << "Server should add edge: " << node_a_id << " " << node_b_id << std::endl;
     }
     else if(command == 3){
       std::cout << "Server should remove node: " << node_a_id << std::endl;
     }
     else{
-      std::cout << "Server should remove edge: " << node_a_id << 
-      << " " << node_b_id << std::endl;
+      std::cout << "Server should remove edge: " << node_a_id << " " << node_b_id << std::endl;
     }
     std::cout << "Server gets node_a_id: " << command << std::endl;
 
