@@ -76,13 +76,13 @@ std::string GreeterClient::SayHello(const std::string& user) {
   }
 }
 
-std::string GreeterClient::SayHelloAgain(const std::string& user) {
+std::string GreeterClient::SayHelloAgain(const std::string& user, uint64_t command, uint64_t node_a_id, uint64_t node_b_id) {
   //Follows the same pattern as SayHello.
   HelloRequest request;
   request.set_name(user);
-  request.set_command(1);
-  request.set_node_a_id(666);
-  request.set_node_b_id(777);
+  request.set_command(command);
+  request.set_node_a_id(node_a_id);
+  request.set_node_b_id(node_b_id);
   HelloReply reply;
   ClientContext context;
 
@@ -109,7 +109,7 @@ int main(int argc, char** argv) {
   std::string reply = greeter.SayHello(user);
   std::cout << "Greeter received: " << reply << std::endl;
   
-  reply = greeter.SayHelloAgain(user);
+  reply = greeter.SayHelloAgain(user, 2, 666, 777);
   std::cout << "Greeter received: " << reply << std::endl;
 
   return 0;

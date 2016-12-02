@@ -51,7 +51,6 @@ class GreeterServiceImpl final : public Greeter::Service {
     else{
       std::cout << "Server should remove edge: " << node_a_id << " " << node_b_id << std::endl;
     }
-    std::cout << "Server gets node_a_id: " << command << std::endl;
 
     std::string prefix("Hello again ");
     reply->set_message(prefix + request->name() + std::to_string(request->command()));
