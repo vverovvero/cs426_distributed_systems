@@ -81,6 +81,7 @@ std::string GreeterClient::SayHelloAgain(const std::string& user) {
   //Follows the same pattern as SayHello.
   HelloRequest request;
   request.set_name(user);
+  request.set_command(1);
   HelloReply reply;
   ClientContext context;
 
