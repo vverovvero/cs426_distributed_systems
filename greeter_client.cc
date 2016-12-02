@@ -76,7 +76,7 @@ std::string GreeterClient::SayHello(const std::string& user) {
   }
 }
 
-int GreeterClient::SayHelloAgain(const std::string& user, uint64_t command, uint64_t node_a_id, uint64_t node_b_id) {
+std::string GreeterClient::SayHelloAgain(const std::string& user, uint64_t command, uint64_t node_a_id, uint64_t node_b_id) {
   //Follows the same pattern as SayHello.
   HelloRequest request;
   request.set_name(user);
