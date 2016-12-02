@@ -89,6 +89,27 @@ std::string GreeterClient::SayHelloAgain(uint64_t command, uint64_t node_a_id, u
   Status status = stub_->SayHelloAgain(&context, request, &reply);
   if(status.ok()){
     //edit the graph if status was ok
+    if(command == 1){
+      //add node
+      std::cout << "Received ack!  Client should add node: " << node_a_id << std::endl;
+    }
+    else if(command == 2){
+      //add edge
+      std::cout << "Received ack!  Client should add edge: " << node_a_id << " " << node_b_id << std::endl;
+    }
+    else if(command == 3){
+      //remove node
+      std::cout << "Received ack!  Client should remove node: " << node_a_id << std::endl;
+    }
+    else if (command == 4){
+      //remove edge
+      std::cout << "Received ack!  Client should remove edge: " << node_a_id << " " << node_b_id << std::endl;
+    }
+    else{
+      std::cout << "Received ack!  Client has faulty command "<< std::endl;
+    }
+
+    //Print out ack
     std::string message("Request OK");
     return message;
   } else {

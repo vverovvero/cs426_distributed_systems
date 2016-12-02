@@ -25,12 +25,6 @@ using helloworld::Greeter;
 
 // Logic and data behind the server's behavior.
 class GreeterServiceImpl final : public Greeter::Service {
-  // Status SayHello(ServerContext* context, const HelloRequest* request,
-  //                 HelloReply* reply) override {
-  //   std::string prefix("Hello ");
-  //   reply->set_message(prefix + request->name());
-  //   return Status::OK;
-  // }
 
   Status SayHelloAgain(ServerContext *context, const HelloRequest* request,
 		  HelloReply* reply) override {
@@ -48,19 +42,17 @@ class GreeterServiceImpl final : public Greeter::Service {
     else if(command == 3){
       std::cout << "Server should remove node: " << node_a_id << std::endl;
     }
-    else{
+    else if (command == 4){
       std::cout << "Server should remove edge: " << node_a_id << " " << node_b_id << std::endl;
     }
-
-    // std::string prefix("Hello again ");
-    // reply->set_message(prefix + request->name() + std::to_string(request->command()));
+    else{
+      std::cout << "Server received faulty command" << std::endl; 
+    }
     return Status::OK;
   }
 
 };
 
-// void RunServer(void);
-// void RunThreadedServer(void);
 
 void RunServer() {
   std::string server_address("0.0.0.0:50051");

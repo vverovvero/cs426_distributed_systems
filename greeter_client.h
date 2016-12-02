@@ -26,8 +26,6 @@ class GreeterClient {
  public:
   GreeterClient(std::shared_ptr<Channel> channel)
   	: stub_(Greeter::NewStub(channel)) {}
-
-  // std::string SayHello(const std::string& user);
   std::string SayHelloAgain(uint64_t command, uint64_t node_a_id, uint64_t node_b_id);
  private:
   std::unique_ptr<Greeter::Stub> stub_;
