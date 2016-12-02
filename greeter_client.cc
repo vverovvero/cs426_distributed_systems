@@ -76,7 +76,7 @@ std::string GreeterClient::SayHello(const std::string& user) {
   }
 }
 
-std::string GreeterClient::SayHelloAgain(const std::string& user, uint64_t command, uint64_t node_a_id, uint64_t node_b_id) {
+int GreeterClient::SayHelloAgain(const std::string& user, uint64_t command, uint64_t node_a_id, uint64_t node_b_id) {
   //Follows the same pattern as SayHello.
   HelloRequest request;
   request.set_name(user);
@@ -89,7 +89,9 @@ std::string GreeterClient::SayHelloAgain(const std::string& user, uint64_t comma
   //Here we can use the stub's newly available method we just added.
   Status status = stub_->SayHelloAgain(&context, request, &reply);
   if(status.ok()){
-    return reply.message();
+    //edit the graph if status was ok
+    std::string message("Request OK");
+    return message;
   } else {
     std::cout << status.error_code() << ": " << status.error_message()
               << std::endl;
