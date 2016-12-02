@@ -10,6 +10,7 @@
 #include <grpc++/grpc++.h>
 
 #include "helloworld.grpc.pb.h"
+#include "stdint.h"
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -35,9 +36,26 @@ class GreeterServiceImpl final : public Greeter::Service {
 
   Status SayHelloAgain(ServerContext *context, const HelloRequest* request,
 		  HelloReply* reply) override {
-    int command = request->command();
+    uint64_t command = request->command();
+    uint64_t node_a_id = request->node_a_id();
+    uint64_t node_b_id = request->node_b_id();
 
     std::cout << "Server gets command: " << command << std::endl;
+    if(command == 1){
+      std::cout << "Server should add node: " << node_a_id << std::endl;
+    }
+    else if(command == 2){
+      std::cout << "Server should add edge: " << node_a_id << 
+      << " " << node_b_id << std::endl;
+    }
+    else if(command == 3){
+      std::cout << "Server should remove node: " << node_a_id << std::endl;
+    }
+    else{
+      std::cout << "Server should remove edge: " << node_a_id << 
+      << " " << node_b_id << std::endl;
+    }
+    std::cout << "Server gets node_a_id: " << command << std::endl;
 
     std::string prefix("Hello again ");
     reply->set_message(prefix + request->name() + std::to_string(request->command()));

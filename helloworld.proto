@@ -51,12 +51,16 @@ message HelloRequest {
   uint64 command = 2;
   uint64 node_a_id = 3;
   uint64 node_b_id = 4;
+  uint64 client_node = 5;
+  uint64 server_node = 6;
 }
 
 // The response message containing the greetings
 message HelloReply {
   string message = 1;
   uint64 acknowledgement = 2;
+  uint64 client_node = 3;
+  uint64 server_node = 4;
 }
 
 //WriteRequest contains three unsigned ints
