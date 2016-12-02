@@ -56,18 +56,27 @@ message HelloReply {
 }
 
 //WriteRequest contains three unsigned ints
+//message WriteRequest{
+//	enum Command {
+//	    ADD_NODE = 0;
+//	    ADD_EDGE = 1;
+//	    REMOVE_NODE = 2;
+//	    REMOVE_EDGE = 3;
+//	}
+//	Command command = 1;
+//	uint32 node_a_id = 2;
+//	uint32 node_b_id = 3;
+//	string name = 4;
+//}
+
+//command {1: add_node, 2: add_edge, 3: remove_node, 4: remove_edge}
 message WriteRequest{
-	enum Command {
-	    ADD_NODE = 0;
-	    ADD_EDGE = 1;
-	    REMOVE_NODE = 2;
-	    REMOVE_EDGE = 3;
-	}
-	Command command = 1;
+	uint32 command = 1;
 	uint32 node_a_id = 2;
 	uint32 node_b_id = 3;
 	string name = 4;
 }
+
 
 //Acknowledgement
 message WriteAck{

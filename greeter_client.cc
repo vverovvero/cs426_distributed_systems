@@ -99,9 +99,8 @@ std::string GreeterClient::ForwardRequest(const std::string& user) {
   std::cout << "Greeter Forward Request preparing request" << std::endl;
   //Follows the same pattern as SayHello.
   WriteRequest request;
-  helloworld::WriteRequest_Command ADD_NODE;
   request.set_name("world");
-  request.set_command(ADD_NODE);
+  request.set_command(1);
   request.set_node_a_id(777);
   request.set_node_b_id(666);
   WriteAck reply;
@@ -119,25 +118,6 @@ std::string GreeterClient::ForwardRequest(const std::string& user) {
     return "RPC failed";
   }
 }
-
-// std::string GreeterClient::WriteRequest(const std::string& user){
-//   WriteRequest request;
-//   request.set_command(1);
-//   request.set_node_a_id(777);
-//   request.set_node_b_id(888);
-//   WriteAck reply;
-//   ClientContext context;
-
-//   //Here, use stub
-//   Status status = stub_->WriteRequest(&context, request, &reply);
-//   if(status.ok()){
-//     return reply.message();
-//   } else {
-//     std::cout << status.error_code() << ": " << status.error_message()
-//               << std::endl;
-//     return "RPC failed";
-//   }
-// }
 
 
 int main(int argc, char** argv) {
