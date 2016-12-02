@@ -17,8 +17,6 @@ using grpc::ClientContext;
 using grpc::Status;
 using helloworld::HelloRequest;
 using helloworld::HelloReply;
-// using helloworld::WriteRequest;
-// using helloworld::WriteAck;
 using helloworld::Greeter;
 
 #ifndef GREETER_CLIENT_H

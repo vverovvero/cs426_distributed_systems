@@ -18,8 +18,6 @@ using grpc::ServerContext;
 using grpc::Status;
 using helloworld::HelloRequest;
 using helloworld::HelloReply;
-// using helloworld::WriteRequest;
-// using helloworld::WriteAck;
 using helloworld::Greeter;
 
 #ifndef GREETER_SERVER_H
@@ -60,13 +58,6 @@ class GreeterServiceImpl final : public Greeter::Service {
     return Status::OK;
   }
 
-  // rpc ForwardRequest (WriteRequest) return (WriteAck) {}
-  // Status ForwardRequest(ServerContext* context, const WriteRequest* request,
-  //                       WriteAck* reply) override {
-  //   //in here, need to send HTTP Request.  using mongoose?
-  //   std::string prefix("Write ");
-  //   reply->set_message(prefix + request->name());
-  // }
 };
 
 // void RunServer(void);

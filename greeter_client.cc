@@ -46,8 +46,6 @@ using grpc::ClientContext;
 using grpc::Status;
 using helloworld::HelloRequest;
 using helloworld::HelloReply;
-// using helloworld::WriteRequest;
-// using helloworld::WriteAck;
 using helloworld::Greeter;
 
 
@@ -83,6 +81,8 @@ std::string GreeterClient::SayHelloAgain(const std::string& user) {
   HelloRequest request;
   request.set_name(user);
   request.set_command(1);
+  request.set_node_a_id(666);
+  request.set_node_b_id(777);
   HelloReply reply;
   ClientContext context;
 
@@ -96,30 +96,6 @@ std::string GreeterClient::SayHelloAgain(const std::string& user) {
     return "RPC failed";
   }
 }
-
-// std::string GreeterClient::ForwardRequest(const std::string& user) {
-//   std::cout << "Greeter Forward Request preparing request" << std::endl;
-//   //Follows the same pattern as SayHello.
-//   WriteRequest request;
-//   request.set_name("world");
-//   request.set_command(1);
-//   request.set_node_a_id(777);
-//   request.set_node_b_id(666);
-//   WriteAck reply;
-//   ClientContext context;
-
-//   std::cout << "Finished preparing request" << std::endl;
-
-//   //Here we can use the stub's newly available method we just added.
-//   Status status = stub_->ForwardRequest(&context, request, &reply);
-//   if(status.ok()){
-//     return reply.message();
-//   } else {
-//     std::cout << status.error_code() << ": " << status.error_message()
-//               << std::endl;
-//     return "RPC failed";
-//   }
-// }
 
 
 int main(int argc, char** argv) {
@@ -135,10 +111,6 @@ int main(int argc, char** argv) {
   
   reply = greeter.SayHelloAgain(user);
   std::cout << "Greeter received: " << reply << std::endl;
-
-  // reply = greeter.ForwardRequest(user);
-  // std::cout << "Greeter received: " << reply << std::endl;
-
 
   return 0;
 }
