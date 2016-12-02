@@ -38,9 +38,9 @@ class GreeterServiceImpl final : public Greeter::Service {
     int command = request->command();
 
     std::cout << "Server gets command: " << command << std::endl;
-    
+
     std::string prefix("Hello again ");
-    reply->set_message(prefix + request->name());
+    reply->set_message(prefix + request->name() + std::to_string(request->command()));
     return Status::OK;
   }
 
