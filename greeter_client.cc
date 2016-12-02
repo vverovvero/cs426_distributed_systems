@@ -134,8 +134,8 @@ int main(int argc, char** argv) {
   reply = greeter.SayHelloAgain(user);
   std::cout << "Greeter received: " << reply << std::endl;
 
-  reply = greeter.ForwardRequest(user);
-  std::cout << "Greeter received: " << reply << std::endl;
+  // reply = greeter.ForwardRequest(user);
+  // std::cout << "Greeter received: " << reply << std::endl;
 
 
   return 0;

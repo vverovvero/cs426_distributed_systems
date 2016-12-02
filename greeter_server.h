@@ -41,12 +41,12 @@ class GreeterServiceImpl final : public Greeter::Service {
   }
 
   // rpc ForwardRequest (WriteRequest) return (WriteAck) {}
-  Status ForwardRequest(ServerContext* context, const WriteRequest* request,
-                        WriteAck* reply) override {
-    //in here, need to send HTTP Request.  using mongoose?
-    std::string prefix("Write ");
-    reply->set_message(prefix + request->name());
-  }
+  // Status ForwardRequest(ServerContext* context, const WriteRequest* request,
+  //                       WriteAck* reply) override {
+  //   //in here, need to send HTTP Request.  using mongoose?
+  //   std::string prefix("Write ");
+  //   reply->set_message(prefix + request->name());
+  // }
 };
 
 // void RunServer(void);
