@@ -35,6 +35,10 @@ class GreeterServiceImpl final : public Greeter::Service {
 
   Status SayHelloAgain(ServerContext *context, const HelloRequest* request,
 		  HelloReply* reply) override {
+    int command = request->command();
+
+    std::cout << "Server gets command: " << command << std::endl;
+    
     std::string prefix("Hello again ");
     reply->set_message(prefix + request->name());
     return Status::OK;
