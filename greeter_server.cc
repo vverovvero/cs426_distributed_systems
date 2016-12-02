@@ -46,8 +46,8 @@ using grpc::ServerContext;
 using grpc::Status;
 using helloworld::HelloRequest;
 using helloworld::HelloReply;
-using helloworld::WriteRequest;
-using helloworld::WriteAck;
+// using helloworld::WriteRequest;
+// using helloworld::WriteAck;
 using helloworld::Greeter;
 
 

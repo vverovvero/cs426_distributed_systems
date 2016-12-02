@@ -48,14 +48,15 @@ service Greeter {
 // The request message containing the user's name.
 message HelloRequest {
   string name = 1;
-  uint32 command = 2;
-  uint32 node_a_id = 3;
-  uint32 node_b_id = 4;
+  uint64 command = 2;
+  uint64 node_a_id = 3;
+  uint64 node_b_id = 4;
 }
 
 // The response message containing the greetings
 message HelloReply {
   string message = 1;
+  uint64 acknowledgement = 2;
 }
 
 //WriteRequest contains three unsigned ints
@@ -73,18 +74,18 @@ message HelloReply {
 //}
 
 //command {1: add_node, 2: add_edge, 3: remove_node, 4: remove_edge}
-message WriteRequest{
-	uint32 command = 1;
-	uint32 node_a_id = 2;
-	uint32 node_b_id = 3;
-	string name = 4;
-}
+//message WriteRequest{
+//	uint32 command = 1;
+//	uint32 node_a_id = 2;
+//	uint32 node_b_id = 3;
+//	string name = 4;
+//}
 
 
 //Acknowledgement
-message WriteAck{
-	uint32 ack = 1;
-	string message = 2;
-}
+//message WriteAck{
+//	uint32 ack = 1;
+//	string message = 2;
+//}
 
 
