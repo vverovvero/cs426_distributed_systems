@@ -96,6 +96,7 @@ std::string GreeterClient::SayHelloAgain(const std::string& user) {
 }
 
 std::string GreeterClient::ForwardRequest(const std::string& user) {
+  std::cout << "Greeter Forward Request preparing request" << std::endl;
   //Follows the same pattern as SayHello.
   WriteRequest request;
   helloworld::WriteRequest_Command ADD_NODE;
@@ -105,6 +106,8 @@ std::string GreeterClient::ForwardRequest(const std::string& user) {
   request.set_node_b_id(666);
   WriteAck reply;
   ClientContext context;
+
+  std::cout << "Finished preparing request" << std::endl;
 
   //Here we can use the stub's newly available method we just added.
   Status status = stub_->ForwardRequest(&context, request, &reply);
