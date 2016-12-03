@@ -190,7 +190,13 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             //Call wrapper, which edits graph and returns HTTP reply
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
-              event_add_node(&graph, nc, result.second[0]);
+              //check ipaddress port
+              if(ipaddress == 8080){
+                //client sends rpc request
+                if(RunClient(8080, 1, result.second[0], 0) == 0){
+                  event_add_node(&graph, nc, result.second[0]);
+                }
+              }
             }
             else {
               error = 1;

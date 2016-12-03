@@ -13,6 +13,8 @@
 #include "stdint.h"
 #include "stdlib.h"
 
+#include "greeter_client.h" //will this be safe?
+
 using grpc::Server;
 using grpc::ServerBuilder;
 using grpc::ServerContext;
@@ -32,24 +34,41 @@ class GreeterServiceImpl final : public Greeter::Service {
     uint64_t command = request->command();
     uint64_t node_a_id = request->node_a_id();
     uint64_t node_b_id = request->node_b_id();
+    uint64_t server_node = request->server_node();
+    uint64_t client_node = request->client->node();
 
-    std::cout << "Server gets command: " << command << std::endl;
-    if(command == 1){
-      std::cout << "Server should add node: " << node_a_id << std::endl;
-    }
-    else if(command == 2){
-      std::cout << "Server should add edge: " << node_a_id << " " << node_b_id << std::endl;
-    }
-    else if(command == 3){
-      std::cout << "Server should remove node: " << node_a_id << std::endl;
-    }
-    else if (command == 4){
-      std::cout << "Server should remove edge: " << node_a_id << " " << node_b_id << std::endl;
+    // std::cout << "Server gets command: " << command << std::endl;
+    // if(command == 1){
+    //   std::cout << "Server should add node: " << node_a_id << std::endl;
+    // }
+    // else if(command == 2){
+    //   std::cout << "Server should add edge: " << node_a_id << " " << node_b_id << std::endl;
+    // }
+    // else if(command == 3){
+    //   std::cout << "Server should remove node: " << node_a_id << std::endl;
+    // }
+    // else if (command == 4){
+    //   std::cout << "Server should remove edge: " << node_a_id << " " << node_b_id << std::endl;
+    // }
+    // else{
+    //   std::cout << "Server received faulty command" << std::endl; 
+    // }
+
+    //when server receives client request, server either forwards or acks
+    if(server_node == 9000){
+      std::cout << "Server is tail, send ack" << std::endl;
+      return Status::OK;
     }
     else{
-      std::cout << "Server received faulty command" << std::endl; 
+      std::cout << "Server is not tail, forward client request" << std::endl;
+      //forward client request
+      if(RunClient(server_node, command, node_a_id, node_b_id) == 0){
+        //when client request returns successfully, server sends ack
+        return Status::OK;
+      }
     }
-    return Status::OK;
+
+    // return Status::OK;
   }
 
 };
