@@ -32,9 +32,7 @@ const uint64_t Infinity = UINT64_MAX;
 
 //////////////////////////////////////////////////////////////////////
 //Helper functions
-void hi() {
-	std::cout << "hi!!!\n";
-}
+
 //prints contents of a set
 void Graph::print_set(set<uint64_t> neighbors){
 	std::cout << "Printing set:" << std::endl;
