@@ -60,14 +60,16 @@ void RunServer(unsigned int rpc_port) {
   std::string server_address;
   GreeterServiceImpl service;
   if(rpc_port == 8080){
-    server_address = "104.198.165.44:8080";
+    // server_address = "104.198.165.44:8080";
+    server_address = "0.0.0.0:8080";
   }
   else if(rpc_port == 8090){
-    server_address = "104.154.198.82:8090";
+    // server_address = "104.154.198.82:8090";
+    server_address = "0.0.0.0:8090";
   }
   else if(rpc_port == 9000){
-    server_address = "104.154.145.208:9000";
-
+    // server_address = "104.154.145.208:9000";
+    server_address = "0.0.0.0:9000";
   }
   else{
     std::cout << "Failed to start grpc server." << std::endl;
