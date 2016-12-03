@@ -95,40 +95,40 @@ std::string GreeterClient::SayHelloAgain(uint64_t command, uint64_t node_a_id, u
 }
 
 //rpc_port is that of the client
-int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){
-  std::string ipaddress;
-  uint64_t server_node = 0;
-  uint64_t client_node = 0;
-  if(rpc_port == 8080){
-    client_node = 8080;
-    server_node = 8090;
-    ipaddress = "104.154.198.82:8090";
-    std::cout << "Forward request to: " << ipaddress << std::endl;
-  }
-  else if(rpc_port == 8090){
-    client_node = 8090;
-    server_node = 9000;
-    ipaddress = "104.154.145.208:9000";
-    std::cout << "Forward request to: " << ipaddress << std::endl;
-  }
-  else if(rpc_port == 9000){
-    client_node = 9000;
-    std::cout << "Tail does not forward request" << std::endl;
-    return 0;
-  }
-  else{
-    std::cout << "Client failed" << std::endl;
-    return -1;
-  }
+// int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){
+//   std::string ipaddress;
+//   uint64_t server_node = 0;
+//   uint64_t client_node = 0;
+//   if(rpc_port == 8080){
+//     client_node = 8080;
+//     server_node = 8090;
+//     ipaddress = "104.154.198.82:8090";
+//     std::cout << "Forward request to: " << ipaddress << std::endl;
+//   }
+//   else if(rpc_port == 8090){
+//     client_node = 8090;
+//     server_node = 9000;
+//     ipaddress = "104.154.145.208:9000";
+//     std::cout << "Forward request to: " << ipaddress << std::endl;
+//   }
+//   else if(rpc_port == 9000){
+//     client_node = 9000;
+//     std::cout << "Tail does not forward request" << std::endl;
+//     return 0;
+//   }
+//   else{
+//     std::cout << "Client failed" << std::endl;
+//     return -1;
+//   }
 
-  GreeterClient greeter(grpc::CreateChannel(
-      ipaddress, grpc::InsecureChannelCredentials()));
+//   GreeterClient greeter(grpc::CreateChannel(
+//       ipaddress, grpc::InsecureChannelCredentials()));
 
-  std::string reply = greeter.SayHelloAgain(command, node_a_id, node_b_id, server_node, client_node);
-  std::cout << "Greeter received: " << reply << std::endl;
+//   std::string reply = greeter.SayHelloAgain(command, node_a_id, node_b_id, server_node, client_node);
+//   std::cout << "Greeter received: " << reply << std::endl;
 
-  return 0;
-}
+//   return 0;
+// }
 
 
 int main(int argc, char** argv) {
