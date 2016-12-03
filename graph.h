@@ -15,6 +15,8 @@ using std::set;
 #ifndef GRAPH_H
 #define GRAPH_H
 
+const set<uint64_t> EmptySet;
+
 class Graph
 {
 	private:
