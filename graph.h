@@ -2,18 +2,33 @@
 
 //Contains #include, using, and functions for the graph class
 
-#include <utility>
-#include <map>
-#include <set>
+// #include <utility>
+// #include <map>
+// #include <set>
 
-#include "stdint.h"
+// #include "stdint.h"
 
-using std::pair;
-using std::map;
-using std::set;
+// using std::pair;
+// using std::map;
+// using std::set;
 
 #ifndef GRAPH_H
 #define GRAPH_H
+
+#include "stdint.h"
+
+#include <iostream>
+#include <stdlib.h> //has exit, EXIT_FAILURE
+// #include <cstdint> //has type 'uint64_t'
+#include <utility> //has type 'pair'
+#include <map>
+#include <set>
+#include <algorithm>
+
+
+using std::pair; 
+using std::map;
+using std::set;
 
 const set<uint64_t> EmptySet;
 const uint64_t Infinity = UINT64_MAX;
