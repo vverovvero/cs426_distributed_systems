@@ -303,10 +303,10 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
 
 
 ///////////helper multithreaded server functions//////////////
-void serve_rpc(){
+void serve_rpc(unsigned int ipaddress){
   std::cout << "Hello, World from rpc server" << std::endl;
   // RunThreadedServer();
-  RunServer();
+  RunServer(ipaddress);
 }
 
 

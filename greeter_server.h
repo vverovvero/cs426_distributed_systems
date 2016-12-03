@@ -55,7 +55,7 @@ class GreeterServiceImpl final : public Greeter::Service {
 };
 
 
-void RunServer(int rpc_port) {
+void RunServer(unsigned int rpc_port) {
   // std::string server_address("0.0.0.0:50051");
   std::string server_address;
   GreeterServiceImpl service;
