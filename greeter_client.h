@@ -29,7 +29,6 @@ class GreeterClient {
  public:
   GreeterClient(std::shared_ptr<Channel> channel)
   	: stub_(Greeter::NewStub(channel)) {}
-  // std::string SayHelloAgain(uint64_t command, uint64_t node_a_id, uint64_t node_b_id, uint64_t server_node, uint64_t client_node); 
   	std::string SayHelloAgain(uint64_t command, uint64_t node_a_id, uint64_t node_b_id, uint64_t server_node, uint64_t client_node) {
 	  //Follows the same pattern as SayHello.
 	  HelloRequest request;
@@ -44,26 +43,26 @@ class GreeterClient {
 	  //Here we can use the stub's newly available method we just added.
 	  Status status = stub_->SayHelloAgain(&context, request, &reply);
 	  if(status.ok()){
-	    //edit the graph if status was ok
-	    if(command == 1){
-	      //add node
-	      std::cout << "Received ack!  Client should add node: " << node_a_id << std::endl;
-	    }
-	    else if(command == 2){
-	      //add edge
-	      std::cout << "Received ack!  Client should add edge: " << node_a_id << " " << node_b_id << std::endl;
-	    }
-	    else if(command == 3){
-	      //remove node
-	      std::cout << "Received ack!  Client should remove node: " << node_a_id << std::endl;
-	    }
-	    else if (command == 4){
-	      //remove edge
-	      std::cout << "Received ack!  Client should remove edge: " << node_a_id << " " << node_b_id << std::endl;
-	    }
-	    else{
-	      std::cout << "Received ack!  Client has faulty command "<< std::endl;
-	    }
+	    // //edit the graph if status was ok
+	    // if(command == 1){
+	    //   //add node
+	    //   std::cout << "Received ack!  Client should add node: " << node_a_id << std::endl;
+	    // }
+	    // else if(command == 2){
+	    //   //add edge
+	    //   std::cout << "Received ack!  Client should add edge: " << node_a_id << " " << node_b_id << std::endl;
+	    // }
+	    // else if(command == 3){
+	    //   //remove node
+	    //   std::cout << "Received ack!  Client should remove node: " << node_a_id << std::endl;
+	    // }
+	    // else if (command == 4){
+	    //   //remove edge
+	    //   std::cout << "Received ack!  Client should remove edge: " << node_a_id << " " << node_b_id << std::endl;
+	    // }
+	    // else{
+	    //   std::cout << "Received ack!  Client has faulty command "<< std::endl;
+	    // }
 
 	    //Print out ack
 	    std::string message("Request OK");
@@ -90,37 +89,37 @@ int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint6
     client_node = 8080;
     server_node = 8090;
     ipaddress = "104.154.198.82:8090";
-    std::cout << "Forward request to: " << ipaddress << std::endl;
+    // std::cout << "Forward request to: " << ipaddress << std::endl;
   }
   else if(rpc_port == 8090){
     client_node = 8090;
     server_node = 9000;
     ipaddress = "104.154.145.208:9000";
-    std::cout << "Forward request to: " << ipaddress << std::endl;
+    // std::cout << "Forward request to: " << ipaddress << std::endl;
   }
   else if(rpc_port == 9000){
     client_node = 9000;
-    std::cout << "Tail does not forward request" << std::endl;
+    // std::cout << "Tail does not forward request" << std::endl;
     //tail modifies the graph
-    std::cout << "Tail client modifies the graph here" << std::endl;
+    // std::cout << "Tail client modifies the graph here" << std::endl;
 	if(command == 1){
-		std::cout << "Graph add node!" << std::endl;
+		// std::cout << "Graph add node!" << std::endl;
     	graph.add_node(node_a_id);
     }
     else if(command == 2){
-      	std::cout << "Graph add edge!" << std::endl;
+      	// std::cout << "Graph add edge!" << std::endl;
     	graph.add_edge(node_a_id, node_b_id);
     }
     else if(command == 3){
-      	std::cout << "Graph remove node!" << std::endl;
+      	// std::cout << "Graph remove node!" << std::endl;
     	graph.remove_node(node_a_id);
     }
     else if (command == 4){
-      	std::cout << "Graph remove edge!" << std::endl;
+      	// std::cout << "Graph remove edge!" << std::endl;
     	graph.remove_edge(node_a_id, node_b_id);
     }
     else{
-      std::cout << "Graph faulty command "<< std::endl;
+      // std::cout << "Graph faulty command "<< std::endl;
     }
     return 0;
   }
@@ -138,30 +137,30 @@ int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint6
   //after receiving ack, head node should return success 
   //lets mongoose server do mod
   if(rpc_port == 8080){
-  	std::cout << "Head node returns; let mongoose server modify graph" << std::endl;
+  	// std::cout << "Head node returns; let mongoose server modify graph" << std::endl;
   	return 0;
   }
   
   //after receiving ack, middle men clients can modify graph
-  std::cout << "Client modifies the graph here" << std::endl;
+  // std::cout << "Client modifies the graph here" << std::endl;
   	if(command == 1){
-		std::cout << "Graph add node!" << std::endl;
+		// std::cout << "Graph add node!" << std::endl;
     	graph.add_node(node_a_id);
     }
     else if(command == 2){
-      	std::cout << "Graph add edge!" << std::endl;
+      	// std::cout << "Graph add edge!" << std::endl;
     	graph.add_edge(node_a_id, node_b_id);
     }
     else if(command == 3){
-      	std::cout << "Graph remove node!" << std::endl;
+      	// std::cout << "Graph remove node!" << std::endl;
     	graph.remove_node(node_a_id);
     }
     else if (command == 4){
-      	std::cout << "Graph remove edge!" << std::endl;
+      	// std::cout << "Graph remove edge!" << std::endl;
     	graph.remove_edge(node_a_id, node_b_id);
     }
     else{
-      std::cout << "Graph faulty command "<< std::endl;
+      // std::cout << "Graph faulty command "<< std::endl;
     }
   return 0;
 }
