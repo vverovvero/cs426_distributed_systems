@@ -135,6 +135,11 @@ int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint6
   std::string reply = greeter.SayHelloAgain(command, node_a_id, node_b_id, server_node, client_node);
   std::cout << "Greeter received: " << reply << std::endl;
 
+  //after receiving ack, head node should return success 
+  //lets mongoose server do mod
+  std::cout << "Head node returns; let mongoose server modify graph" << std::endl;
+  return 0;
+
   //after receiving ack, middle men clients can modify graph
   std::cout << "Client modifies the graph here" << std::endl;
   	if(command == 1){
