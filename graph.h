@@ -319,4 +319,7 @@ class Graph
 		}
 };
 
+//declare Graph here
+Graph graph;
+
 #endif

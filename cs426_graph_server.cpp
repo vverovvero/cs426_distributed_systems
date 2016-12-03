@@ -59,7 +59,7 @@ static const struct mg_str key_shortest_path = MG_STR("/shortest_path");
 
 static const vector<uint64_t> EmptyVector; //if no node id's found
 
-Graph graph; //global graph
+// Graph graph; //global graph
 static const char *s_http_port = "666"; //global port
 unsigned int ipaddress = 666; //global ipaddress (for RPC)
 
