@@ -223,7 +223,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
               if(ipaddress == 8080){
                 //client sends rpc request
                 if(RunClient(8080, 4, result.second[0], result.second[1]) == 0){
-                  eevent_remove_edge(&graph, nc, result.second[0], result.second[1]);
+                  event_remove_edge(&graph, nc, result.second[0], result.second[1]);
                 }
               }              
             }
