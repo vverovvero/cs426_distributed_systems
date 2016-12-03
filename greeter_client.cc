@@ -119,17 +119,52 @@ std::string GreeterClient::SayHelloAgain(uint64_t command, uint64_t node_a_id, u
   }
 }
 
+int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){
+  std::string ipaddress;
+  if(rpc_port == 8080){
+    ipaddress = "104.154.198.82:8090";
+  }
+  else if(rpc_port == 8090){
+    ipaddress = "104.154.145.208:9000";
+  }
+  else if(rpc_port == 9000){
+    std::cout << "Tail does not forward request" << std::endl;
+    return 0;
+  }
+  else{
+    std::cout << "Client failed" << std::endl;
+    return -1;
+  }
+
+  GreeterClient greeter(grpc::CreateChannel(
+      ipaddress, grpc::InsecureChannelCredentials()));
+
+  std::string reply = greeter.SayHelloAgain(command, node_a_id, node_b_id);
+  std::cout << "Greeter received: " << reply << std::endl;
+
+  return 0;
+}
+
 
 int main(int argc, char** argv) {
   // Instantiate the client. It requires a channel, out of which the actual RPCs
   // are created. This channel models a connection to an endpoint (in this case,
   // localhost at port 50051). We indicate that the channel isn't authenticated
   // (use of InsecureChannelCredentials()).
-  GreeterClient greeter(grpc::CreateChannel(
-      "localhost:50051", grpc::InsecureChannelCredentials()));
+  // GreeterClient greeter(grpc::CreateChannel(
+  //     "localhost:50051", grpc::InsecureChannelCredentials()));
 
-  std::string reply = greeter.SayHelloAgain(2, 666, 777);
-  std::cout << "Greeter received: " << reply << std::endl;
+  // std::string reply = greeter.SayHelloAgain(2, 666, 777);
+  // std::cout << "Greeter received: " << reply << std::endl;
+
+  if(argc == 5){
+    unsigned int rpc_port = (unsigned int) atoi(argv[1]);
+    unsigned int command = (unsigned int) atoi(argv[2]);
+    unsigned int node_a_id = (unsigned int) atoi(argv[3]);
+    unsigned int node_b_id = (unsigned int) atoi(argv[4]);
+
+    RunClient(rpc_port, command, node_a_id, node_b_id);
+  }
 
   return 0;
 }

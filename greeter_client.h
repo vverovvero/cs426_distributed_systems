@@ -34,32 +34,7 @@ class GreeterClient {
 
 //based on node's server rpc_port, 
 //client has hardcoded node to send to
-int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){
-  std::string ipaddress;
-  if(rpc_port == 8080){
-  	ipaddress = "104.154.198.82:8090";
-  }
-  else if(rpc_port == 8090){
-  	ipaddress = "104.154.145.208:9000";
-  }
-  else if(rpc_port == 9000){
-  	std::cout << "Tail does not forward request" << std::endl;
-  	return 0;
-  }
-  else{
-    std::cout << "Client failed" << std::endl;
-    return -1;
-  }
-
-  GreeterClient greeter(grpc::CreateChannel(
-      ipaddress, grpc::InsecureChannelCredentials()));
-
-  std::string reply = greeter.SayHelloAgain(command, node_a_id, node_b_id);
-  std::cout << "Greeter received: " << reply << std::endl;
-
-  return 0;
-}
-
+int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id);
 // int main(int argc, char** argv);
 
 #endif
