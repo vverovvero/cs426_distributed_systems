@@ -10,7 +10,6 @@
 #include "api.h"
 #include "graph.h"
 #include "globals.h"
-#include "globals_def.h"
 
 #include <stdio.h>
 #include <stdarg.h>

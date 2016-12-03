@@ -20,7 +20,11 @@ vpath %.proto $(PROTOS_PATH)
 
 default: all
 
-all: system-check greeter_client greeter_server cs426_graph_server
+all: system-check globals_def greeter_client greeter_server cs426_graph_server
+
+globals_def: globals_def.o
+
+globals_def.o: globals.cpp graph.cpp
 
 greeter_client: helloworld.pb.o helloworld.grpc.pb.o greeter_client.o 
 	$(CXX) $^ $(LDFLAGS) -o $@
