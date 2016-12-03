@@ -95,7 +95,7 @@ std::string GreeterClient::SayHelloAgain(uint64_t command, uint64_t node_a_id, u
 }
 
 //rpc_port is that of the client
-int GreeterClient::RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){
+int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){
   std::string ipaddress;
   uint64_t server_node = 0;
   uint64_t client_node = 0;
@@ -154,7 +154,7 @@ int main(int argc, char** argv) {
     std::cout << "node_a_id: " << node_a_id << std::cout;
     std::cout << "node_b_id: " << node_b_id << std::cout;
 
-    GreeterClient::RunClient(rpc_port, command, node_a_id, node_b_id);
+    RunClient(rpc_port, command, node_a_id, node_b_id);
   }
 
   return 0;
