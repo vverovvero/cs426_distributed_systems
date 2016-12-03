@@ -26,6 +26,7 @@
 #include <grpc++/grpc++.h>
 #include "helloworld.grpc.pb.h"
 #include "greeter_server.h"
+#include "greeter_client.h"
 
 using grpc::Server;
 using grpc::ServerBuilder;
