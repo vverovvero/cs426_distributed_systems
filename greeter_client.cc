@@ -154,7 +154,7 @@ int main(int argc, char** argv) {
     std::cout << "node_a_id: " << node_a_id << std::cout;
     std::cout << "node_b_id: " << node_b_id << std::cout;
 
-    RunClient(rpc_port, command, node_a_id, node_b_id);
+    GreeterClient::RunClient(rpc_port, command, node_a_id, node_b_id);
   }
 
   return 0;
