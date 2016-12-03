@@ -5,17 +5,4 @@
 #include "graph.h"
 #include "globals.h"
 
-int test = 666;
 Graph graph;  /* Definition of the variable */
-
-// void hi(){
-// 	test++;
-// 	printf("test: %d\n", test);
-// }
-
-
-// int main(int argc, char const *argv[])
-// {
-// 	hi();
-// 	return 0;
-// }

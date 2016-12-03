@@ -36,6 +36,6 @@ Write requests should only be made to instance-1.
 e.g. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.198.165.44:7080/api/v1/add_node
 
 Read requests can be made to any of the instances:
-eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.198.165.44:7080/api/v1/get_neighbors
-eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.154.198.82:7090/api/v1/get_neighbors
-eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.154.145.208:8000/api/v1/get_neighbors
+eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.198.165.44:7080/api/v1/get_node
+eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.154.198.82:7090/api/v1/get_node
+eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.154.145.208:8000/api/v1/get_node

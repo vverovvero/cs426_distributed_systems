@@ -82,12 +82,6 @@ class GreeterClient {
 //based on node's server rpc_port, 
 //client has hardcoded node to send to
 
-int hi(void){
-	test++;
-	printf("test: %d\n", test);
-}
-
-
 int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){
   std::string ipaddress;
   uint64_t server_node = 0;
