@@ -49,7 +49,7 @@ using helloworld::HelloReply;
 using helloworld::Greeter;
 
 
-void RunServer(unsigned int rpc_port);
+// void RunServer(unsigned int rpc_port);
 
 // Assambles the client's payload, sends it and presents the response back
 // from the server.
