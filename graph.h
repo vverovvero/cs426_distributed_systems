@@ -319,6 +319,8 @@ class Graph
 		}
 };
 
+int test = 666;
+Graph graph; //global graph
 
 
 #endif
