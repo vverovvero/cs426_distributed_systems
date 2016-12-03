@@ -8,7 +8,7 @@
 int test = 666;
 Graph graph;  /* Definition of the variable */
 
-void test(void){
+void hi(){
 	test++;
 	printf("test: %d\n", test);
 }
@@ -16,6 +16,6 @@ void test(void){
 
 int main(int argc, char const *argv[])
 {
-	test();
+	hi();
 	return 0;
 }
