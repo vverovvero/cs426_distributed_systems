@@ -14,7 +14,6 @@
 #include "stdlib.h"
 
 #include "greeter_client.h" //will this be safe?
-#include "greeter_client.cc"
 
 using grpc::Server;
 using grpc::ServerBuilder;
