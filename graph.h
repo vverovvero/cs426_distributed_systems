@@ -320,6 +320,6 @@ class Graph
 };
 
 //declare Graph here
-Graph graph;
+// Graph graph;
 
 #endif

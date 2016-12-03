@@ -32,7 +32,7 @@ greeter_server: helloworld.pb.o helloworld.grpc.pb.o greeter_server.o
 
 greeter_server.o: greeter_server.cc graph.cpp
 
-cs426_graph_server: mongoose.o api.cpp graph.cpp helloworld.pb.o helloworld.grpc.pb.o cs426_graph_server.cpp
+cs426_graph_server: mongoose.o api.o graph.o helloworld.pb.o helloworld.grpc.pb.o cs426_graph_server.o 
 	$(CXX) $^ $(LDFLAGS) -o $@
 #	${CC} ${CFLAGS} -o $@ $^
 
