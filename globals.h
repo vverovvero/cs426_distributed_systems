@@ -7,6 +7,7 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-extern Graph graph;  /* Declaration of the variable */
+// extern Graph graph;  /* Declaration of the variable */
+Graph graph;
 
 #endif

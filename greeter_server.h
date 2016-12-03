@@ -18,7 +18,7 @@
 
 #include "greeter_client.h" //will this be safe?
 
-Graph graph;
+// Graph graph;
 
 using grpc::Server;
 using grpc::ServerBuilder;
