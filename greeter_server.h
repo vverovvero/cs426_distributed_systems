@@ -13,6 +13,9 @@
 #include "stdint.h"
 #include "stdlib.h"
 
+#include "graph.h"
+#include "globals.h"
+
 #include "greeter_client.h" //will this be safe?
 
 using grpc::Server;
@@ -63,6 +66,25 @@ class GreeterServiceImpl final : public Greeter::Service {
       std::cout << "Server is tail, send ack" << std::endl;
       //server modifies the graph here
       std::cout << "Tail server should modify the graph" << std::endl;
+      if(command == 1){
+        std::cout << "Graph add node!" << std::endl;
+        (*graph).add_node(node_a_id);
+      }
+      else if(command == 2){
+          std::cout << "Graph add edge!" << std::endl;
+        (*graph).add_edge(node_a_id, node_b_id);
+      }
+      else if(command == 3){
+          std::cout << "Graph remove node!" << std::endl;
+        (*graph).remove_node(node_a_id);
+      }
+      else if (command == 4){
+          std::cout << "Graph remove edge!" << std::endl;
+        (*graph).remove_edge(node_a_id, node_b_id);
+      }
+      else{
+        std::cout << "Graph faulty command "<< std::endl;
+      }
       return Status::OK;
     }
     else{

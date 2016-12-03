@@ -13,6 +13,7 @@
 #include "stdint.h"
 
 #include "graph.h"
+#include "globals.h"
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -105,6 +106,25 @@ int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint6
     std::cout << "Tail does not forward request" << std::endl;
     //tail modifies the graph
     std::cout << "Tail client modifies the graph here" << std::endl;
+	if(command == 1){
+		std::cout << "Graph add node!" << std::endl;
+    	(*graph).add_node(node_a_id);
+    }
+    else if(command == 2){
+      	std::cout << "Graph add edge!" << std::endl;
+    	(*graph).add_edge(node_a_id, node_b_id);
+    }
+    else if(command == 3){
+      	std::cout << "Graph remove node!" << std::endl;
+    	(*graph).remove_node(node_a_id);
+    }
+    else if (command == 4){
+      	std::cout << "Graph remove edge!" << std::endl;
+    	(*graph).remove_edge(node_a_id, node_b_id);
+    }
+    else{
+      std::cout << "Graph faulty command "<< std::endl;
+    }
     return 0;
   }
   else{
@@ -120,7 +140,25 @@ int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint6
 
   //after receiving ack, middle men clients can modify graph
   std::cout << "Client modifies the graph here" << std::endl;
-
+  	if(command == 1){
+		std::cout << "Graph add node!" << std::endl;
+    	(*graph).add_node(node_a_id);
+    }
+    else if(command == 2){
+      	std::cout << "Graph add edge!" << std::endl;
+    	(*graph).add_edge(node_a_id, node_b_id);
+    }
+    else if(command == 3){
+      	std::cout << "Graph remove node!" << std::endl;
+    	(*graph).remove_node(node_a_id);
+    }
+    else if (command == 4){
+      	std::cout << "Graph remove edge!" << std::endl;
+    	(*graph).remove_edge(node_a_id, node_b_id);
+    }
+    else{
+      std::cout << "Graph faulty command "<< std::endl;
+    }
   return 0;
 }
 
