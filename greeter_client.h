@@ -12,6 +12,8 @@
 #include "helloworld.grpc.pb.h"
 #include "stdint.h"
 
+#include "graph.h"
+
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::Status;
@@ -101,6 +103,8 @@ int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint6
   else if(rpc_port == 9000){
     client_node = 9000;
     std::cout << "Tail does not forward request" << std::endl;
+    //tail modifies the graph
+    std::cout << "Tail client modifies the graph here" << std::endl;
     return 0;
   }
   else{
@@ -113,6 +117,9 @@ int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint6
 
   std::string reply = greeter.SayHelloAgain(command, node_a_id, node_b_id, server_node, client_node);
   std::cout << "Greeter received: " << reply << std::endl;
+
+  //after receiving ack, middle men clients can modify graph
+  std::cout << "Client modifies the graph here" << std::endl;
 
   return 0;
 }

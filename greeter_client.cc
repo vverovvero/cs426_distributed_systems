@@ -41,6 +41,8 @@
 #include "helloworld.grpc.pb.h"
 #include "stdint.h"
 
+#include "graph.h"
+
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::Status;

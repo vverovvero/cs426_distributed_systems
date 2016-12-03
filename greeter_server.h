@@ -61,6 +61,8 @@ class GreeterServiceImpl final : public Greeter::Service {
     //when server receives client request, server either forwards or acks
     if(server_node == 9000){
       std::cout << "Server is tail, send ack" << std::endl;
+      //server modifies the graph here
+      std::cout << "Tail server should modify the graph" << std::endl;
       return Status::OK;
     }
     else{
