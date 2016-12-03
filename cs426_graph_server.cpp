@@ -367,7 +367,7 @@ int main(int argc, char *argv[]) {
     s_http_server_opts.dav_document_root = ".";  // Allow access via WebDav
     s_http_server_opts.enable_directory_listing = "yes";
 
-    printf("Starting web server on port %s\n", s_http_port);
+    printf("Starting mongoose http web server on port %s\n", s_http_port);
     for (;;) {
       mg_mgr_poll(&mgr, 1000);
     }

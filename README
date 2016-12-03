@@ -17,8 +17,8 @@ middle			instance-2  104.154.198.82   7090			  8090
 tail			instance-3  104.154.145.208  8000			  9000
 
 
-On each node, all executables have been made.  If not made, just run 'make' 
-in the directory: /lab3
+On each node, all executables have been made.  If not made, just run 'make clean',
+then run 'make' in the directory: /lab3
 
 To start each server:
 
