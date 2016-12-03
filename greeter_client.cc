@@ -49,50 +49,50 @@ using helloworld::HelloReply;
 using helloworld::Greeter;
 
 
-std::string GreeterClient::SayHelloAgain(uint64_t command, uint64_t node_a_id, uint64_t node_b_id, uint64_t server_node, uint64_t client_node) {
-  //Follows the same pattern as SayHello.
-  HelloRequest request;
-  request.set_command(command);
-  request.set_node_a_id(node_a_id);
-  request.set_node_b_id(node_b_id);
-  request.set_server_node(server_node);
-  request.set_client_node(client_node);
-  HelloReply reply;
-  ClientContext context;
+// std::string GreeterClient::SayHelloAgain(uint64_t command, uint64_t node_a_id, uint64_t node_b_id, uint64_t server_node, uint64_t client_node) {
+//   //Follows the same pattern as SayHello.
+//   HelloRequest request;
+//   request.set_command(command);
+//   request.set_node_a_id(node_a_id);
+//   request.set_node_b_id(node_b_id);
+//   request.set_server_node(server_node);
+//   request.set_client_node(client_node);
+//   HelloReply reply;
+//   ClientContext context;
 
-  //Here we can use the stub's newly available method we just added.
-  Status status = stub_->SayHelloAgain(&context, request, &reply);
-  if(status.ok()){
-    //edit the graph if status was ok
-    if(command == 1){
-      //add node
-      std::cout << "Received ack!  Client should add node: " << node_a_id << std::endl;
-    }
-    else if(command == 2){
-      //add edge
-      std::cout << "Received ack!  Client should add edge: " << node_a_id << " " << node_b_id << std::endl;
-    }
-    else if(command == 3){
-      //remove node
-      std::cout << "Received ack!  Client should remove node: " << node_a_id << std::endl;
-    }
-    else if (command == 4){
-      //remove edge
-      std::cout << "Received ack!  Client should remove edge: " << node_a_id << " " << node_b_id << std::endl;
-    }
-    else{
-      std::cout << "Received ack!  Client has faulty command "<< std::endl;
-    }
+//   //Here we can use the stub's newly available method we just added.
+//   Status status = stub_->SayHelloAgain(&context, request, &reply);
+//   if(status.ok()){
+//     //edit the graph if status was ok
+//     if(command == 1){
+//       //add node
+//       std::cout << "Received ack!  Client should add node: " << node_a_id << std::endl;
+//     }
+//     else if(command == 2){
+//       //add edge
+//       std::cout << "Received ack!  Client should add edge: " << node_a_id << " " << node_b_id << std::endl;
+//     }
+//     else if(command == 3){
+//       //remove node
+//       std::cout << "Received ack!  Client should remove node: " << node_a_id << std::endl;
+//     }
+//     else if (command == 4){
+//       //remove edge
+//       std::cout << "Received ack!  Client should remove edge: " << node_a_id << " " << node_b_id << std::endl;
+//     }
+//     else{
+//       std::cout << "Received ack!  Client has faulty command "<< std::endl;
+//     }
 
-    //Print out ack
-    std::string message("Request OK");
-    return message;
-  } else {
-    std::cout << status.error_code() << ": " << status.error_message()
-              << std::endl;
-    return "RPC failed";
-  }
-}
+//     //Print out ack
+//     std::string message("Request OK");
+//     return message;
+//   } else {
+//     std::cout << status.error_code() << ": " << status.error_message()
+//               << std::endl;
+//     return "RPC failed";
+//   }
+// }
 
 //rpc_port is that of the client
 // int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){
