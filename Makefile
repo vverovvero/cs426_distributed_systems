@@ -24,7 +24,7 @@ all: system-check globals_def greeter_client greeter_server cs426_graph_server
 
 globals_def: globals_def.o
 
-globals_def.o: globals.cpp graph.cpp
+globals_def.o: globals_def.cpp graph.cpp
 
 greeter_client: helloworld.pb.o helloworld.grpc.pb.o greeter_client.o 
 	$(CXX) $^ $(LDFLAGS) -o $@
