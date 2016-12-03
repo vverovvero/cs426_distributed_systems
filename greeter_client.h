@@ -132,7 +132,7 @@ int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint6
       ipaddress, grpc::InsecureChannelCredentials()));
 
   std::string reply = greeter.SayHelloAgain(command, node_a_id, node_b_id, server_node, client_node);
-  std::cout << "Greeter received: " << reply << std::endl;
+  // std::cout << "Greeter received: " << reply << std::endl;
 
   //after receiving ack, head node should return success 
   //lets mongoose server do mod

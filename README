@@ -39,3 +39,14 @@ Read requests can be made to any of the instances:
 eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.198.165.44:7080/api/v1/get_node
 eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.154.198.82:7090/api/v1/get_node
 eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.154.145.208:8000/api/v1/get_node
+
+For an example run, I have provided some shell scripts.
+On instance-1, run ./mywritetest7080.sh
+
+Then, read to read the graph on each server, run:
+On instance-1, run ./myreadtest7080.sh
+On instance-2, run ./myreadtest7090.sh
+On instance-3, run ./myreadtest8000.sh
+
+The results should be the same.
+
