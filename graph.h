@@ -322,4 +322,8 @@ class Graph
 //declare Graph here
 // Graph graph;
 
+
+extern int test;
+extern Graph graph;
+
 #endif
