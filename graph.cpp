@@ -22,8 +22,8 @@ using std::pair;
 using std::map;
 using std::set;
 
-const set<uint64_t> EmptySet;
-const uint64_t Infinity = UINT64_MAX;
+// const set<uint64_t> EmptySet;
+// const uint64_t Infinity = UINT64_MAX;
 
 //Be consistent on what means success
 // 1 is success
@@ -34,59 +34,59 @@ const uint64_t Infinity = UINT64_MAX;
 //Helper functions
 
 //prints contents of a set
-void Graph::print_set(set<uint64_t> neighbors){
-	std::cout << "Printing set:" << std::endl;
-	for(set<uint64_t>::iterator i = neighbors.begin(); i != neighbors.end(); i++){
-		uint64_t neighbor = *i;
-		std::cout << neighbor << std::endl;
-	}
-}
+// void Graph::print_set(set<uint64_t> neighbors){
+// 	std::cout << "Printing set:" << std::endl;
+// 	for(set<uint64_t>::iterator i = neighbors.begin(); i != neighbors.end(); i++){
+// 		uint64_t neighbor = *i;
+// 		std::cout << neighbor << std::endl;
+// 	}
+// }
 
-uint64_t Graph::Dijkstra_get_min_distance_unvisited_node(set<uint64_t> unvisited, map<uint64_t, uint64_t> distance){
-	//std::cout << "Dijkstra_get_min_distance_unvisited_node called!" << std::endl;
-	//dummy return
-	uint64_t min_dist_node;
-	uint64_t current_node_dist;
-	uint64_t current_min_dist = Infinity;
+// uint64_t Graph::Dijkstra_get_min_distance_unvisited_node(set<uint64_t> unvisited, map<uint64_t, uint64_t> distance){
+// 	//std::cout << "Dijkstra_get_min_distance_unvisited_node called!" << std::endl;
+// 	//dummy return
+// 	uint64_t min_dist_node;
+// 	uint64_t current_node_dist;
+// 	uint64_t current_min_dist = Infinity;
 
-	if(!unvisited.empty()){
-		for(set<uint64_t>::iterator n = unvisited.begin(); n != unvisited.end(); n++){
-		//for(const auto &n : unvisited){
-			current_node_dist = distance[*n];
-			if(current_node_dist <= current_min_dist){
-				//set new minimum distance and node
-				current_min_dist = current_node_dist;
-				min_dist_node = *n;
-			}
-		}
-		//std::cout << "Min distance node is: " << min_dist_node << std::endl;
-		return min_dist_node;
-	}
-	else{
-		exit(EXIT_FAILURE);
-	}
-}
+// 	if(!unvisited.empty()){
+// 		for(set<uint64_t>::iterator n = unvisited.begin(); n != unvisited.end(); n++){
+// 		//for(const auto &n : unvisited){
+// 			current_node_dist = distance[*n];
+// 			if(current_node_dist <= current_min_dist){
+// 				//set new minimum distance and node
+// 				current_min_dist = current_node_dist;
+// 				min_dist_node = *n;
+// 			}
+// 		}
+// 		//std::cout << "Min distance node is: " << min_dist_node << std::endl;
+// 		return min_dist_node;
+// 	}
+// 	else{
+// 		exit(EXIT_FAILURE);
+// 	}
+// }
 
-set<uint64_t> Graph::Dijkstra_get_unvisited_neighbors(set<uint64_t> unvisited, uint64_t node){
-	// std::cout << "Dijkstra_get_unvisited_neighbors called!" << std::endl;
+// set<uint64_t> Graph::Dijkstra_get_unvisited_neighbors(set<uint64_t> unvisited, uint64_t node){
+// 	// std::cout << "Dijkstra_get_unvisited_neighbors called!" << std::endl;
 
-	set<uint64_t> neighbors; //call get neighbors
-	set<uint64_t> unvisited_neighbors; //want to return the unvisited neighbors
-	set<uint64_t>::iterator it;
+// 	set<uint64_t> neighbors; //call get neighbors
+// 	set<uint64_t> unvisited_neighbors; //want to return the unvisited neighbors
+// 	set<uint64_t>::iterator it;
 
-	//fetch the neighbors of node
-	pair<int, set<uint64_t> > result = get_neighbors(node);
-	if(result.first == 1){
-		neighbors = result.second;
-	}
-	else{
-		exit(EXIT_FAILURE);
-	}
+// 	//fetch the neighbors of node
+// 	pair<int, set<uint64_t> > result = get_neighbors(node);
+// 	if(result.first == 1){
+// 		neighbors = result.second;
+// 	}
+// 	else{
+// 		exit(EXIT_FAILURE);
+// 	}
 
-	//unvisited_neighbors is the set_intersection between neighbors and unvisited
-	std::set_intersection(neighbors.begin(), neighbors.end(), unvisited.begin(),unvisited.end(), std::inserter(unvisited_neighbors, unvisited_neighbors.begin()));
-	return unvisited_neighbors;
-}
+// 	//unvisited_neighbors is the set_intersection between neighbors and unvisited
+// 	std::set_intersection(neighbors.begin(), neighbors.end(), unvisited.begin(),unvisited.end(), std::inserter(unvisited_neighbors, unvisited_neighbors.begin()));
+// 	return unvisited_neighbors;
+// }
 
 ////////////////////////////////////////////////////////////////////////
 //return 1 if node is in the graph
