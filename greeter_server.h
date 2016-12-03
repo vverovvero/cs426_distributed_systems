@@ -35,7 +35,7 @@ class GreeterServiceImpl final : public Greeter::Service {
     uint64_t node_a_id = request->node_a_id();
     uint64_t node_b_id = request->node_b_id();
     uint64_t server_node = request->server_node();
-    uint64_t client_node = request->client->node();
+    uint64_t client_node = request->client_node();
 
     // std::cout << "Server gets command: " << command << std::endl;
     // if(command == 1){
