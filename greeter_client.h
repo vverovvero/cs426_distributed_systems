@@ -137,9 +137,11 @@ int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint6
 
   //after receiving ack, head node should return success 
   //lets mongoose server do mod
-  std::cout << "Head node returns; let mongoose server modify graph" << std::endl;
-  return 0;
-
+  if(rpc_port == 8080){
+  	std::cout << "Head node returns; let mongoose server modify graph" << std::endl;
+  	return 0;
+  }
+  
   //after receiving ack, middle men clients can modify graph
   std::cout << "Client modifies the graph here" << std::endl;
   	if(command == 1){
