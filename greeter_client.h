@@ -15,6 +15,8 @@
 #include "graph.h"
 #include "globals.h"
 
+Graph graph;
+
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::Status;
