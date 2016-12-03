@@ -15,7 +15,7 @@
 #include "graph.h"
 #include "globals.h"
 
-Graph graph;
+// Graph graph;
 
 using grpc::Channel;
 using grpc::ClientContext;
