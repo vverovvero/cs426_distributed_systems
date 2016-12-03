@@ -123,9 +123,11 @@ int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint6
   std::string ipaddress;
   if(rpc_port == 8080){
     ipaddress = "104.154.198.82:8090";
+    std::cout << "Forward request to: " << ipaddress << std::endl;
   }
   else if(rpc_port == 8090){
     ipaddress = "104.154.145.208:9000";
+    std::cout << "Forward request to: " << ipaddress << std::endl;
   }
   else if(rpc_port == 9000){
     std::cout << "Tail does not forward request" << std::endl;
@@ -158,10 +160,16 @@ int main(int argc, char** argv) {
   // std::cout << "Greeter received: " << reply << std::endl;
 
   if(argc == 5){
+    std::cout << "greeter_client has enough arguments" << std::cout;
     unsigned int rpc_port = (unsigned int) atoi(argv[1]);
     unsigned int command = (unsigned int) atoi(argv[2]);
     unsigned int node_a_id = (unsigned int) atoi(argv[3]);
     unsigned int node_b_id = (unsigned int) atoi(argv[4]);
+
+    std::cout << "rpc_port: " << rpc_port << std::cout;
+    std::cout << "command: " << command << std::cout;
+    std::cout << "node_a_id: " << node_a_id << std::cout;
+    std::cout << "node_b_id: " << node_b_id << std::cout;
 
     RunClient(rpc_port, command, node_a_id, node_b_id);
   }
