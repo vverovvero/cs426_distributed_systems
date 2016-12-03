@@ -143,19 +143,19 @@ int Graph::get_edge(uint64_t node_a_id, uint64_t node_b_id){
 }
 
 //return 1 if success, 0 if node already exists
-int Graph::add_node(uint64_t node_id){
-	// std::cout << "Client would like to add node: " << node_id << std::endl;
-	if(get_node(node_id) == 0){
-		//Node was not found, create it
-		// std::cout << "Adding node with id: " << node_id << std::endl;
-		this->nodes.insert(pair<uint64_t, set<uint64_t> >(node_id, EmptySet));
-		return 1;
-	}
-	//Node already exists
-	// std::cout << "Cannot add node that already exists" << std::endl;
-	return 0;
+// int Graph::add_node(uint64_t node_id){
+// 	// std::cout << "Client would like to add node: " << node_id << std::endl;
+// 	if(get_node(node_id) == 0){
+// 		//Node was not found, create it
+// 		// std::cout << "Adding node with id: " << node_id << std::endl;
+// 		this->nodes.insert(pair<uint64_t, set<uint64_t> >(node_id, EmptySet));
+// 		return 1;
+// 	}
+// 	//Node already exists
+// 	// std::cout << "Cannot add node that already exists" << std::endl;
+// 	return 0;
 
-}
+// }
 
 //return 1 if success, 0 if edge already exists,
 //2 if node doesn't exist or node_a_id == node_b_id
