@@ -26,6 +26,8 @@ using helloworld::Greeter;
 #ifndef GREETER_SERVER_H
 #define GREETER_SERVER_H
 
+int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id);
+
 // Logic and data behind the server's behavior.
 class GreeterServiceImpl final : public Greeter::Service {
 
@@ -62,7 +64,7 @@ class GreeterServiceImpl final : public Greeter::Service {
     else{
       std::cout << "Server is not tail, forward client request" << std::endl;
       //forward client request
-      if(GreeterClient::RunClient(server_node, command, node_a_id, node_b_id) == 0){
+      if(RunClient(server_node, command, node_a_id, node_b_id) == 0){
         //when client request returns successfully, server sends ack
         return Status::OK;
       }
