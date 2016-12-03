@@ -11,6 +11,7 @@
 
 #include "helloworld.grpc.pb.h"
 #include "stdint.h"
+#include "stdlib.h"
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -54,10 +55,25 @@ class GreeterServiceImpl final : public Greeter::Service {
 };
 
 
-void RunServer() {
-  std::string server_address("0.0.0.0:50051");
+void RunServer(int rpc_port) {
+  // std::string server_address("0.0.0.0:50051");
+  std::string server_address;
   GreeterServiceImpl service;
+  if(rpc_port == 8080){
+    server_address = "104.198.165.44:8080";
+  }
+  else if(rpc_port == 8090){
+    server_address = "104.154.198.82:8090";
+  }
+  else if(rpc_port == 9000){
+    server_address = "104.154.145.208:9000";
 
+  }
+  else{
+    std::cout << "Failed to start grpc server." << std::endl;
+    return;
+  }
+  
   ServerBuilder builder;
   // Listen on the given address without any authentication mechanism.
   builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());

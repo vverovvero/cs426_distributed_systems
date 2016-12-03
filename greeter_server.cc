@@ -40,6 +40,7 @@
 #include "greeter_server.h"
 #include "helloworld.grpc.pb.h"
 #include "stdint.h"
+#include "stdlib.h"
 
 using grpc::Server;
 using grpc::ServerBuilder;
@@ -70,7 +71,9 @@ using helloworld::Greeter;
 // }
 
 int main(int argc, char** argv) {
-  RunServer();
-
+  if(argc > 1){
+  	RunServer(atoi(argv[1]));
+  }
+  
   return 0;
 }
