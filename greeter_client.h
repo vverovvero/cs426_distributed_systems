@@ -15,7 +15,8 @@
 #include "graph.h"
 #include "globals.h"
 
-// Graph graph;
+int test = 666;
+Graph graph; //global graph
 
 using grpc::Channel;
 using grpc::ClientContext;
