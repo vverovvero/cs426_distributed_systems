@@ -38,7 +38,7 @@
 #include <grpc++/grpc++.h>
 
 #include "graph.h"
-#include "globals.h"
+// #include "globals.h"
 
 #include "greeter_server.h"
 #include "helloworld.grpc.pb.h"

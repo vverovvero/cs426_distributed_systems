@@ -81,8 +81,7 @@ class GreeterClient {
 
 //based on node's server rpc_port, 
 //client has hardcoded node to send to
-// int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id);
-// int main(int argc, char** argv);
+
 
 
 int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){

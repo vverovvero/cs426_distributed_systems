@@ -140,6 +140,5 @@ void RunServer(unsigned int rpc_port) {
 
 
 
-// int main(int argc, char** argv);
 
 #endif
