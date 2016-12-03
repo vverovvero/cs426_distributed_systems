@@ -141,6 +141,7 @@ int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint6
 
   //after receiving ack, middle men clients can modify graph
   std::cout << "Client modifies the graph here" << std::endl;
+  graph.hi();
   	if(command == 1){
 		std::cout << "Graph add node!" << std::endl;
     	graph.add_node(node_a_id);
