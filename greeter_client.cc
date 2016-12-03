@@ -49,35 +49,6 @@ using helloworld::HelloReply;
 using helloworld::Greeter;
 
 
-// void RunServer(unsigned int rpc_port);
-
-// Assambles the client's payload, sends it and presents the response back
-// from the server.
-// std::string GreeterClient::SayHello(const std::string& user) {
-//   // Data we are sending to the server.
-//   HelloRequest request;
-//   request.set_name(user);
-
-//   // Container for the data we expect from the server.
-//   HelloReply reply;
-
-//   // Context for the client. It could be used to convey extra information to
-//   // the server and/or tweak certain RPC behaviors.
-//   ClientContext context;
-
-//   // The actual RPC.
-//   Status status = stub_->SayHello(&context, request, &reply);
-
-//   // Act upon its status.
-//   if (status.ok()) {
-//     return reply.message();
-//   } else {
-//     std::cout << status.error_code() << ": " << status.error_message()
-//               << std::endl;
-//     return "RPC failed";
-//   }
-// }
-
 std::string GreeterClient::SayHelloAgain(uint64_t command, uint64_t node_a_id, uint64_t node_b_id, uint64_t server_node, uint64_t client_node) {
   //Follows the same pattern as SayHello.
   HelloRequest request;
@@ -124,7 +95,7 @@ std::string GreeterClient::SayHelloAgain(uint64_t command, uint64_t node_a_id, u
 }
 
 //rpc_port is that of the client
-int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){
+int GreeterClient::RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){
   std::string ipaddress;
   uint64_t server_node = 0;
   uint64_t client_node = 0;

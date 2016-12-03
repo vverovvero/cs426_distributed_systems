@@ -27,6 +27,9 @@ class GreeterClient {
   GreeterClient(std::shared_ptr<Channel> channel)
   	: stub_(Greeter::NewStub(channel)) {}
   std::string SayHelloAgain(uint64_t command, uint64_t node_a_id, uint64_t node_b_id, uint64_t server_node, uint64_t client_node); 
+
+  int GreeterClient::RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id);
+  
  private:
   std::unique_ptr<Greeter::Stub> stub_;
 };
@@ -34,7 +37,7 @@ class GreeterClient {
 
 //based on node's server rpc_port, 
 //client has hardcoded node to send to
-int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id);
+// int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint64_t node_b_id);
 // int main(int argc, char** argv);
 
 #endif
