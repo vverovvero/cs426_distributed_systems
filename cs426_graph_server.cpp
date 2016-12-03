@@ -9,6 +9,7 @@
 #include "mongoose.h"
 #include "api.h"
 #include "graph.h"
+#include "globals.h"
 
 #include <stdio.h>
 #include <stdarg.h>
