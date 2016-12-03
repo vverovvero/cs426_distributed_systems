@@ -42,7 +42,7 @@
 #include "stdint.h"
 
 #include "graph.h"
-// #include "globals.h"
+#include "globals.h"
 
 using grpc::Channel;
 using grpc::ClientContext;
