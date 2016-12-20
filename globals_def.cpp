@@ -6,3 +6,4 @@
 #include "globals.h"
 
 Graph graph;  /* Definition of the variable */
+std::mutex partition_mtx;
