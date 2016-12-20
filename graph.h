@@ -40,7 +40,11 @@ class Graph
 		map<uint64_t, set<uint64_t> > nodes;
 		std::mutex graph_mtx; /*Mutex for graph lock*/
 		bool is_locked = false; /* locked state of graph_mtx, init unlocked */
+		unsigned int partition_no = 0;
+		unsigned int partition_total = 0;
 	public:
+		void init_partition_info(unsigned int partition_no, unsigned int partition_info);
+
 		int add_node(uint64_t node_id);
 		int add_edge(uint64_t node_a_id, uint64_t node_b_id);
 		int remove_edge(uint64_t node_a_id, uint64_t node_b_id);

@@ -32,6 +32,27 @@ using std::set;
 // 2 is extra option
 
 //////////////////////////////////////////////////////////////////////
+//init functions
+void Graph::init_partition_info(unsigned int partition_no, unsigned int partition_total){
+	//Lock if most external scope
+	int memory_bit = 0;
+	if(!(this->is_locked)){
+		this->graph_mtx.lock();
+		this->is_locked = true;
+		memory_bit = 1;
+	}
+	//Update private variables
+	this->partition_no = partition_no;
+	this->partition_total = partition_total;
+
+	//Unlock if most external scope
+	if(memory_bit){
+		this->graph_mtx.unlock();
+		this->is_locked = false;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////
 //Helper functions
 
 //prints contents of a set
