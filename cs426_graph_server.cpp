@@ -348,8 +348,8 @@ int main(int argc, char *argv[]) {
     // printf("rpc_server_port: %s\n", rpc_server_port);;
     printf("ipaddress_rpc_port: %s\n", ipaddress_rpc_port);
 
-    for(int j=1; j<10; j++){
-      printf("%d\t%s", j, partition[j]);
+    for(int j=1; j=<partition_total; j++){
+      printf("%d\t%s\n", j, partition[j]);
     }
 
     return 0;
