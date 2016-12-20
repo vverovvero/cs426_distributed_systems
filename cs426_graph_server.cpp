@@ -41,26 +41,18 @@ using std::pair;
 using std::vector;
 using std::thread;
 
-// static const char *s_http_port = "8000";
 static struct mg_serve_http_opts s_http_server_opts;
 
-//static int s_sig_num = 0;
-//static void *s_db_handle = NULL;
-//static const char *s_db_path = "api_server.db";
 static const struct mg_str s_post_method = MG_STR("POST");
 static const struct mg_str key_add_node = MG_STR("/add_node");
 static const struct mg_str key_add_edge = MG_STR("/add_edge");
-static const struct mg_str key_remove_node = MG_STR("/remove_node");
 static const struct mg_str key_remove_edge = MG_STR("/remove_edge");
 static const struct mg_str key_get_node = MG_STR("/get_node");
 static const struct mg_str key_get_edge = MG_STR("/get_edge");
 static const struct mg_str key_get_neighbors = MG_STR("/get_neighbors");
-static const struct mg_str key_shortest_path = MG_STR("/shortest_path");
 
 static const vector<uint64_t> EmptyVector; //if no node id's found
 
-// int test = 666;
-// Graph graph; //global graph
 static const char *s_http_port = "666"; //global port
 unsigned int ipaddress = 666; //global ipaddress (for RPC)
 
@@ -199,22 +191,6 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
               error = 1;
             }
           }
-          else if(is_equal(&key, &key_remove_node)){
-            // print_flush("KEY was remove_node");
-            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
-            if(result.first == 1) {
-              //check ipaddress port
-              if(ipaddress == 8080){
-                //client sends rpc request
-                if(RunClient(8080, 3, result.second[0], 0) == 0){
-                  event_remove_node(&graph, nc, result.second[0]);
-                }
-              }              
-            }
-            else {
-              error = 1;
-            }
-          }
           else if(is_equal(&key, &key_remove_edge)){
             // print_flush("KEY was remove_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
@@ -256,16 +232,6 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
               event_get_neighbors(&graph, nc, result.second[0]);
-            }
-            else {
-              error = 1;
-            }
-          }
-          else if(is_equal(&key, &key_shortest_path)){
-            // print_flush("KEY was shortest_path");
-            pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
-            if(result.first == 1) {
-              event_shortest_path(&graph, nc, result.second[0], result.second[1]);
             }
             else {
               error = 1;
@@ -314,8 +280,6 @@ void serve_rpc(){
   // RunThreadedServer();
   RunServer(ipaddress);
 }
-
-
 
 
 
