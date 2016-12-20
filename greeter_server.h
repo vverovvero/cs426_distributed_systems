@@ -57,7 +57,7 @@ class GreeterServiceImpl final : public Greeter::Service {
       }
       else if(command == 3){
           // std::cout << "Graph remove node!" << std::endl;
-        graph.remove_node(node_a_id);
+        // graph.remove_node(node_a_id);
       }
       else if (command == 4){
           // std::cout << "Graph remove edge!" << std::endl;

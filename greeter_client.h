@@ -112,7 +112,7 @@ int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint6
     }
     else if(command == 3){
       	// std::cout << "Graph remove node!" << std::endl;
-    	graph.remove_node(node_a_id);
+    	// graph.remove_node(node_a_id);
     }
     else if (command == 4){
       	// std::cout << "Graph remove edge!" << std::endl;
@@ -153,7 +153,7 @@ int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint6
     }
     else if(command == 3){
       	// std::cout << "Graph remove node!" << std::endl;
-    	graph.remove_node(node_a_id);
+    	// graph.remove_node(node_a_id);
     }
     else if (command == 4){
       	// std::cout << "Graph remove edge!" << std::endl;
