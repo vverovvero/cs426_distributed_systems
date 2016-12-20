@@ -338,7 +338,7 @@ int main(int argc, char *argv[]) {
 
     ////////////////////////////////////////////////
     //Launch a thread for the rpc server
-    thread t1(serve_rpc);
+    // thread t1(serve_rpc); //commented out for now
 
     ////////////////////////////////////////////////
     // Set up the http server
