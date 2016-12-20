@@ -106,7 +106,7 @@ int Graph::get_edge(uint64_t node_a_id, uint64_t node_b_id){
 //return 1 if success, 0 if node already exists
 int Graph::add_node(uint64_t node_id){
 	//Lock_guard before preceding
-	// std::lock_guard<std::mutex> lock (this->graph_mtx);
+	std::lock_guard<std::mutex> lock (this->graph_mtx);
 	// std::cout << "Client would like to add node: " << node_id << std::endl;
 	if(get_node(node_id) == 0){
 		//Node was not found, create it

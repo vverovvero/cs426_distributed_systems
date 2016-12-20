@@ -171,13 +171,14 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             //Call wrapper, which edits graph and returns HTTP reply
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 1, "node_id");
             if(result.first == 1) {
-              //check ipaddress port
-              if(ipaddress == 8080){
-                //client sends rpc request
-                if(RunClient(8080, 1, result.second[0], 0) == 0){
-                  event_add_node(&graph, nc, result.second[0]);
-                }
-              }
+              // //check ipaddress port
+              // if(ipaddress == 8080){
+              //   //client sends rpc request
+              //   if(RunClient(8080, 1, result.second[0], 0) == 0){
+              //     event_add_node(&graph, nc, result.second[0]);
+              //   }
+              // }
+              event_add_node(&graph, nc, result.second[0]);
             }
             else {
               error = 1;
@@ -187,13 +188,14 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             // print_flush("KEY was add_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
-              //check ipaddress port
-              if(ipaddress == 8080){
-                //client sends rpc request
-                if(RunClient(8080, 2, result.second[0], result.second[1]) == 0){
-                  event_add_edge(&graph, nc, result.second[0], result.second[1]);
-                }
-              }
+              // //check ipaddress port
+              // if(ipaddress == 8080){
+              //   //client sends rpc request
+              //   if(RunClient(8080, 2, result.second[0], result.second[1]) == 0){
+              //     event_add_edge(&graph, nc, result.second[0], result.second[1]);
+              //   }
+              // }
+              event_add_edge(&graph, nc, result.second[0], result.second[1]);
             }
             else {
               error = 1;
@@ -203,13 +205,14 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             // print_flush("KEY was remove_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
-              //check ipaddress port
-              if(ipaddress == 8080){
-                //client sends rpc request
-                if(RunClient(8080, 4, result.second[0], result.second[1]) == 0){
-                  event_remove_edge(&graph, nc, result.second[0], result.second[1]);
-                }
-              }              
+              // //check ipaddress port
+              // if(ipaddress == 8080){
+              //   //client sends rpc request
+              //   if(RunClient(8080, 4, result.second[0], result.second[1]) == 0){
+              //     event_remove_edge(&graph, nc, result.second[0], result.second[1]);
+              //   }
+              // }  
+              event_remove_edge(&graph, nc, result.second[0], result.second[1]);            
             }
             else {
               error = 1;
