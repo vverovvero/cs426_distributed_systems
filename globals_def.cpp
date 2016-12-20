@@ -5,4 +5,4 @@
 #include "graph.h"
 #include "globals.h"
 
-Graph graph;  /* Definition of the variable */
+Graph graph();  /* Definition of the variable */

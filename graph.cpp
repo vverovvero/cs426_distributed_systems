@@ -32,6 +32,13 @@ using std::set;
 // 2 is extra option
 
 //////////////////////////////////////////////////////////////////////
+//Initialization
+Graph::Graph (void) {
+	//init the unique lock
+	this->graph_lock( this->graph_mtx, std::defer_lock);
+}
+
+//////////////////////////////////////////////////////////////////////
 //Helper functions
 
 //prints contents of a set
