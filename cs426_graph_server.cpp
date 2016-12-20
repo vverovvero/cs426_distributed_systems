@@ -319,10 +319,12 @@ int main(int argc, char *argv[]) {
            //Handle regular arguments
           if(optind == 1){
             s_http_port = argv[optind];
+            optind++;
           }
           //Grab the rest of the partitions
-          partition_total++;
-          optind++;
+          else{
+            partition_total++;
+          }  
         }
         break;
       }
@@ -335,6 +337,8 @@ int main(int argc, char *argv[]) {
     // printf("ipaddress: %s\n", ipaddress);
     // printf("rpc_server_port: %s\n", rpc_server_port);;
     printf("ipaddress_rpc_port: %s\n", ipaddress_rpc_port);
+
+    return 0;
 
     ////////////////////////////////////////////////
     //Launch a thread for the rpc server
