@@ -36,12 +36,22 @@ using std::set;
 
 //prints contents of a set
 void Graph::print_set(set<uint64_t> neighbors){
-	//Lock_guard before preceding
-	// std::lock_guard<std::mutex> lock (this->graph_mtx);
+	//Lock if most external scope
+	int memory_bit = 0;
+	if(!(this->is_locked)){
+		this->graph_mtx.lock();
+		this->is_locked = true;
+		memory_bit = 1;
+	}
 	std::cout << "Printing set:" << std::endl;
 	for(set<uint64_t>::iterator i = neighbors.begin(); i != neighbors.end(); i++){
 		uint64_t neighbor = *i;
 		std::cout << neighbor << std::endl;
+	}
+	//Unlock if most external scope
+	if(memory_bit){
+		this->graph_mtx.unlock();
+		this->is_locked = false;
 	}
 }
 
@@ -49,8 +59,13 @@ void Graph::print_set(set<uint64_t> neighbors){
 //return 1 if node is in the graph
 //return 0 if node is not in the graph
 int Graph::get_node(uint64_t node_id){
-	//Lock_guard before preceding
-	// std::lock_guard<std::mutex> lock (this->graph_mtx);
+	//Lock if most external scope
+	int memory_bit = 0;
+	if(!(this->is_locked)){
+		this->graph_mtx.lock();
+		this->is_locked = true;
+		memory_bit = 1;
+	}
 	// std::cout << "Getting node: " << node_id << std::endl;
 	map<uint64_t, set<uint64_t> >::iterator it;
 	it = this->nodes.find(node_id);
@@ -61,6 +76,11 @@ int Graph::get_node(uint64_t node_id){
 	}
 	//Node was not found
 	// std::cout << "Node was not found" << std::endl;
+	//Unlock if most external scope
+	if(memory_bit){
+		this->graph_mtx.unlock();
+		this->is_locked = false;
+	}
 	return 0;
 }
 

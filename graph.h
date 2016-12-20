@@ -39,7 +39,7 @@ class Graph
 	private:
 		map<uint64_t, set<uint64_t> > nodes;
 		std::mutex graph_mtx; /*Mutex for graph lock*/
-		bool is_locked = false; /* locked state of graph_mtx */
+		bool is_locked = false; /* locked state of graph_mtx, init unlocked */
 	public:
 		int add_node(uint64_t node_id);
 		int add_edge(uint64_t node_a_id, uint64_t node_b_id);
