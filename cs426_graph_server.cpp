@@ -53,8 +53,12 @@ static const struct mg_str key_get_neighbors = MG_STR("/get_neighbors");
 
 static const vector<uint64_t> EmptyVector; //if no node id's found
 
-static const char *s_http_port = "666"; //global port
-unsigned int ipaddress = 666; //global ipaddress (for RPC)
+static const char *s_http_port = "666"; //global http port
+// static const char *ipaddress = "1000000"; //global ipaddress (for RPC)
+// static const char *rpc_server_port = "667"; //global rpc port
+static const char *ipaddress_rpc_port = "100000.667"; //for running the rpc server
+unsigned int partition_total = 0;
+unsigned int partition_no = 0;
 
 //////// my helper print functions////////////
 void print_flush(char * string){
@@ -285,7 +289,7 @@ void serve_rpc(){
 
 /////////////////////////////////////////
 int main(int argc, char *argv[]) {
-  //Need at least port and devfile
+  //Need at least executable and port
   if(argc >= 2){
     //Fetch all the arguments
     //If format flag, then the format option flag must come first
@@ -293,13 +297,18 @@ int main(int argc, char *argv[]) {
     int b_flag = 0;
     // static const char *s_http_port;
     while(optind < argc){
-      if((c = getopt(argc, argv, "b:")) != -1){
+      if((c = getopt(argc, argv, "p:l:")) != -1){
         switch (c) {
-          case 'b':
-            //set format flag
-            // printf("Found format flag\n");
-            b_flag = 1;
-            ipaddress = atoi(optarg);
+          case 'p':
+            //GET PART NUMBER
+            partition_no = atoi(optarg);
+            break;
+          case 'l':
+            //GET First item in partition list
+            partition_total++;
+            if(partition_no == partition_total){
+              ipaddress_rpc_port = optarg;
+            }
             break;
           default:
             break;
@@ -308,7 +317,11 @@ int main(int argc, char *argv[]) {
       else{
         while(optind < argc){
            //Handle regular arguments
-          s_http_port = argv[optind];
+          if(optind == 1){
+            s_http_port = argv[optind];
+          }
+          //Grab the rest of the partitions
+          partition_total++;
           optind++;
         }
         break;
@@ -316,8 +329,12 @@ int main(int argc, char *argv[]) {
     }
       
     //Sanity check the arguments
-    printf("port: %s\n", s_http_port);
-    printf("ipaddress (from -b): %u\n", ipaddress);
+    printf("s_http_port: %s\n", s_http_port);
+    printf("partition_no: %u\n", partition_no);
+    printf("partition_total: %u\n", partition_total);
+    // printf("ipaddress: %s\n", ipaddress);
+    // printf("rpc_server_port: %s\n", rpc_server_port);;
+    printf("ipaddress_rpc_port: %s\n", ipaddress_rpc_port);
 
     ////////////////////////////////////////////////
     //Launch a thread for the rpc server
