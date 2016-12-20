@@ -1,9 +1,23 @@
 Lab4, Wendy Chen															12/2016
 
 
-Lab3, Wendy Chen															12/2016
+We expect partition number to start at 1.
 
-Implementation details:
+Can hold up to 9 partitions.  We expect testing to happen with 3.
+The partition array always contains nothing in the 0th slot.
+rpc_server_port addresses are added to the array by the partition number.
+
+We expect the command line invocation to always be of form:
+$ ./cs426_graph_server <graph_server_port> -p <partnum> -l <partlist> 
+
+Example from spec:
+$ ./cs426_graph_server 8000 -p 1 -l 10.0.0.1:1111 10.0.0.2:2222 10.0.0.3:1111  
+
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+Implementation details from lab3:
 //Installed grpc on Linux VM hosted on Google Cloud.
 //Making the proto file only works assuming grpc has been correctly installed.
 //grpc has dependendencies beyond these files in the lab.  Grpc has been installed

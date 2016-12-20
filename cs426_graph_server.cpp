@@ -60,6 +60,10 @@ static const char *ipaddress_rpc_port = "100000.667"; //for running the rpc serv
 unsigned int partition_total = 0;
 unsigned int partition_no = 0;
 
+//the 0th slot is always empty (to keep it simpler)
+char partitions[10]; //array of 9 to hold up to 10 partitions
+
+
 //////// my helper print functions////////////
 void print_flush(char * string){
   printf("%s\n", string);
@@ -290,7 +294,7 @@ void serve_rpc(){
 /////////////////////////////////////////
 int main(int argc, char *argv[]) {
   //Need at least executable and port
-  if(argc >= 2){
+  if((argc >= 2) && (argc < 16)){
     //Fetch all the arguments
     //If format flag, then the format option flag must come first
     int c;
@@ -309,6 +313,7 @@ int main(int argc, char *argv[]) {
             if(partition_no == partition_total){
               ipaddress_rpc_port = optarg;
             }
+            partition[partition_total] = optarg;
             break;
           default:
             break;
@@ -327,6 +332,7 @@ int main(int argc, char *argv[]) {
             if(partition_no == partition_total){
               ipaddress_rpc_port = argv[optind];
             }
+            partition[partition_total] = argv[optind];
             optind++;
           }  
         }
@@ -341,6 +347,10 @@ int main(int argc, char *argv[]) {
     // printf("ipaddress: %s\n", ipaddress);
     // printf("rpc_server_port: %s\n", rpc_server_port);;
     printf("ipaddress_rpc_port: %s\n", ipaddress_rpc_port);
+
+    for(int j=1; j<10; j++){
+      printf("%d\t%s", j, partition[j]);
+    }
 
     return 0;
 
