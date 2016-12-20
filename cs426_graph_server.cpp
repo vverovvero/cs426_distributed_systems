@@ -317,7 +317,7 @@ int main(int argc, char *argv[]) {
       else{
         while(optind < argc){
            //Handle regular arguments
-          if(optind == 1){
+          if(optind == 5){
             s_http_port = argv[optind];
             optind++;
           }
