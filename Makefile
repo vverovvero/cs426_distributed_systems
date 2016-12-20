@@ -22,17 +22,17 @@ default: all
 
 all: system-check greeter_client greeter_server cs426_graph_server
 
-greeter_client: helloworld.pb.o helloworld.grpc.pb.o greeter_client.o globals_def.o
+greeter_client: helloworld.pb.o helloworld.grpc.pb.o greeter_client.o globals_def.o graph.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
 globals_def.o: globals_def.cpp
 
-greeter_client.o: greeter_client.cc graph.cpp globals_def.cpp
+greeter_client.o: graph.cpp globals_def.cpp greeter_client.cc
 
-greeter_server: helloworld.pb.o helloworld.grpc.pb.o greeter_server.o globals_def.o
+greeter_server: helloworld.pb.o helloworld.grpc.pb.o greeter_server.o globals_def.o graph.o
 	$(CXX) $^ $(LDFLAGS) -o $@
 
-greeter_server.o: greeter_server.cc graph.cpp globals_def.cpp
+greeter_server.o:  graph.cpp globals_def.cpp greeter_server.cc
 
 cs426_graph_server: mongoose.o api.o graph.o helloworld.pb.o helloworld.grpc.pb.o cs426_graph_server.o globals_def.o
 	$(CXX) $^ $(LDFLAGS) -o $@
