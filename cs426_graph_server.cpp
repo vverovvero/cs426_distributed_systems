@@ -324,6 +324,7 @@ int main(int argc, char *argv[]) {
           //Grab the rest of the partitions
           else{
             partition_total++;
+            optind++;
           }  
         }
         break;
