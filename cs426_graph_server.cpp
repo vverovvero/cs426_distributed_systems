@@ -352,8 +352,6 @@ int main(int argc, char *argv[]) {
       printf("%d\t%s\n", j, partition[j]);
     }
 
-    return 0;
-
     ////////////////////////////////////////////////
     //Launch a thread for the rpc server
     // thread t1(serve_rpc); //commented out for now

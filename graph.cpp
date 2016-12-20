@@ -36,6 +36,8 @@ using std::set;
 
 //prints contents of a set
 void Graph::print_set(set<uint64_t> neighbors){
+	//Lock_guard before preceding
+	std::lock_guard<std::mutex> lock (this->graph_mtx);
 	std::cout << "Printing set:" << std::endl;
 	for(set<uint64_t>::iterator i = neighbors.begin(); i != neighbors.end(); i++){
 		uint64_t neighbor = *i;
@@ -47,6 +49,8 @@ void Graph::print_set(set<uint64_t> neighbors){
 //return 1 if node is in the graph
 //return 0 if node is not in the graph
 int Graph::get_node(uint64_t node_id){
+	//Lock_guard before preceding
+	std::lock_guard<std::mutex> lock (this->graph_mtx);
 	// std::cout << "Getting node: " << node_id << std::endl;
 	map<uint64_t, set<uint64_t> >::iterator it;
 	it = this->nodes.find(node_id);
@@ -64,6 +68,8 @@ int Graph::get_node(uint64_t node_id){
 //return 0 if edge is not in graph
 //return 2 if at least one of vertices does not exist (or if nodes are same?)
 int Graph::get_edge(uint64_t node_a_id, uint64_t node_b_id){
+	//Lock_guard before preceding
+	std::lock_guard<std::mutex> lock (this->graph_mtx);
 	// std::cout << "Getting edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
 	//are the nodes the same?
 	if(node_a_id == node_b_id){
@@ -99,6 +105,8 @@ int Graph::get_edge(uint64_t node_a_id, uint64_t node_b_id){
 
 //return 1 if success, 0 if node already exists
 int Graph::add_node(uint64_t node_id){
+	//Lock_guard before preceding
+	std::lock_guard<std::mutex> lock (this->graph_mtx);
 	// std::cout << "Client would like to add node: " << node_id << std::endl;
 	if(get_node(node_id) == 0){
 		//Node was not found, create it
@@ -115,6 +123,8 @@ int Graph::add_node(uint64_t node_id){
 //return 1 if success, 0 if edge already exists,
 //2 if node doesn't exist or node_a_id == node_b_id
 int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id){
+	//Lock_guard before preceding
+	std::lock_guard<std::mutex> lock (this->graph_mtx);
 	// std::cout << "Client wants to add edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
 	int found_edge = get_edge(node_a_id, node_b_id);
 	if(found_edge == 2){
@@ -141,6 +151,8 @@ int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id){
 
 //return 1 if success, 0 if edge does not exist
 int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id){
+	//Lock_guard before preceding
+	std::lock_guard<std::mutex> lock (this->graph_mtx);
 	// std::cout << "Client wants to remove edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
 	//does edge exist?  Check neighbors of both nodes
 	int found_edge = get_edge(node_a_id, node_b_id);
@@ -162,6 +174,8 @@ int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id){
 //return (1, set of neighbors) if node exists
 //return (0, empty set) if node doesn't exist
 pair<int, set<uint64_t> > Graph::get_neighbors(uint64_t node_id){
+	//Lock_guard before preceding
+	std::lock_guard<std::mutex> lock (this->graph_mtx);
 	// std::cout << "Client would like to get neighbors of node: " << node_id << std::endl;
 	//first find node
 	int found_node = get_node(node_id);
