@@ -61,7 +61,7 @@ unsigned int partition_total = 0;
 unsigned int partition_no = 0;
 
 //the 0th slot is always empty (to keep it simpler)
-char partition[10]; //array of 9 to hold up to 10 partitions
+char* partition[10]; //array of 9 to hold up to 10 partitions
 
 
 //////// my helper print functions////////////
