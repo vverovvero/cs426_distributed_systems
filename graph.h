@@ -25,6 +25,7 @@
 #include <set>
 #include <algorithm>
 
+#include <mutex>  
 
 using std::pair; 
 using std::map;
@@ -37,6 +38,7 @@ class Graph
 {
 	private:
 		map<uint64_t, set<uint64_t> > nodes;
+		std::mutex graph_mtx; /*Lock on the graph*/
 	public:
 		int add_node(uint64_t node_id);
 		int add_edge(uint64_t node_a_id, uint64_t node_b_id);
