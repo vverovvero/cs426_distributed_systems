@@ -72,6 +72,11 @@ int Graph::get_node(uint64_t node_id){
 	if(it != this->nodes.end()){
 		//Found the node
 		// std::cout << "Found the node " << it->first << std::endl;
+		//Unlock if most external scope
+		if(memory_bit){
+			this->graph_mtx.unlock();
+			this->is_locked = false;
+		}
 		return 1;
 	}
 	//Node was not found
@@ -88,12 +93,22 @@ int Graph::get_node(uint64_t node_id){
 //return 0 if edge is not in graph
 //return 2 if at least one of vertices does not exist (or if nodes are same?)
 int Graph::get_edge(uint64_t node_a_id, uint64_t node_b_id){
-	//Lock_guard before preceding
-	// std::lock_guard<std::mutex> lock (this->graph_mtx);
+	//Lock if most external scope
+	int memory_bit = 0;
+	if(!(this->is_locked)){
+		this->graph_mtx.lock();
+		this->is_locked = true;
+		memory_bit = 1;
+	}
 	// std::cout << "Getting edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
 	//are the nodes the same?
 	if(node_a_id == node_b_id){
 		// std::cout << "Nodes are the same" << std::endl;
+		//Unlock if most external scope
+		if(memory_bit){
+			this->graph_mtx.unlock();
+			this->is_locked = false;
+		}
 		return 2;
 	}
 	//do the nodes exist?
@@ -102,6 +117,11 @@ int Graph::get_edge(uint64_t node_a_id, uint64_t node_b_id){
 	it_b = this->nodes.find(node_b_id);
 	if(it_a == this->nodes.end() || it_b == this->nodes.end()){
 		// std::cout << "One or both nodes do not exist" << std::endl;
+		//Unlock if most external scope
+		if(memory_bit){
+			this->graph_mtx.unlock();
+			this->is_locked = false;
+		}
 		return 2;
 	}
 	//Nodes exist and have unique ids
@@ -115,27 +135,52 @@ int Graph::get_edge(uint64_t node_a_id, uint64_t node_b_id){
 	if(it_a_neighbors != node_a_neighbors.end() && it_b_neighbors != node_b_neighbors.end()){
 		//Edge was found.  Don't add it.
 		// std::cout << "Edge was found (on both nodes)." << std::endl;
+		//Unlock if most external scope
+		if(memory_bit){
+			this->graph_mtx.unlock();
+			this->is_locked = false;
+		}
 		return 1;
 	}
 	
 	//Edge doesn't exist, add it
 	// std::cout << "Edge doesn't exist.  Was not found." << std::endl;
+	//Unlock if most external scope
+	if(memory_bit){
+		this->graph_mtx.unlock();
+		this->is_locked = false;
+	}
 	return 0;
 }
 
 //return 1 if success, 0 if node already exists
 int Graph::add_node(uint64_t node_id){
-	//Lock_guard before preceding
-	// std::lock_guard<std::mutex> lock (this->graph_mtx);
+	//Lock if most external scope
+	int memory_bit = 0;
+	if(!(this->is_locked)){
+		this->graph_mtx.lock();
+		this->is_locked = true;
+		memory_bit = 1;
+	}
 	// std::cout << "Client would like to add node: " << node_id << std::endl;
 	if(get_node(node_id) == 0){
 		//Node was not found, create it
 		// std::cout << "Adding node with id: " << node_id << std::endl;
 		this->nodes.insert(pair<uint64_t, set<uint64_t> >(node_id, EmptySet));
+		//Unlock if most external scope
+		if(memory_bit){
+			this->graph_mtx.unlock();
+			this->is_locked = false;
+		}
 		return 1;
 	}
 	//Node already exists
 	// std::cout << "Cannot add node that already exists" << std::endl;
+	//Unlock if most external scope
+	if(memory_bit){
+		this->graph_mtx.unlock();
+		this->is_locked = false;
+	}
 	return 0;
 
 }
@@ -143,16 +188,31 @@ int Graph::add_node(uint64_t node_id){
 //return 1 if success, 0 if edge already exists,
 //2 if node doesn't exist or node_a_id == node_b_id
 int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id){
-	//Lock_guard before preceding
-	// std::lock_guard<std::mutex> lock (this->graph_mtx);
+	//Lock if most external scope
+	int memory_bit = 0;
+	if(!(this->is_locked)){
+		this->graph_mtx.lock();
+		this->is_locked = true;
+		memory_bit = 1;
+	}
 	// std::cout << "Client wants to add edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
 	int found_edge = get_edge(node_a_id, node_b_id);
 	if(found_edge == 2){
 		// std::cout << "Cannot add edge because node(s) doesn't exist, or is same." << std::endl;
+		//Unlock if most external scope
+		if(memory_bit){
+			this->graph_mtx.unlock();
+			this->is_locked = false;
+		}
 		return 2;
 	}
 	else if(found_edge == 1){
 		// std::cout << "Edge already in graph.  Do not add." << std::endl;
+		//Unlock if most external scope
+		if(memory_bit){
+			this->graph_mtx.unlock();
+			this->is_locked = false;
+		}
 		return 0;
 	}
 	else{
@@ -164,6 +224,11 @@ int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id){
 		set<uint64_t> &node_b_neighbors = it_b->second;
 		node_a_neighbors.insert(node_b_id);
 		node_b_neighbors.insert(node_a_id);
+		//Unlock if most external scope
+		if(memory_bit){
+			this->graph_mtx.unlock();
+			this->is_locked = false;
+		}
 		return 1;
 	}
 }
@@ -171,8 +236,13 @@ int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id){
 
 //return 1 if success, 0 if edge does not exist
 int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id){
-	//Lock_guard before preceding
-	// std::lock_guard<std::mutex> lock (this->graph_mtx);
+	//Lock if most external scope
+	int memory_bit = 0;
+	if(!(this->is_locked)){
+		this->graph_mtx.lock();
+		this->is_locked = true;
+		memory_bit = 1;
+	}
 	// std::cout << "Client wants to remove edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
 	//does edge exist?  Check neighbors of both nodes
 	int found_edge = get_edge(node_a_id, node_b_id);
@@ -182,10 +252,21 @@ int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id){
 		this->nodes[node_a_id].erase(node_b_id);
 		this->nodes[node_b_id].erase(node_a_id);
 
+		//Unlock if most external scope
+		if(memory_bit){
+			this->graph_mtx.unlock();
+			this->is_locked = false;
+		}
+
 		return 1;
 	}
 	//No edge to remove.
 	// std::cout << "No edge to remove." << std::endl;
+	//Unlock if most external scope
+	if(memory_bit){
+		this->graph_mtx.unlock();
+		this->is_locked = false;
+	}
 	return 0;
 }
 
@@ -194,16 +275,31 @@ int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id){
 //return (1, set of neighbors) if node exists
 //return (0, empty set) if node doesn't exist
 pair<int, set<uint64_t> > Graph::get_neighbors(uint64_t node_id){
-	//Lock_guard before preceding
-	// std::lock_guard<std::mutex> lock (this->graph_mtx);
+	//Lock if most external scope
+	int memory_bit = 0;
+	if(!(this->is_locked)){
+		this->graph_mtx.lock();
+		this->is_locked = true;
+		memory_bit = 1;
+	}
 	// std::cout << "Client would like to get neighbors of node: " << node_id << std::endl;
 	//first find node
 	int found_node = get_node(node_id);
 	if(found_node == 1){
 		//Node found.  Return the set of neighbors.
+		//Unlock if most external scope
+		if(memory_bit){
+			this->graph_mtx.unlock();
+			this->is_locked = false;
+		}
 		return pair<int, set<uint64_t> > (1, this->nodes[node_id]);
 	}
 	// std::cout << "Node doesn't exist.  No neighbors to fetch." << std::endl;
+	//Unlock if most external scope
+	if(memory_bit){
+		this->graph_mtx.unlock();
+		this->is_locked = false;
+	}
 	return pair<int, set<uint64_t> > (0, EmptySet); //is this correct?
 }
 
