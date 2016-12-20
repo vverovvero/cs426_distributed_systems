@@ -325,7 +325,7 @@ int main(int argc, char *argv[]) {
           else{
             partition_total++;
             if(partition_no == partition_total){
-              ipaddress_rpc_port = optarg;
+              ipaddress_rpc_port = argv[optind];
             }
             optind++;
           }  
