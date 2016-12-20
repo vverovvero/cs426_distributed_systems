@@ -360,7 +360,7 @@ int main(int argc, char *argv[]) {
     }
     mg_mgr_free(&mgr);
     //join the thread
-    t1.join();
+    // t1.join(); //commented out for now
   }
   else{
     std::cout << "Specify port by : './cs426_graph_server <optional -b ipaddress> <port> '" << std::endl;
