@@ -54,7 +54,7 @@ static const struct mg_str key_get_neighbors = MG_STR("/get_neighbors");
 static const vector<uint64_t> EmptyVector; //if no node id's found
 
 static const char *s_http_port = "666"; //global http port
-// static const char *ipaddress = "1000000"; //global ipaddress (for RPC)
+static const char *ipaddress = "1000000"; //global ipaddress (for RPC) //don't want this anymore
 // static const char *rpc_server_port = "667"; //global rpc port
 static const char *ipaddress_rpc_port = "100000.667"; //for running the rpc server
 unsigned int partition_total = 0;
