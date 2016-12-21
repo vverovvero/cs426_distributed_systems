@@ -137,7 +137,7 @@ int Graph::get_edge(uint64_t node_a_id, uint64_t node_b_id){
 	it_a = this->nodes.find(node_a_id);
 	it_b = this->nodes.find(node_b_id);
 	if(((it_a == this->nodes.end()) &&  (((node_a_id % this->partition_total) + 1) == this->partition_no) ) || 
-		((it_b == this->nodes.end()) && (((node_b_id % this->partition_total) + 1) == this->partition_no) ){
+		((it_b == this->nodes.end()) && (((node_b_id % this->partition_total) + 1) == this->partition_no) ) ){
 		// std::cout << "One or both nodes do not exist" << std::endl;
 		//Unlock if most external scope
 		if(memory_bit){
