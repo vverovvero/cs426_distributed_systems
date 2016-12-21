@@ -64,12 +64,12 @@ int main(int argc, char** argv) {
 
   if(argc == 5){
     std::cout << "greeter_client has enough arguments\n" << std::cout;
-    unsigned int partition_sent = (unsigned int) atoi(argv[1]);
+    char * rpc_address = argv[1];
     unsigned int command = (unsigned int) atoi(argv[2]);
     unsigned int node_a_id = (unsigned int) atoi(argv[3]);
     unsigned int node_b_id = (unsigned int) atoi(argv[4]);
 
-    printf("partition_sent: %u\n", partition_sent);
+    printf("rpc_address: %s\n", rpc_address);
     printf("command: %u\n", command);
     printf("node_a_id: %u\n", node_a_id);
     printf("node_b_id: %u\n", node_b_id);
