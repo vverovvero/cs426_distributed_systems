@@ -60,7 +60,7 @@ class GreeterClient {
 //Send request to partition number
 int RunClient(unsigned int partition_sent, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){
   //testing
-  std::string ipaddress("104.198.165.44:8080");
+  std::string ipaddress("0.0.0.0:8080");
 
   // printf("RunClient received address for partition %d, %s\n", partition_sent, partition[partition_sent]);
   // std::string ipaddress(partition[partition_sent]);
