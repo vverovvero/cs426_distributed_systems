@@ -66,7 +66,7 @@ class GreeterServiceImpl final : public Greeter::Service {
         }
       }
 
-      reply->set_node_has_neighbor(has_neighbor);
+      reply->set_has_neighbor(has_neighbor);
       printf("server side, has_neighbor: %u\n", has_neighbor);
     }
 
