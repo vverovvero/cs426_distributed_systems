@@ -86,6 +86,7 @@ class GreeterServiceImpl final : public Greeter::Service {
     }
 
     return Status::OK;
+  }
 
 };
 
