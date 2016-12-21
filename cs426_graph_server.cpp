@@ -195,7 +195,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
               unsigned int higher_partition;
               (partition_a_no > partition_b_no) ? (higher_partition = partition_a_no) : (higher_partition = partition_b_no);
 
-              RunClient(partition[partition_higher], 2, node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
+              RunClient(partition[higher_partition], 2, node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
 
               printf("From http server side, node_a_id %u existence %u\n", node_a_id, node_a_exists);
               printf("From http server side, node_b_id %u existence %u\n", node_b_id, node_b_exists);
@@ -233,7 +233,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
               unsigned int higher_partition;
               (partition_a_no > partition_b_no) ? (higher_partition = partition_a_no) : (higher_partition = partition_b_no);
 
-              RunClient(partition[partition_higher], 3, node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
+              RunClient(partition[higher_partition], 3, node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
 
               printf("From http server side, node_a_id %u existence %u\n", node_a_id, node_a_exists);
               printf("From http server side, node_b_id %u existence %u\n", node_b_id, node_b_exists);
