@@ -57,7 +57,7 @@ class GreeterServiceImpl final : public Greeter::Service {
         pair<int, set<uint64_t> > result = graph.get_neighbors(node_a_id);
         if(result.first == 1){
           set<uint64_t> neighbors = result.second;
-          sstd::cout << "Found neighbors of: " << node_a_id << ": " << neighbors << server_address << std::endl;
+          sstd::cout << "Found neighbors of: " << node_a_id << ": " << neighbors  << std::endl;
           //Look through neighbors
           set<uint64_t>::iterator it;
           it = neighbors.find(node_b_id);
