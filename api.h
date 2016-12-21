@@ -26,8 +26,8 @@ void emit_json_body(struct mg_connection *nc, const char *buf, const int size);
 void emit_json_end(struct mg_connection *nc);
 
 void event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id);
-void event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id);
-void event_remove_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id);
+void event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists);
+void event_remove_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists);
 void event_get_node(Graph *graph, struct mg_connection *nc, uint64_t node_id);
 void event_get_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id);
 void event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_id);
