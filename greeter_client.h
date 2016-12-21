@@ -50,18 +50,18 @@ class GreeterClient {
       if(command == 1){
         unsigned int existence = reply.node_exists();
         unsigned int has_neighbor = reply.has_neighbor();
-        std::vector<unsigned int> result(0, existence, has_neighbor);
+        std::vector<unsigned int> result = {0, existence, has_neighbor};
         return result;
       }
       //for command 2 or 3, always return 0
-      std::vector<unsigned int> result(0, 0, 0);
+      std::vector<unsigned int> result = {0, 0, 0};
 	    return result;
 	  } 
     else {
 	    std::cout << status.error_code() << ": " << status.error_message()
 	              << std::endl;
 
-      std::vector<unsigned int> result(666, 666, 666);
+      std::vector<unsigned int> result = {666, 666, 666};
 	    return result;
 	  }
 	}
