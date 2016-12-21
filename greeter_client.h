@@ -35,8 +35,6 @@ class GreeterClient {
 	  request.set_command(command);
 	  request.set_node_a_id(node_a_id);
 	  request.set_node_b_id(node_b_id);
-	  request.set_server_node(server_node);
-	  request.set_client_node(client_node);
 	  HelloReply reply;
 	  ClientContext context;
 
@@ -60,8 +58,6 @@ class GreeterClient {
 //Send request to partition number
 int RunClient(char * rpc_address, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){
   std::string ipaddress(rpc_address);
-  uint64_t server_node = 32;
-  uint64_t client_node = 45;
 
   GreeterClient greeter(grpc::CreateChannel(
       ipaddress, grpc::InsecureChannelCredentials()));
@@ -69,10 +65,12 @@ int RunClient(char * rpc_address, uint64_t command, uint64_t node_a_id, uint64_t
   std::string reply = greeter.SayHelloAgain(command, node_a_id, node_b_id, server_node, client_node);
   std::cout << "Greeter received: " << reply << std::endl;
 
-  // //after receiving ack, ...
-  // if(command == 1){
-  //   //send appropriate response for get_node(node_a_id)
-  // }
+  //after receiving ack, ...
+  if(command == 1){
+    //if client asked for node existence
+    unsigned int existence = reply->node_exists();
+    printf("get_node for %u return %u\n", node_a_id, existence);
+  }
   // else if(command == 2){
   //   //send response for add_edge(node_a_id, node_b_id)
   // }

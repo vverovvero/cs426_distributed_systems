@@ -79,6 +79,7 @@ void Graph::print_set(set<uint64_t> neighbors){
 ////////////////////////////////////////////////////////////////////////
 //return 1 if node is in the graph
 //return 0 if node is not in the graph
+//return 2 if partition error
 int Graph::get_node(uint64_t node_id){
 	//Lock if most external scope
 	int memory_bit = 0;

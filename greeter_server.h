@@ -39,8 +39,13 @@ class GreeterServiceImpl final : public Greeter::Service {
     uint64_t command = request->command();
     uint64_t node_a_id = request->node_a_id();
     uint64_t node_b_id = request->node_b_id();
-    uint64_t server_node = request->server_node();
-    uint64_t client_node = request->client_node();
+
+    //Server always executes what client asks for
+    if(command == 1){
+      //Check node_a existence
+      unsigned int existence = graph.get_node(node_a_id);
+      reply.set_node_exists(existence);
+    }
 
     return Status::OK;
 
