@@ -17,7 +17,7 @@ $ ./cs426_graph_server <graph_server_port> -p <partnum> -l <partlist>
 Example from spec:
 $ ./cs426_graph_server 8000 -p 1 -l 10.0.0.1:1111 10.0.0.2:2222 10.0.0.3:1111  
 
-./cs426_graph_server 7080 -p 1 -l 104.198.165.44:8080 104.154.198.82:8090 104.154.145.208:9000
+./cs426_graph_server 7080 -p 1 -l 104.154.145.208:8080 104.154.198.82:8090 104.197.167.77:9000
 
 
 Locking: introduced a graph_mutex as part of the Graph class defintion.
@@ -51,9 +51,9 @@ In this lab, a chain of vm nodes has been set up:
 
 Chain Position	| VM name	| External IP 	| http port 	| grpc port 	|
 -----------------------------------------------------------------------------
-head			instance-1	104.198.165.44	 7080			  8080
+head			instance-1	104.154.145.208	 7080			  8080
 middle			instance-2  104.154.198.82   7090			  8090
-tail			instance-3  104.154.145.208  8000			  9000
+tail			instance-3  104.197.167.77   8000			  9000
 
 
 On each node, all executables have been made.  If not made, just run 'make clean',
