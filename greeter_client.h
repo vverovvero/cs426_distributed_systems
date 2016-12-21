@@ -42,7 +42,11 @@ class GreeterClient {
 	  Status status = stub_->SayHelloAgain(&context, request, &reply);
 	  if(status.ok()){
 	    //Print out ack
-	    std::string message("Request OK");
+	    // std::string message("Request OK");
+      if(command == 1){
+        unsigned int existence = reply->node_exists();
+        return (int) existence;
+      }
 	    return 0;
 	  } else {
 	    std::cout << status.error_code() << ": " << status.error_message()
@@ -68,8 +72,7 @@ int RunClient(char * rpc_address, uint64_t command, uint64_t node_a_id, uint64_t
   //after receiving ack, ...
   if(command == 1){
     //if client asked for node existence
-    // unsigned int existence = reply.node_exists();
-    // printf("get_node for %lu return %u\n", node_a_id, existence);
+    printf("Client side, for node_id %lu, existence %d\n", node_a_id, existence);
     printf("Returned to Greeter after get_node\n");
   }
   // else if(command == 2){
