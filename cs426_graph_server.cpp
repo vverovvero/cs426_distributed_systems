@@ -334,6 +334,27 @@ int main(int argc, char *argv[]) {
       }
     }
       
+    //Sanitize the address in partition[partition_no]
+    //Sanitize server address
+    const char s[2] = ":";
+    char *token, *last;
+    token = strtok(partition[partition_no], s);
+     
+    /* walk through other tokens */
+    // printf("[D] printing tokens: \n");
+    while( token != NULL ) 
+    {
+      // printf( "[D] %s\n", token );
+
+      last = token;
+      token = strtok(NULL, s);
+    }
+
+    char address[100];
+    strcpy (address,"0.0.0.0:");
+    strcat (address, last);
+    partition[partition_no] = address;
+
     //Sanity check the arguments
     printf("s_http_port: %s\n", s_http_port);
     printf("partition_no: %u\n", partition_no);
