@@ -87,6 +87,17 @@ int Graph::get_node(uint64_t node_id){
 		this->is_locked = true;
 		memory_bit = 1;
 	}
+
+	//Check partition
+	if(((node_id % this->partition_total) + 1) != this->partition_no){
+		//Unlock if most external scope
+		if(memory_bit){
+			this->graph_mtx.unlock();
+			this->is_locked = false;
+		}
+		return 2;
+	}
+	
 	// std::cout << "Getting node: " << node_id << std::endl;
 	map<uint64_t, set<uint64_t> >::iterator it;
 	it = this->nodes.find(node_id);
@@ -221,6 +232,7 @@ int Graph::add_node(uint64_t node_id){
 
 }
 
+//REQUIRES RPC MODIFICATION
 //return 1 if success, 0 if edge already exists,
 //2 if node doesn't exist or node_a_id == node_b_id
 //add edge for the node if it exists on the partition.  else, rely on RPC to call add_edge on another partition.
@@ -290,6 +302,7 @@ int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id){
 }
 
 
+//REQUIRES RPC MODIFICATION
 //return 1 if success, 0 if edge does not exist
 int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id){
 	//Lock if most external scope

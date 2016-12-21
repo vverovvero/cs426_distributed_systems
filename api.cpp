@@ -73,6 +73,7 @@ void event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	}
 }
 
+//Require RCP modification 
 void event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
 	//Call graph function
 	int result = (*graph).add_edge(node_a_id, node_b_id);
@@ -98,6 +99,8 @@ void event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, 
 	}
 }
 
+
+//REQUIRE RPC MODIFICATION
 void event_remove_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){	
 	//Call graph function
 	int result = (*graph).remove_edge(node_a_id, node_b_id);
@@ -123,18 +126,26 @@ void event_get_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 	int result = (*graph).get_node(node_id);
 
 	//Send HTTP reply
-	emit_json_start(nc, 200);
-	emit_json_header(nc, 200, "OK\n");
-    int size;
-    char buf[1000];
-    if(result == 1){
-    	size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i\n}\n", "node_id", node_id, "in_graph", (long) 1);
-    }
-    else{
-    	size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i\n}\n", "node_id", node_id, "in_graph", (long) 0);
-    }
-    emit_json_body(nc, buf, size);
-    emit_json_end(nc);
+	if(result != 2){
+		emit_json_start(nc, 200);
+		emit_json_header(nc, 200, "OK\n");
+	    int size;
+	    char buf[1000];
+	    if(result == 1){
+	    	size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i\n}\n", "node_id", node_id, "in_graph", (long) 1);
+	    }
+	    else{
+	    	size = json_emit(buf, sizeof(buf), "{\n  s: i,\n  s: i\n}\n", "node_id", node_id, "in_graph", (long) 0);
+	    }
+	    emit_json_body(nc, buf, size);
+	    emit_json_end(nc);
+	}
+	else{
+		emit_json_start(nc, 400);
+		emit_json_header(nc, 400, "Bad Request\n");
+		emit_json_end(nc);
+	}
+
 }
 
 void event_get_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id){
