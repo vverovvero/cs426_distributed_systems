@@ -74,7 +74,7 @@ void event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
 }
 
 //Require RCP modification 
-void event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists){
+void event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists, uint64_t node_a_has_b, uint64_t node_b_has_a){
 	//Call graph function
 	int result = (*graph).add_edge(node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
 
@@ -101,7 +101,7 @@ void event_add_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, 
 
 
 //REQUIRE RPC MODIFICATION
-void event_remove_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists){	
+void event_remove_edge(Graph *graph, struct mg_connection *nc, uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists, uint64_t node_a_has_b, uint64_t node_b_has_a){	
 	//Call graph function
 	int result = (*graph).remove_edge(node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
 
