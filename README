@@ -28,6 +28,12 @@ changed the response if an illegal request is made.
 In lab4check branch, we introduce a 400 Bad Request error if an illegal request
 is made to a partition.
 
+RPC calls:
+Commands: 
+1 - get_node
+2 - add_edge
+3 - remove_edge
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

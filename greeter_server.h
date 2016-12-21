@@ -81,23 +81,9 @@ class GreeterServiceImpl final : public Greeter::Service {
 };
 
 
-void RunServer(unsigned int rpc_port) {
-  // std::string server_address("0.0.0.0:50051");
-  std::string server_address;
+void RunServer(char * rpc_server_port) {
+  std::string server_address(rpc_server_port);
   GreeterServiceImpl service;
-  if(rpc_port == 8080){
-    server_address = "0.0.0.0:8080";
-  }
-  else if(rpc_port == 8090){
-    server_address = "0.0.0.0:8090";
-  }
-  else if(rpc_port == 9000){
-    server_address = "0.0.0.0:9000";
-  }
-  else{
-    std::cout << "Failed to start grpc server." << std::endl;
-    return;
-  }
   
   ServerBuilder builder;
   // Listen on the given address without any authentication mechanism.
