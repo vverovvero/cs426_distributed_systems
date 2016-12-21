@@ -29,7 +29,7 @@ class GreeterClient {
  public:
   GreeterClient(std::shared_ptr<Channel> channel)
   	: stub_(Greeter::NewStub(channel)) {}
-  	std::string SayHelloAgain(uint64_t command, uint64_t node_a_id, uint64_t node_b_id) {
+  	int SayHelloAgain(uint64_t command, uint64_t node_a_id, uint64_t node_b_id) {
 	  //Follows the same pattern as SayHello.
 	  HelloRequest request;
 	  request.set_command(command);
@@ -43,11 +43,11 @@ class GreeterClient {
 	  if(status.ok()){
 	    //Print out ack
 	    std::string message("Request OK");
-	    return message;
+	    return 0;
 	  } else {
 	    std::cout << status.error_code() << ": " << status.error_message()
 	              << std::endl;
-	    return "RPC failed";
+	    return -1;
 	  }
 	}
  private:
@@ -62,7 +62,7 @@ int RunClient(char * rpc_address, uint64_t command, uint64_t node_a_id, uint64_t
   GreeterClient greeter(grpc::CreateChannel(
       ipaddress, grpc::InsecureChannelCredentials()));
 
-  std::string reply = greeter.SayHelloAgain(command, node_a_id, node_b_id);
+  int reply = greeter.SayHelloAgain(command, node_a_id, node_b_id);
   std::cout << "Greeter received: " << reply << std::endl;
 
   //after receiving ack, ...
