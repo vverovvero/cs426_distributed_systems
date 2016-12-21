@@ -174,7 +174,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             }
           }
           else if(is_equal(&key, &key_add_edge)){
-            print_flush("KEY was add_edge");
+            // print_flush("KEY was add_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
               // //SEND RPC REQUEST for node existence
@@ -212,7 +212,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             }
           }
           else if(is_equal(&key, &key_remove_edge)){
-            print_flush("KEY was remove_edge");
+            // print_flush("KEY was remove_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
               //SEND RPC REQUEST
