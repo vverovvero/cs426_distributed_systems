@@ -82,6 +82,7 @@ class GreeterServiceImpl final : public Greeter::Service {
 
 
 void RunServer(char * rpc_server_port) {
+  //Sanitize server address
   const char s[2] = ":";
   char *token, *last;
   token = strtok(rpc_server_port, s);
@@ -97,9 +98,8 @@ void RunServer(char * rpc_server_port) {
   }
 
   char address[100];
-  strcpy (address,"0.0.0.0");
+  strcpy (address,"0.0.0.0:");
   strcat (address, last);
-
 
   std::string server_address(address);
   GreeterServiceImpl service;
