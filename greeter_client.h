@@ -44,7 +44,7 @@ class GreeterClient {
 	    //Print out ack
 	    // std::string message("Request OK");
       if(command == 1){
-        unsigned int existence = reply->node_exists();
+        unsigned int existence = reply.node_exists();
         return (int) existence;
       }
 	    return 0;
@@ -72,7 +72,7 @@ int RunClient(char * rpc_address, uint64_t command, uint64_t node_a_id, uint64_t
   //after receiving ack, ...
   if(command == 1){
     //if client asked for node existence
-    printf("Client side, for node_id %lu, existence %d\n", node_a_id, existence);
+    printf("Client side, for node_id %lu, existence %d\n", node_a_id, reply);
     printf("Returned to Greeter after get_node\n");
   }
   // else if(command == 2){
