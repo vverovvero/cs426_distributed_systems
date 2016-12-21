@@ -63,7 +63,7 @@ int main(int argc, char** argv) {
   // std::cout << "Greeter received: " << reply << std::endl;
 
   if(argc == 5){
-    std::cout << "greeter_client has enough arguments" << std::cout;
+    std::cout << "greeter_client has enough arguments\n" << std::cout;
     unsigned int partition_sent = (unsigned int) atoi(argv[1]);
     unsigned int command = (unsigned int) atoi(argv[2]);
     unsigned int node_a_id = (unsigned int) atoi(argv[3]);
