@@ -44,7 +44,7 @@ class GreeterServiceImpl final : public Greeter::Service {
     if(command == 1){
       //Check node_a existence
       unsigned int existence = graph.get_node(node_a_id);
-      reply.set_node_exists(existence);
+      reply->set_node_exists(existence);
       printf("server side, get_node for %lu, existence %u\n", node_a_id, existence);
     }
 
