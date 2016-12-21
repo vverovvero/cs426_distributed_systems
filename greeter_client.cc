@@ -74,7 +74,7 @@ int main(int argc, char** argv) {
     printf("node_a_id: %u\n", node_a_id);
     printf("node_b_id: %u\n", node_b_id);
 
-    RunClient(partition_sent, command, node_a_id, node_b_id);
+    RunClient(rpc_address, command, node_a_id, node_b_id);
   }
 
   return 0;
