@@ -355,7 +355,7 @@ int main(int argc, char *argv[]) {
     strcat (address, last);
     partition[partition_no] = address;
 
-    //Sanity check the arguments
+    //Sanity check the arguments////////////////////
     printf("s_http_port: %s\n", s_http_port);
     printf("partition_no: %u\n", partition_no);
     printf("partition_total: %u\n", partition_total);

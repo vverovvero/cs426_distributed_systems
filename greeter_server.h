@@ -84,26 +84,7 @@ class GreeterServiceImpl final : public Greeter::Service {
 
 
 void RunServer(char * rpc_server_port) {
-  //Sanitize server address
-  const char s[2] = ":";
-  char *token, *last;
-  token = strtok(rpc_server_port, s);
-   
-  /* walk through other tokens */
-  // printf("[D] printing tokens: \n");
-  while( token != NULL ) 
-  {
-    // printf( "[D] %s\n", token );
-
-    last = token;
-    token = strtok(NULL, s);
-  }
-
-  char address[100];
-  strcpy (address,"0.0.0.0:");
-  strcat (address, last);
-
-  std::string server_address(address);
+  std::string server_address(rpc_server_port);
   GreeterServiceImpl service;
   
   ServerBuilder builder;
