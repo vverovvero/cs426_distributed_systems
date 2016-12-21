@@ -68,8 +68,8 @@ int RunClient(char * rpc_address, uint64_t command, uint64_t node_a_id, uint64_t
   //after receiving ack, ...
   if(command == 1){
     //if client asked for node existence
-    unsigned int existence = reply->node_exists();
-    printf("get_node for %d return %d\n", node_a_id, existence);
+    unsigned int existence = reply.node_exists();
+    printf("get_node for %lu return %lu\n", node_a_id, existence);
   }
   // else if(command == 2){
   //   //send response for add_edge(node_a_id, node_b_id)
