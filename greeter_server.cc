@@ -56,7 +56,7 @@ using helloworld::Greeter;
 
 int main(int argc, char** argv) {
   if(argc > 1){
-  	RunServer(atoi(argv[1]));
+  	RunServer(argv[1]);
   }
   
   return 0;
