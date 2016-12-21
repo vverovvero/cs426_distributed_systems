@@ -83,7 +83,7 @@ class GreeterServiceImpl final : public Greeter::Service {
 
 void RunServer(char * rpc_server_port) {
   const char s[2] = ":";
-  char *token;
+  char *token, *last;
   token = strtok(rpc_server_port, s);
    
   /* walk through other tokens */
@@ -92,12 +92,13 @@ void RunServer(char * rpc_server_port) {
   {
     printf( " %s\n", token );
 
+    last = token;
     token = strtok(NULL, s);
   }
 
   char address[100];
   strcpy (address,"0.0.0.0");
-  strcat (address, token);
+  strcat (address, last);
 
 
   std::string server_address(address);
