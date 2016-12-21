@@ -178,6 +178,8 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
               // //SEND RPC REQUEST
+              unsigned int node_a_id = result.second[0];
+              unsigned int node_b_id = result.second[1];
               unsigned int partition_a_no = (node_a_id % partition_total) + 1;
               unsigned int partition_b_no = (node_b_id % partition_total) + 1;
 
@@ -203,6 +205,8 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
               //SEND RPC REQUEST
+              unsigned int node_a_id = result.second[0];
+              unsigned int node_b_id = result.second[1];
               unsigned int partition_a_no = (node_a_id % partition_total) + 1;
               unsigned int partition_b_no = (node_b_id % partition_total) + 1;
 
