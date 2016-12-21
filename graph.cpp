@@ -337,6 +337,7 @@ int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_e
 	}
 
 	std::cout << "Client wants to remove edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
+	printf("node_a_exists: %lu, node_b_exists: %lu, node_a_has_b: %lu, node_b_has_a: %lu\n", node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
 	//does edge exist?  Check neighbors of both nodes
 	if((node_a_has_b == 1) && (node_b_has_a == 1)){
 		std::cout << "Removing edge!" << std::endl;
