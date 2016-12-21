@@ -174,12 +174,19 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             }
           }
           else if(is_equal(&key, &key_add_edge)){
-            // print_flush("KEY was add_edge");
+            print_flush("KEY was add_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
               // //SEND RPC REQUEST
-              // unsigned int node_a_exists = RunClient();
-              // unsigned int node_b_exists = RunClient();
+              unsigned int partition_a_no = (node_a_id % partition_total) + 1;
+              unsigned int partition_b_no = (node_b_id % partition_total) + 1;
+
+              unsigned int node_a_exists = RunClient(partition[partition_a_no], 1, node_a_id, 0);
+              unsigned int node_b_exists = RunClient(partition[partition_b_no], 1, node_b_id, 0);
+
+              printf("From http server side, node_a_id %u existence %u\n", node_a_id, node_a_exists);
+              printf("From http server side, node_b_id %u existence %u\n", node_b_id, node_b_exists);
+              printf("Safe to call graph add edge...\n");
 
               // //Add edge
               // if(RunClient()){
@@ -192,13 +199,20 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             }
           }
           else if(is_equal(&key, &key_remove_edge)){
-            // print_flush("KEY was remove_edge");
+            print_flush("KEY was remove_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
               //SEND RPC REQUEST
-               // //SEND RPC REQUEST
-              // unsigned int node_a_exists = RunClient();
-              // unsigned int node_b_exists = RunClient();
+              unsigned int partition_a_no = (node_a_id % partition_total) + 1;
+              unsigned int partition_b_no = (node_b_id % partition_total) + 1;
+
+              unsigned int node_a_exists = RunClient(partition[partition_a_no], 1, node_a_id, 0);
+              unsigned int node_b_exists = RunClient(partition[partition_b_no], 1, node_b_id, 0);
+
+              printf("From http server side, node_a_id %u existence %u\n", node_a_id, node_a_exists);
+              printf("From http server side, node_b_id %u existence %u\n", node_b_id, node_b_exists);
+              printf("Safe to call graph remove edge...\n");
+
 
               // //Add edge
               // if(RunClient()){

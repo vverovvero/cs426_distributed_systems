@@ -74,6 +74,7 @@ int RunClient(char * rpc_address, uint64_t command, uint64_t node_a_id, uint64_t
     //if client asked for node existence
     printf("Client side, for node_id %lu, existence %d\n", node_a_id, reply);
     printf("Returned to Greeter after get_node\n");
+    return reply;
   }
   // else if(command == 2){
   //   //send response for add_edge(node_a_id, node_b_id)
