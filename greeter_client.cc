@@ -62,20 +62,20 @@ int main(int argc, char** argv) {
   // std::string reply = greeter.SayHelloAgain(2, 666, 777);
   // std::cout << "Greeter received: " << reply << std::endl;
 
-  // if(argc == 5){
-  //   std::cout << "greeter_client has enough arguments" << std::cout;
-  //   unsigned int rpc_port = (unsigned int) atoi(argv[1]);
-  //   unsigned int command = (unsigned int) atoi(argv[2]);
-  //   unsigned int node_a_id = (unsigned int) atoi(argv[3]);
-  //   unsigned int node_b_id = (unsigned int) atoi(argv[4]);
+  if(argc == 5){
+    std::cout << "greeter_client has enough arguments" << std::cout;
+    unsigned int partition_sent = (unsigned int) atoi(argv[1]);
+    unsigned int command = (unsigned int) atoi(argv[2]);
+    unsigned int node_a_id = (unsigned int) atoi(argv[3]);
+    unsigned int node_b_id = (unsigned int) atoi(argv[4]);
 
-  //   std::cout << "rpc_port: " << rpc_port << std::cout;
-  //   std::cout << "command: " << command << std::cout;
-  //   std::cout << "node_a_id: " << node_a_id << std::cout;
-  //   std::cout << "node_b_id: " << node_b_id << std::cout;
+    std::cout << "partition_sent: " << rpc_port << std::cout;
+    std::cout << "command: " << command << std::cout;
+    std::cout << "node_a_id: " << node_a_id << std::cout;
+    std::cout << "node_b_id: " << node_b_id << std::cout;
 
-  //   RunClient(rpc_port, command, node_a_id, node_b_id);
-  // }
+    RunClient(partition_sent, command, node_a_id, node_b_id);
+  }
 
   return 0;
 }

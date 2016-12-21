@@ -69,16 +69,16 @@ int RunClient(unsigned int partition_sent, uint64_t command, uint64_t node_a_id,
   std::string reply = greeter.SayHelloAgain(command, node_a_id, node_b_id, server_node, client_node);
   // std::cout << "Greeter received: " << reply << std::endl;
 
-  //after receiving ack, ...
-  if(command == 1){
-    //send appropriate response for get_node(node_a_id)
-  }
-  else if(command == 2){
-    //send response for add_edge(node_a_id, node_b_id)
-  }
-  else if(command == 3){
-    //send response for remove_edge(node_a_id, node_b_id)
-  }
+  // //after receiving ack, ...
+  // if(command == 1){
+  //   //send appropriate response for get_node(node_a_id)
+  // }
+  // else if(command == 2){
+  //   //send response for add_edge(node_a_id, node_b_id)
+  // }
+  // else if(command == 3){
+  //   //send response for remove_edge(node_a_id, node_b_id)
+  // }
 
   return 0;
 }

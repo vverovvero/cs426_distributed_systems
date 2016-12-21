@@ -88,10 +88,10 @@ void RunServer(char * rpc_server_port) {
   token = strtok(rpc_server_port, s);
    
   /* walk through other tokens */
-  printf("printing tokens: \n");
+  // printf("[D] printing tokens: \n");
   while( token != NULL ) 
   {
-    printf( " %s\n", token );
+    // printf( "[D] %s\n", token );
 
     last = token;
     token = strtok(NULL, s);
