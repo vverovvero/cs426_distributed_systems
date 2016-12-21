@@ -97,7 +97,7 @@ int Graph::get_node(uint64_t node_id){
 		}
 		return 2;
 	}
-	
+
 	// std::cout << "Getting node: " << node_id << std::endl;
 	map<uint64_t, set<uint64_t> >::iterator it;
 	it = this->nodes.find(node_id);
@@ -133,6 +133,18 @@ int Graph::get_edge(uint64_t node_a_id, uint64_t node_b_id){
 		this->is_locked = true;
 		memory_bit = 1;
 	}
+
+	//Partition check (both nodes do not exist on this partition)
+	if( (((node_a_id % this->partition_total) + 1) != this->partition_no) && 
+	   	(((node_b_id % this->partition_total) + 1) != this->partition_no) ){
+		//Unlock if most external scope
+		if(memory_bit){
+			this->graph_mtx.unlock();
+			this->is_locked = false;
+		}
+		return 2;
+	}
+
 	// std::cout << "Getting edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
 	//are the nodes the same?
 	if(node_a_id == node_b_id){
