@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
     unsigned int node_a_id = (unsigned int) atoi(argv[3]);
     unsigned int node_b_id = (unsigned int) atoi(argv[4]);
 
-    std::cout << "partition_sent: " << rpc_port << std::cout;
+    std::cout << "partition_sent: " << partition_sent << std::cout;
     std::cout << "command: " << command << std::cout;
     std::cout << "node_a_id: " << node_a_id << std::cout;
     std::cout << "node_b_id: " << node_b_id << std::cout;
