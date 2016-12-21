@@ -1,9 +1,7 @@
 Lab4, Wendy Chen															12/2016
 
 
-github branches:
-lab4
-lab4check
+Implementation details for lab4:
 
 We expect partition number to start at 1.
 
@@ -14,78 +12,26 @@ rpc_server_port addresses are added to the array by the partition number.
 We expect the command line invocation to always be of form:
 $ ./cs426_graph_server <graph_server_port> -p <partnum> -l <partlist> 
 
-Example from spec:
-$ ./cs426_graph_server 8000 -p 1 -l 10.0.0.1:1111 10.0.0.2:2222 10.0.0.3:1111  
-
-./cs426_graph_server 7080 -p 1 -l 104.154.145.208:8080 104.154.198.82:8090 104.197.167.77:9000
+Example:
+$ ./cs426_graph_server 7080 -p 1 -l 104.154.145.208:8080 104.154.198.82:8090 104.197.167.77:9000
 
 
-Locking: introduced a graph_mutex as part of the Graph class defintion.
-Whenever a graph method is called, the lock is obtained by the method first.
-
-Partition checking happens in add_edge and get_edge.
-Per specification indicating that no illegal requests are made, we have not
-changed the response if an illegal request is made.
-
-In lab4check branch, we introduce a 400 Bad Request error if an illegal request
+Partition checking happens in add_edge and get_edge, as specified by spec.
+Although it is noted that illegal requests will not be made, to be safe, we also
+include partition checking in all graph methods.
+We introduce a 400 Bad Request error if an illegal request
 is made to a partition.
 
-RPC calls:
-Commands: 
-1 - get_node
-2 - add_edge
-3 - remove_edge
+Commands add_edge and get_edge involve RPC calls.  First, the lower number
+partition is locked (ie. the partition to which the request was sent).
+RPC calls are made to determine whether the nodes involved exist on their respective partitions,
+and if they are neighbors of each other.
 
+Then, an RPC call is made to the higher partition.  The higher partition acquires
+its lock, mutates the graph, unlocks, and returns.  
 
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-Implementation details from lab3:
-//Installed grpc on Linux VM hosted on Google Cloud.
-//Making the proto file only works assuming grpc has been correctly installed.
-//grpc has dependendencies beyond these files in the lab.  Grpc has been installed
-//at ~/grpc.
+Lastly, the lower number partition mutates the graph, then forfeits the lock.
+This way, we always guarantee that all partitions involved are locked during
+the mutations of both graphs.
 
-//Mongoose used in this lab has no known dependencies beyond the included files.
-
-In this lab, a chain of vm nodes has been set up:
-
-Chain Position	| VM name	| External IP 	| http port 	| grpc port 	|
------------------------------------------------------------------------------
-head			instance-1	104.154.145.208	 7080			  8080
-middle			instance-2  104.154.198.82   7090			  8090
-tail			instance-3  104.197.167.77   8000			  9000
-
-
-On each node, all executables have been made.  If not made, just run 'make clean',
-then run 'make' in the directory: /lab3
-
-To start each server:
-
-instance-1:
-./cs426_graph_server -b 8080 7080
-
-instance-2: 
-./cs426_graph_server -b 8090 7090
-
-instance-3:
-./cs426_graph_server -b 9000 8000
-
-
-Write requests should only be made to instance-1.
-e.g. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.198.165.44:7080/api/v1/add_node
-
-Read requests can be made to any of the instances:
-eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.198.165.44:7080/api/v1/get_node
-eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.154.198.82:7090/api/v1/get_node
-eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.154.145.208:8000/api/v1/get_node
-
-For an example run, I have provided some shell scripts.
-On instance-1, run ./mywritetest7080.sh
-
-Then, read to read the graph on each server, run:
-On instance-1, run ./myreadtest7080.sh
-On instance-2, run ./myreadtest7090.sh
-On instance-3, run ./myreadtest8000.sh
-
-The results should be the same.
 

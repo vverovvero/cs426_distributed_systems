@@ -49,7 +49,7 @@ class GreeterServiceImpl final : public Greeter::Service {
       //Check node_a existence
       unsigned int existence = graph.get_node(node_a_id);
       reply->set_node_exists(existence);
-      printf("server side, get_node for %lu, existence %u\n", node_a_id, existence);
+      // printf("server side, get_node for %lu, existence %u\n", node_a_id, existence);
 
       //Check for neighbor if node exists
       unsigned int has_neighbor = 0;
@@ -57,8 +57,8 @@ class GreeterServiceImpl final : public Greeter::Service {
         pair<int, set<uint64_t> > result = graph.get_neighbors(node_a_id);
         if(result.first == 1){
           set<uint64_t> neighbors = result.second;
-          std::cout << "Found neighbors of: " << node_a_id << std::endl;
-          graph.print_set(neighbors);
+          // std::cout << "Found neighbors of: " << node_a_id << std::endl;
+          // graph.print_set(neighbors);
           //Look through neighbors
           set<uint64_t>::iterator it;
           it = neighbors.find(node_b_id);
@@ -69,11 +69,11 @@ class GreeterServiceImpl final : public Greeter::Service {
       }
 
       reply->set_has_neighbor(has_neighbor);
-      printf("server side, has_neighbor: %u\n", has_neighbor);
+      // printf("server side, has_neighbor: %u\n", has_neighbor);
     }
 
     if(command == 2){
-      printf("server side, will ADD_EDGE\n");
+      // printf("server side, will ADD_EDGE\n");
       //lock and add edge
       partition_mtx.lock();
       graph.add_edge(node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
@@ -83,7 +83,7 @@ class GreeterServiceImpl final : public Greeter::Service {
 
     if(command == 3){
       //remove_edge
-      printf("server side, will REMOVE_EDGE\n");
+      // printf("server side, will REMOVE_EDGE\n");
       partition_mtx.lock();
       graph.remove_edge(node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
       partition_mtx.unlock();

@@ -269,9 +269,9 @@ int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exis
 		return 2;
 	}
 
-	std::cout << "Client wants to add edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
+	// std::cout << "Client wants to add edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
 	if((node_a_exists == 0) || (node_b_exists == 0) || (node_a_id == node_b_id)){
-		std::cout << "Cannot add edge because node(s) doesn't exist, or is same." << std::endl;
+		// std::cout << "Cannot add edge because node(s) doesn't exist, or is same." << std::endl;
 		//Unlock if most external scope
 		// if(memory_bit){
 		// 	this->graph_mtx.unlock();
@@ -280,7 +280,7 @@ int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exis
 		return 2;
 	}
 	else if((node_a_has_b == 1) && (node_b_has_a == 1)){
-		std::cout << "Edge already in graph.  Do not add." << std::endl;
+		// std::cout << "Edge already in graph.  Do not add." << std::endl;
 		//Unlock if most external scope
 		// if(memory_bit){
 		// 	this->graph_mtx.unlock();
@@ -289,7 +289,7 @@ int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exis
 		return 0;
 	}
 	else{
-		std::cout << "Adding edge!" << std::endl;
+		// std::cout << "Adding edge!" << std::endl;
 		map<uint64_t, set<uint64_t> >::iterator it_a, it_b;
 		//add_edge for node_a_id
 		if(((node_a_id % this->partition_total) + 1) == this->partition_no){
@@ -327,7 +327,7 @@ int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_e
 
 	//if one of the nodes doesn't exist
 	if((node_a_exists == 0) || (node_b_exists == 0)){
-		std::cout << "One of the nodes doesn't exist" << std::endl;
+		// std::cout << "One of the nodes doesn't exist" << std::endl;
 		//Unlock if most external scope
 		// if(memory_bit){
 		// 	this->graph_mtx.unlock();
@@ -336,11 +336,11 @@ int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_e
 		return 2;
 	}
 
-	std::cout << "Client wants to remove edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
-	printf("node_a_exists: %lu, node_b_exists: %lu, node_a_has_b: %lu, node_b_has_a: %lu\n", node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
+	// std::cout << "Client wants to remove edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
+	// printf("node_a_exists: %lu, node_b_exists: %lu, node_a_has_b: %lu, node_b_has_a: %lu\n", node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
 	//does edge exist?  Check neighbors of both nodes
 	if((node_a_has_b == 1) && (node_b_has_a == 1)){
-		std::cout << "Removing edge!" << std::endl;
+		// std::cout << "Removing edge!" << std::endl;
 		//Edge is in graph.  Get neighbors for each node, and remove the opposite 
 		if(((node_a_id % this->partition_total) + 1) == this->partition_no){
 			this->nodes[node_a_id].erase(node_b_id);
@@ -359,7 +359,7 @@ int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_e
 		return 1;
 	}
 	//No edge to remove.
-	std::cout << "No edge to remove." << std::endl;
+	// std::cout << "No edge to remove." << std::endl;
 	//Unlock if most external scope
 	// if(memory_bit){
 	// 	this->graph_mtx.unlock();

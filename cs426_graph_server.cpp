@@ -179,6 +179,8 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             // print_flush("KEY was add_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
+              //Lock partition
+              partition_mtx.lock();
               // //SEND RPC REQUEST for node existence
               unsigned int node_a_id = result.second[0];
               unsigned int node_b_id = result.second[1];
@@ -197,17 +199,18 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
               unsigned int higher_partition;
               (partition_a_no > partition_b_no) ? (higher_partition = partition_a_no) : (higher_partition = partition_b_no);
 
-              printf("Send rpc to higher_partition: %u\n", higher_partition);
+              // printf("Send rpc to higher_partition: %u\n", higher_partition);
 
               RunClient(partition[higher_partition], 2, node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
 
-              printf("From http server side, node_a_id %u existence %u\n", node_a_id, node_a_exists);
-              printf("From http server side, node_b_id %u existence %u\n", node_b_id, node_b_exists);
-              printf("Safe to call graph add edge...\n");
+              // printf("From http server side, node_a_id %u existence %u\n", node_a_id, node_a_exists);
+              // printf("From http server side, node_b_id %u existence %u\n", node_b_id, node_b_exists);
+              // printf("Safe to call graph add edge...\n");
 
-              //Lock and add
-              partition_mtx.lock();
+              
+              //Make local change on partition
               event_add_edge(&graph, nc, result.second[0], result.second[1], node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
+              //Unlock
               partition_mtx.unlock();
               
             }
@@ -219,6 +222,8 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             // print_flush("KEY was remove_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
+              //Lock partition
+              partition_mtx.lock();
               //SEND RPC REQUEST
               unsigned int node_a_id = result.second[0];
               unsigned int node_b_id = result.second[1];
@@ -237,18 +242,19 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
               unsigned int higher_partition;
               (partition_a_no > partition_b_no) ? (higher_partition = partition_a_no) : (higher_partition = partition_b_no);
 
-              printf("Send rpc to higher_partition: %u\n", higher_partition);
+              // printf("Send rpc to higher_partition: %u\n", higher_partition);
 
 
               RunClient(partition[higher_partition], 3, node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
 
-              printf("From http server side, node_a_id %u existence %u\n", node_a_id, node_a_exists);
-              printf("From http server side, node_b_id %u existence %u\n", node_b_id, node_b_exists);
-              printf("Safe to call graph remove edge...\n");
+              // printf("From http server side, node_a_id %u existence %u\n", node_a_id, node_a_exists);
+              // printf("From http server side, node_b_id %u existence %u\n", node_b_id, node_b_exists);
+              // printf("Safe to call graph remove edge...\n");
 
-              //Lock and add
-              partition_mtx.lock();
+              //Make local change on partition
               event_remove_edge(&graph, nc, result.second[0], result.second[1], node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
+              
+              //Unlock
               partition_mtx.unlock();         
             }
             else {
@@ -450,7 +456,7 @@ int main(int argc, char *argv[]) {
     t1.join(); //commented out for now
   }
   else{
-    std::cout << "Specify port by : './cs426_graph_server <optional -b ipaddress> <port> '" << std::endl;
+    std::cout << "Usage: ./cs426_graph_server <graph_server_port> -p <partnum> -l <partlist> " << std::endl;
   }
   return 0;
 }

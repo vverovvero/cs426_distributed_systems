@@ -78,18 +78,18 @@ std::vector<unsigned int> RunClient(char * rpc_address, uint64_t command, uint64
       ipaddress, grpc::InsecureChannelCredentials()));
 
   std::vector<unsigned int> reply = greeter.SayHelloAgain(command, node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
-  std::cout << "Greeter received: " << reply[0] << reply[1] << reply[2] << std::endl;
+  // std::cout << "Greeter received: " << reply[0] << reply[1] << reply[2] << std::endl;
 
   //after receiving ack, ...
   if(command == 1){
     //if client asked for node existence
-    printf("Client side, for node_id %lu, existence %u\n", node_a_id, reply[1]);
-    printf("Client side, has neighbor %u\n", reply[2]);
-    printf("Returned to Greeter after get_node\n");
+    // printf("Client side, for node_id %lu, existence %u\n", node_a_id, reply[1]);
+    // printf("Client side, has neighbor %u\n", reply[2]);
+    // printf("Returned to Greeter after get_node\n");
     return reply;
   }
   //else, for command 2 or 3, return 0
-  printf("Returned to Greeter after add_edge or remove_edge");
+  // printf("Returned to Greeter after add_edge or remove_edge");
 
   return reply;
 }
