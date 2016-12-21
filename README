@@ -17,6 +17,13 @@ $ ./cs426_graph_server 8000 -p 1 -l 10.0.0.1:1111 10.0.0.2:2222 10.0.0.3:1111
 Locking: introduced a graph_mutex as part of the Graph class defintion.
 Whenever a graph method is called, the lock is obtained by the method first.
 
+Partition checking happens in add_edge and get_edge.
+Per specification indicating that no illegal requests are made, we have not
+changed the response if an illegal request is made.
+
+In lab4check branch, we introduce a 400 Bad Request error if an illegal request
+is made to a partition.
+
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////

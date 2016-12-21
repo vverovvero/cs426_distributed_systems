@@ -60,9 +60,15 @@ void event_add_node(Graph *graph, struct mg_connection *nc, uint64_t node_id){
         emit_json_body(nc, buf, size);
         emit_json_end(nc);
 	} 
-	else {
+	else if(result == 2){
 		emit_json_start(nc, 204);
 		emit_json_header(nc, 204, "No Content\n");
+		emit_json_end(nc);
+	}
+	//2, Bad Request due to partition error
+	else{
+		emit_json_start(nc, 400);
+		emit_json_header(nc, 400, "Bad Request\n");
 		emit_json_end(nc);
 	}
 }
