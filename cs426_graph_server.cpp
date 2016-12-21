@@ -177,7 +177,7 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
             print_flush("KEY was add_edge");
             pair<int, vector<uint64_t> > result = parse_for_node_ids(hm->body, 2, "node_a_id", "node_b_id");
             if(result.first == 1) {
-              // //SEND RPC REQUEST
+              // //SEND RPC REQUEST for node existence
               unsigned int node_a_id = result.second[0];
               unsigned int node_b_id = result.second[1];
               unsigned int partition_a_no = (node_a_id % partition_total) + 1;
@@ -185,6 +185,10 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
 
               unsigned int node_a_exists = RunClient(partition[partition_a_no], 1, node_a_id, 0);
               unsigned int node_b_exists = RunClient(partition[partition_b_no], 1, node_b_id, 0);
+
+              //Now, make rpc call to high partition number
+              unsigned int higher_partition;
+              (partition_a_no > partition_b_no) ? (higher_partition = partition_a_no) : (higher_partition = partition_b_no);
 
               printf("From http server side, node_a_id %u existence %u\n", node_a_id, node_a_exists);
               printf("From http server side, node_b_id %u existence %u\n", node_b_id, node_b_exists);

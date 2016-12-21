@@ -39,6 +39,8 @@ class GreeterServiceImpl final : public Greeter::Service {
     uint64_t command = request->command();
     uint64_t node_a_id = request->node_a_id();
     uint64_t node_b_id = request->node_b_id();
+    uint64_t node_a_exists = request->node_a_exists();
+    uint64_t node_b_exists = request->node_b_exists();
 
     //Server always executes what client asks for
     if(command == 1){

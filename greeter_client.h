@@ -29,24 +29,25 @@ class GreeterClient {
  public:
   GreeterClient(std::shared_ptr<Channel> channel)
   	: stub_(Greeter::NewStub(channel)) {}
-  	int SayHelloAgain(uint64_t command, uint64_t node_a_id, uint64_t node_b_id) {
+  	int SayHelloAgain(uint64_t command, uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists) {
 	  //Follows the same pattern as SayHello.
 	  HelloRequest request;
 	  request.set_command(command);
 	  request.set_node_a_id(node_a_id);
 	  request.set_node_b_id(node_b_id);
+    request.set_node_a_exists(node_a_exists);
+    request.set_node_b_exists(node_b_exists);
 	  HelloReply reply;
 	  ClientContext context;
 
 	  //Here we can use the stub's newly available method we just added.
 	  Status status = stub_->SayHelloAgain(&context, request, &reply);
 	  if(status.ok()){
-	    //Print out ack
-	    // std::string message("Request OK");
       if(command == 1){
         unsigned int existence = reply.node_exists();
         return (int) existence;
       }
+      //for command 2 or 3, always return 0
 	    return 0;
 	  } else {
 	    std::cout << status.error_code() << ": " << status.error_message()
@@ -60,13 +61,13 @@ class GreeterClient {
 
 
 //Send request to partition number
-int RunClient(char * rpc_address, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){
+int RunClient(char * rpc_address, uint64_t command, uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists){
   std::string ipaddress(rpc_address);
 
   GreeterClient greeter(grpc::CreateChannel(
       ipaddress, grpc::InsecureChannelCredentials()));
 
-  int reply = greeter.SayHelloAgain(command, node_a_id, node_b_id);
+  int reply = greeter.SayHelloAgain(command, node_a_id, node_b_id, node_a_exists, node_b_exists);
   std::cout << "Greeter received: " << reply << std::endl;
 
   //after receiving ack, ...
@@ -76,12 +77,8 @@ int RunClient(char * rpc_address, uint64_t command, uint64_t node_a_id, uint64_t
     printf("Returned to Greeter after get_node\n");
     return reply;
   }
-  // else if(command == 2){
-  //   //send response for add_edge(node_a_id, node_b_id)
-  // }
-  // else if(command == 3){
-  //   //send response for remove_edge(node_a_id, node_b_id)
-  // }
+  //else, for command 2 or 3, return 0
+  printf("Returned to Greeter after add_edge or remove_edge");
 
   return 0;
 }

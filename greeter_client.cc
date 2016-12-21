@@ -62,19 +62,23 @@ int main(int argc, char** argv) {
   // std::string reply = greeter.SayHelloAgain(2, 666, 777);
   // std::cout << "Greeter received: " << reply << std::endl;
 
-  if(argc == 5){
+  if(argc == 7){
     std::cout << "greeter_client has enough arguments\n" << std::cout;
     char * rpc_address = argv[1];
     unsigned int command = (unsigned int) atoi(argv[2]);
     unsigned int node_a_id = (unsigned int) atoi(argv[3]);
     unsigned int node_b_id = (unsigned int) atoi(argv[4]);
+    unsigned int node_a_exists = (unsigned int) atoi(argv[5]);
+    unsigned int node_b_exists = (unsigned int) atoi(argv[6]);
 
     printf("rpc_address: %s\n", rpc_address);
     printf("command: %u\n", command);
     printf("node_a_id: %u\n", node_a_id);
     printf("node_b_id: %u\n", node_b_id);
+    printf("node_a_exists: %u\n", node_a_exists);
+    printf("node_b_exists: %u\n", node_b_exists);
 
-    RunClient(rpc_address, command, node_a_id, node_b_id);
+    RunClient(rpc_address, command, node_a_id, node_b_id, node_a_exists, node_b_exists);
   }
 
   return 0;

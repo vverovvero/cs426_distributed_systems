@@ -49,8 +49,8 @@ message HelloRequest {
   uint64 command = 1;
   uint64 node_a_id = 2;
   uint64 node_b_id = 3;
-  //uint64 client_node = 4;
-  //uint64 server_node = 5;
+  uint64 node_a_exists = 4;
+  uint64 node_b_exists = 5;
 }
 
 // The response message containing the greetings
