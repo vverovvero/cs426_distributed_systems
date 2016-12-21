@@ -132,11 +132,12 @@ int Graph::get_edge(uint64_t node_a_id, uint64_t node_b_id){
 		}
 		return 2;
 	}
-	//do the nodes exist?
+	//do the nodes exist and belong to this partition?
 	map<uint64_t, set<uint64_t> >::iterator it_a, it_b;
 	it_a = this->nodes.find(node_a_id);
 	it_b = this->nodes.find(node_b_id);
-	if(it_a == this->nodes.end() || it_b == this->nodes.end()){
+	if(((it_a == this->nodes.end()) &&  (((node_a_id % this->partition_total) + 1) == this->partition_no) ) || 
+		((it_b == this->nodes.end()) && (((node_b_id % this->partition_total) + 1) == this->partition_no) ){
 		// std::cout << "One or both nodes do not exist" << std::endl;
 		//Unlock if most external scope
 		if(memory_bit){
@@ -146,14 +147,15 @@ int Graph::get_edge(uint64_t node_a_id, uint64_t node_b_id){
 		return 2;
 	}
 	//Nodes exist and have unique ids
-	//Does the edge already exist?
+	//Does the edge already exist? and node belong on the partition?
 	set<uint64_t> &node_a_neighbors = it_a->second;
 	set<uint64_t> &node_b_neighbors = it_b->second;
 	set<uint64_t>::iterator it_a_neighbors;
 	set<uint64_t>::iterator it_b_neighbors;
 	it_a_neighbors = node_a_neighbors.find(node_b_id);
 	it_b_neighbors = node_b_neighbors.find(node_a_id);
-	if(it_a_neighbors != node_a_neighbors.end() && it_b_neighbors != node_b_neighbors.end()){
+	if(((it_a_neighbors != node_a_neighbors.end()) && (((node_a_id % this->partition_total) + 1) == this->partition_no) ) || 
+	   ((it_b_neighbors != node_b_neighbors.end()) && (((node_b_id % this->partition_total) + 1) == this->partition_no) ) ){
 		//Edge was found.  Don't add it.
 		// std::cout << "Edge was found (on both nodes)." << std::endl;
 		//Unlock if most external scope
