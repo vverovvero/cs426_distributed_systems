@@ -42,40 +42,42 @@ class GreeterServiceImpl final : public Greeter::Service {
     uint64_t server_node = request->server_node();
     uint64_t client_node = request->client_node();
 
-    //when server receives client request, server either forwards or acks
-    if(server_node == 9000){
-      // std::cout << "Server is tail, send ack" << std::endl;
-      //server modifies the graph here
-      // std::cout << "Tail server should modify the graph" << std::endl;
-      if(command == 1){
-        // std::cout << "Graph add node!" << std::endl;
-        graph.add_node(node_a_id);
-      }
-      else if(command == 2){
-          // std::cout << "Graph add edge!" << std::endl;
-        graph.add_edge(node_a_id, node_b_id);
-      }
-      else if(command == 3){
-          // std::cout << "Graph remove node!" << std::endl;
-        // graph.remove_node(node_a_id);
-      }
-      else if (command == 4){
-          // std::cout << "Graph remove edge!" << std::endl;
-        graph.remove_edge(node_a_id, node_b_id);
-      }
-      else{
-        // std::cout << "Graph faulty command "<< std::endl;
-      }
-      return Status::OK;
-    }
-    else{
-      // std::cout << "Server is not tail, forward client request" << std::endl;
-      //forward client request
-      if(RunClient(server_node, command, node_a_id, node_b_id) == 0){
-        //when client request returns successfully, server sends ack
-        return Status::OK;
-      }
-    }
+    return Status::OK;
+
+    // //when server receives client request, server either forwards or acks
+    // if(server_node == 9000){
+    //   // std::cout << "Server is tail, send ack" << std::endl;
+    //   //server modifies the graph here
+    //   // std::cout << "Tail server should modify the graph" << std::endl;
+    //   if(command == 1){
+    //     // std::cout << "Graph add node!" << std::endl;
+    //     graph.add_node(node_a_id);
+    //   }
+    //   else if(command == 2){
+    //       // std::cout << "Graph add edge!" << std::endl;
+    //     graph.add_edge(node_a_id, node_b_id);
+    //   }
+    //   else if(command == 3){
+    //       // std::cout << "Graph remove node!" << std::endl;
+    //     // graph.remove_node(node_a_id);
+    //   }
+    //   else if (command == 4){
+    //       // std::cout << "Graph remove edge!" << std::endl;
+    //     graph.remove_edge(node_a_id, node_b_id);
+    //   }
+    //   else{
+    //     // std::cout << "Graph faulty command "<< std::endl;
+    //   }
+    //   return Status::OK;
+    // }
+    // else{
+    //   // std::cout << "Server is not tail, forward client request" << std::endl;
+    //   //forward client request
+    //   if(RunClient(server_node, command, node_a_id, node_b_id) == 0){
+    //     //when client request returns successfully, server sends ack
+    //     return Status::OK;
+    //   }
+    // }
   }
 
 };
