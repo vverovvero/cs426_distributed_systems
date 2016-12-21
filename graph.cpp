@@ -330,8 +330,13 @@ int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id){
 	if(found_edge == 1){
 		// std::cout << "Removing edge!" << std::endl;
 		//Edge is in graph.  Get neighbors for each node, and remove the opposite 
-		this->nodes[node_a_id].erase(node_b_id);
-		this->nodes[node_b_id].erase(node_a_id);
+		if(((node_a_id % this->partition_total) + 1) == this->partition_no){
+			this->nodes[node_a_id].erase(node_b_id);
+		}
+
+		if(((node_b_id % this->partition_total) + 1) == this->partition_no){
+			this->nodes[node_b_id].erase(node_a_id);
+		}
 
 		//Unlock if most external scope
 		if(memory_bit){
@@ -355,6 +360,7 @@ int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id){
 //return pair (success/fail, vector of neighbors)
 //return (1, set of neighbors) if node exists
 //return (0, empty set) if node doesn't exist
+//return (2, empty set) if not in partition
 pair<int, set<uint64_t> > Graph::get_neighbors(uint64_t node_id){
 	//Lock if most external scope
 	int memory_bit = 0;
@@ -363,6 +369,17 @@ pair<int, set<uint64_t> > Graph::get_neighbors(uint64_t node_id){
 		this->is_locked = true;
 		memory_bit = 1;
 	}
+
+	//Check partition
+	if(((node_id % this->partition_total) + 1) != this->partition_no){
+		//Unlock if most external scope
+		if(memory_bit){
+			this->graph_mtx.unlock();
+			this->is_locked = false;
+		}
+		return pair<int, set<uint64_t> > (2, EmptySet);;
+	}
+
 	// std::cout << "Client would like to get neighbors of node: " << node_id << std::endl;
 	//first find node
 	int found_node = get_node(node_id);
