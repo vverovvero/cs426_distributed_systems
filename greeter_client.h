@@ -59,7 +59,7 @@ class GreeterClient {
 
 //Send request to partition number
 int RunClient(unsigned int partition_sent, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){
-  std::string ipaddress = partition[partition_sent]
+  std::string ipaddress = partition[partition_sent];
 
   GreeterClient greeter(grpc::CreateChannel(
       ipaddress, grpc::InsecureChannelCredentials()));
