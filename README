@@ -17,6 +17,8 @@ $ ./cs426_graph_server <graph_server_port> -p <partnum> -l <partlist>
 Example from spec:
 $ ./cs426_graph_server 8000 -p 1 -l 10.0.0.1:1111 10.0.0.2:2222 10.0.0.3:1111  
 
+./cs426_graph_server 7080 -p 1 -l 104.198.165.44:8080 104.154.198.82:8090 104.154.145.208:9000
+
 
 Locking: introduced a graph_mutex as part of the Graph class defintion.
 Whenever a graph method is called, the lock is obtained by the method first.

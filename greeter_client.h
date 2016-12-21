@@ -71,7 +71,7 @@ int RunClient(unsigned int partition_sent, uint64_t command, uint64_t node_a_id,
       ipaddress, grpc::InsecureChannelCredentials()));
 
   std::string reply = greeter.SayHelloAgain(command, node_a_id, node_b_id, server_node, client_node);
-  // std::cout << "Greeter received: " << reply << std::endl;
+  std::cout << "Greeter received: " << reply << std::endl;
 
   // //after receiving ack, ...
   // if(command == 1){
