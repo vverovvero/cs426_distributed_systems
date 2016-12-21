@@ -58,9 +58,8 @@ class GreeterClient {
 
 
 //Send request to partition number
-int RunClient(unsigned int partition_sent, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){
-  printf("RunClient received address for partition %d, %s\n", partition_sent, partition[partition_sent]);
-  std::string ipaddress(partition[partition_sent]);
+int RunClient(char * rpc_address, uint64_t command, uint64_t node_a_id, uint64_t node_b_id){
+  std::string ipaddress(rpc_address);
   uint64_t server_node = 32;
   uint64_t client_node = 45;
 
