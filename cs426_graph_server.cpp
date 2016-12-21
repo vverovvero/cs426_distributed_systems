@@ -183,8 +183,8 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
               unsigned int partition_a_no = (node_a_id % partition_total) + 1;
               unsigned int partition_b_no = (node_b_id % partition_total) + 1;
 
-              unsigned int node_a_exists = RunClient(partition[partition_a_no], 1, node_a_id, 0);
-              unsigned int node_b_exists = RunClient(partition[partition_b_no], 1, node_b_id, 0);
+              unsigned int node_a_exists = RunClient(partition[partition_a_no], 1, node_a_id, 0, 0, 0);
+              unsigned int node_b_exists = RunClient(partition[partition_b_no], 1, node_b_id, 0, 0, 0);
 
               //Now, make rpc call to high partition number
               unsigned int higher_partition;
