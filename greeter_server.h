@@ -54,7 +54,7 @@ class GreeterServiceImpl final : public Greeter::Service {
       //Check for neighbor if node exists
       unsigned int has_neighbor = 0;
       if(existence == 1){
-        pair<int, set<uint64_t> > result = (*graph).get_neighbors(node_id);
+        pair<int, set<uint64_t> > result = graph.get_neighbors(node_a_id);
         if(result.first == 1){
           set<uint64_t> neighbors = result.second;
           //Look through neighbors
