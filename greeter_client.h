@@ -29,7 +29,7 @@ class GreeterClient {
  public:
   GreeterClient(std::shared_ptr<Channel> channel)
   	: stub_(Greeter::NewStub(channel)) {}
-  	std::string SayHelloAgain(uint64_t command, uint64_t node_a_id, uint64_t node_b_id, uint64_t server_node, uint64_t client_node) {
+  	std::string SayHelloAgain(uint64_t command, uint64_t node_a_id, uint64_t node_b_id) {
 	  //Follows the same pattern as SayHello.
 	  HelloRequest request;
 	  request.set_command(command);
@@ -62,14 +62,14 @@ int RunClient(char * rpc_address, uint64_t command, uint64_t node_a_id, uint64_t
   GreeterClient greeter(grpc::CreateChannel(
       ipaddress, grpc::InsecureChannelCredentials()));
 
-  std::string reply = greeter.SayHelloAgain(command, node_a_id, node_b_id, server_node, client_node);
+  std::string reply = greeter.SayHelloAgain(command, node_a_id, node_b_id);
   std::cout << "Greeter received: " << reply << std::endl;
 
   //after receiving ack, ...
   if(command == 1){
     //if client asked for node existence
     unsigned int existence = reply->node_exists();
-    printf("get_node for %u return %u\n", node_a_id, existence);
+    printf("get_node for %d return %d\n", node_a_id, existence);
   }
   // else if(command == 2){
   //   //send response for add_edge(node_a_id, node_b_id)
