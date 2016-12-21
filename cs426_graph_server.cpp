@@ -197,6 +197,8 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
               unsigned int higher_partition;
               (partition_a_no > partition_b_no) ? (higher_partition = partition_a_no) : (higher_partition = partition_b_no);
 
+              printf("Send rpc to higher_partition: %u\n", higher_partition);
+
               RunClient(partition[higher_partition], 2, node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
 
               printf("From http server side, node_a_id %u existence %u\n", node_a_id, node_a_exists);
@@ -234,6 +236,9 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
               //Now, make rpc call to high partition number
               unsigned int higher_partition;
               (partition_a_no > partition_b_no) ? (higher_partition = partition_a_no) : (higher_partition = partition_b_no);
+
+              printf("Send rpc to higher_partition: %u\n", higher_partition);
+
 
               RunClient(partition[higher_partition], 3, node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
 

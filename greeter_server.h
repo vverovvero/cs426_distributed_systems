@@ -71,6 +71,7 @@ class GreeterServiceImpl final : public Greeter::Service {
     }
 
     if(command == 2){
+      printf("server side, will ADD_EDGE\n");
       //lock and add edge
       partition_mtx.lock();
       graph.add_edge(node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
@@ -80,6 +81,7 @@ class GreeterServiceImpl final : public Greeter::Service {
 
     if(command == 3){
       //remove_edge
+      printf("server side, will REMOVE_EDGE\n");
       partition_mtx.lock();
       graph.remove_edge(node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
       partition_mtx.unlock();
