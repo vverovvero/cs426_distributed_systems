@@ -185,11 +185,11 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
               unsigned int partition_a_no = (node_a_id % partition_total) + 1;
               unsigned int partition_b_no = (node_b_id % partition_total) + 1;
 
-              std::vector<unsigned int> result_a = RunClient(partition[partition_a_no], 1, node_a_id, 0, 0, 0, 0, 0);
+              std::vector<unsigned int> result_a = RunClient(partition[partition_a_no], 1, node_a_id, node_b_id, 0, 0, 0, 0);
               unsigned int node_a_exists = result_a[1];
               unsigned int node_a_has_b = result_a[2];
 
-              std::vector<unsigned int> result_b = RunClient(partition[partition_b_no], 1, node_b_id, 0, 0, 0, 0, 0);
+              std::vector<unsigned int> result_b = RunClient(partition[partition_b_no], 1, node_b_id, node_b_id, 0, 0, 0, 0);
               unsigned int node_b_exists = result_b[1];
               unsigned int node_b_has_a = result_b[2];
 
