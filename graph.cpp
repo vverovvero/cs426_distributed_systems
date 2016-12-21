@@ -113,6 +113,7 @@ int Graph::get_node(uint64_t node_id){
 //return 1 if edge is in graph
 //return 0 if edge is not in graph
 //return 2 if at least one of vertices does not exist (or if nodes are same?)
+//if either node_a_id or node_b_id exists on partition, then get_edge should return the correct answer
 int Graph::get_edge(uint64_t node_a_id, uint64_t node_b_id){
 	//Lock if most external scope
 	int memory_bit = 0;
@@ -210,6 +211,7 @@ int Graph::add_node(uint64_t node_id){
 
 //return 1 if success, 0 if edge already exists,
 //2 if node doesn't exist or node_a_id == node_b_id
+//add edge for the node if it exists on the partition.  else, rely on RPC to call add_edge on another partition.
 int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id){
 	//Lock if most external scope
 	int memory_bit = 0;
@@ -241,12 +243,20 @@ int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id){
 	else{
 		// std::cout << "Adding edge!" << std::endl;
 		map<uint64_t, set<uint64_t> >::iterator it_a, it_b;
-		it_a = this->nodes.find(node_a_id);
-		it_b = this->nodes.find(node_b_id);
-		set<uint64_t> &node_a_neighbors = it_a->second;
-		set<uint64_t> &node_b_neighbors = it_b->second;
-		node_a_neighbors.insert(node_b_id);
-		node_b_neighbors.insert(node_a_id);
+		//add_edge for node_a_id
+		if(((node_a_id % this->partition_total) + 1) == this->partition_no){
+			it_a = this->nodes.find(node_a_id);
+			set<uint64_t> &node_a_neighbors = it_a->second;
+			node_a_neighbors.insert(node_b_id);
+		}
+		
+		//add_edge for node_b_id
+		if(((node_b_id % this->partition_total) + 1) == this->partition_no){
+			it_b = this->nodes.find(node_b_id);
+			set<uint64_t> &node_b_neighbors = it_b->second;
+			node_b_neighbors.insert(node_a_id);
+		}
+
 		//Unlock if most external scope
 		if(memory_bit){
 			this->graph_mtx.unlock();
