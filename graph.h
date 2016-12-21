@@ -46,8 +46,8 @@ class Graph
 		void init_partition_info(unsigned int partition_no, unsigned int partition_info);
 
 		int add_node(uint64_t node_id);
-		int add_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists);
-		int remove_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists);
+		int add_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists, uint64_t node_a_has_b, uint64_t node_b_has_a);
+		int remove_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists, uint64_t node_a_has_b, uint64_t node_b_has_a);
 		int get_node(uint64_t node_id);
 		int get_edge(uint64_t node_a_id, uint64_t node_b_id);
 		pair<int, set<uint64_t> > get_neighbors(uint64_t node_id);

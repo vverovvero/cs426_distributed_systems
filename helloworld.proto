@@ -51,12 +51,13 @@ message HelloRequest {
   uint64 node_b_id = 3;
   uint64 node_a_exists = 4;
   uint64 node_b_exists = 5;
+  uint64 node_a_has_b = 6;
+  uint64 node_b_has_a = 7;
 }
 
 // The response message containing the greetings
 message HelloReply {
   uint64 acknowledgement = 1;
-  uint64 node_exists = 2;
-  //uint64 client_node = 2;
-  //uint64 server_node = 3;
+  uint64 node_exists = 2;   //for node_a
+  uint64 node_has_neighbor = 3;  //node_a_has neighbor b
 }

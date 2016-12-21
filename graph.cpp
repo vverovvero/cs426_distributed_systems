@@ -249,7 +249,7 @@ int Graph::add_node(uint64_t node_id){
 //return 1 if success, 0 if edge already exists,
 //2 if node doesn't exist or node_a_id == node_b_id
 //add edge for the node if it exists on the partition.  else, rely on RPC to call add_edge on another partition.
-int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists){
+int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists, uint64_t node_a_has_b, uint64_t node_b_has_a){
 	//Lock if most external scope
 	int memory_bit = 0;
 	if(!(this->is_locked)){
@@ -269,20 +269,8 @@ int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exis
 		return 2;
 	}
 
-	//if one of the nodes doesn't exist
-	if((node_a_exists == 0) || (node_b_exists == 0)){
-		std::cout << "One of the nodes doesn't exist" << std::endl;
-		//Unlock if most external scope
-		if(memory_bit){
-			this->graph_mtx.unlock();
-			this->is_locked = false;
-		}
-		return 2;
-	}
-
 	std::cout << "Client wants to add edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
-	int found_edge = get_edge(node_a_id, node_b_id);
-	if(found_edge == 2){
+	if((node_a_exists == 0) || (node_b_exists == 0) || (node_a_id == node_b_id)){
 		std::cout << "Cannot add edge because node(s) doesn't exist, or is same." << std::endl;
 		//Unlock if most external scope
 		if(memory_bit){
@@ -291,7 +279,7 @@ int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exis
 		}
 		return 2;
 	}
-	else if(found_edge == 1){
+	else if((node_a_has_b == 1) && (node_b_has_a == 1)){
 		std::cout << "Edge already in graph.  Do not add." << std::endl;
 		//Unlock if most external scope
 		if(memory_bit){
@@ -328,7 +316,7 @@ int Graph::add_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exis
 
 //REQUIRES RPC MODIFICATION
 //return 1 if success, 0 if edge does not exist
-int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists){
+int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists, uint64_t node_a_has_b, uint64_t node_b_has_a){
 	//Lock if most external scope
 	int memory_bit = 0;
 	if(!(this->is_locked)){
@@ -347,11 +335,10 @@ int Graph::remove_edge(uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_e
 		}
 		return 2;
 	}
-	
+
 	std::cout << "Client wants to remove edge (" << node_a_id << ", " << node_b_id << ")." << std::endl;
 	//does edge exist?  Check neighbors of both nodes
-	int found_edge = get_edge(node_a_id, node_b_id);
-	if(found_edge == 1){
+	if((node_a_has_b == 1) && (node_b_has_a == 1)){
 		std::cout << "Removing edge!" << std::endl;
 		//Edge is in graph.  Get neighbors for each node, and remove the opposite 
 		if(((node_a_id % this->partition_total) + 1) == this->partition_no){

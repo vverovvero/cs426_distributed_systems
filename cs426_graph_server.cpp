@@ -183,21 +183,28 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
               unsigned int partition_a_no = (node_a_id % partition_total) + 1;
               unsigned int partition_b_no = (node_b_id % partition_total) + 1;
 
-              unsigned int node_a_exists = RunClient(partition[partition_a_no], 1, node_a_id, 0, 0, 0);
-              unsigned int node_b_exists = RunClient(partition[partition_b_no], 1, node_b_id, 0, 0, 0);
+              std::vector<unsigned int> result_a = RunClient(partition[partition_a_no], 1, node_a_id, 0, 0, 0, 0, 0);
+              unsigned int node_a_exists = result_a[1];
+              unsigned int node_a_has_b = result_a[2];
+
+              std::vector<unsigned int> result_b = RunClient(partition[partition_b_no], 1, node_b_id, 0, 0, 0, 0, 0);
+              unsigned int node_b_exists = result_b[1];
+              unsigned int node_b_has_a = result_b[2];
 
               //Now, make rpc call to high partition number
               unsigned int higher_partition;
               (partition_a_no > partition_b_no) ? (higher_partition = partition_a_no) : (higher_partition = partition_b_no);
 
+              RunClient(partition[partition_higher], 2, node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
+
               printf("From http server side, node_a_id %u existence %u\n", node_a_id, node_a_exists);
               printf("From http server side, node_b_id %u existence %u\n", node_b_id, node_b_exists);
               printf("Safe to call graph add edge...\n");
 
-              // //Add edge
-              // if(RunClient()){
-              //   event_add_edge(&graph, nc, result.second[0], result.second[1]);
-              // }
+              //Lock and add
+              partition_mtx.lock();
+              event_add_edge(&graph, nc, result.second[0], result.second[1], node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
+              partition_mtx.unlock();
               
             }
             else {
@@ -214,18 +221,28 @@ static void ev_handler(struct mg_connection *nc, int ev, void *ev_data) {
               unsigned int partition_a_no = (node_a_id % partition_total) + 1;
               unsigned int partition_b_no = (node_b_id % partition_total) + 1;
 
-              unsigned int node_a_exists = RunClient(partition[partition_a_no], 1, node_a_id, 0, 0, 0);
-              unsigned int node_b_exists = RunClient(partition[partition_b_no], 1, node_b_id, 0, 0 ,0);
+              std::vector<unsigned int> result_a = RunClient(partition[partition_a_no], 1, node_a_id, 0, 0, 0, 0, 0);
+              unsigned int node_a_exists = result_a[1];
+              unsigned int node_a_has_b = result_a[2];
+
+              std::vector<unsigned int> result_b = RunClient(partition[partition_b_no], 1, node_b_id, 0, 0, 0, 0, 0);
+              unsigned int node_b_exists = result_b[1];
+              unsigned int node_b_has_a = result_b[2];
+
+              //Now, make rpc call to high partition number
+              unsigned int higher_partition;
+              (partition_a_no > partition_b_no) ? (higher_partition = partition_a_no) : (higher_partition = partition_b_no);
+
+              RunClient(partition[partition_higher], 3, node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
 
               printf("From http server side, node_a_id %u existence %u\n", node_a_id, node_a_exists);
               printf("From http server side, node_b_id %u existence %u\n", node_b_id, node_b_exists);
               printf("Safe to call graph remove edge...\n");
 
-
-              // //Add edge
-              // if(RunClient()){
-              //   event_remove_edge(&graph, nc, result.second[0], result.second[1]);
-              // }          
+              //Lock and add
+              partition_mtx.lock();
+              event_remove_edge(&graph, nc, result.second[0], result.second[1], node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
+              partition_mtx.unlock();         
             }
             else {
               error = 1;

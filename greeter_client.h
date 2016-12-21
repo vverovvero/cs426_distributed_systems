@@ -15,6 +15,8 @@
 #include "graph.h"
 #include "globals.h"
 
+#include <vector>
+
 using grpc::Channel;
 using grpc::ClientContext;
 using grpc::Status;
@@ -29,7 +31,7 @@ class GreeterClient {
  public:
   GreeterClient(std::shared_ptr<Channel> channel)
   	: stub_(Greeter::NewStub(channel)) {}
-  	int SayHelloAgain(uint64_t command, uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists) {
+  	std::vector<unsigned int> SayHelloAgain(uint64_t command, uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists, uint64_t node_a_has_b, uint64_t node_b_has_a) {
 	  //Follows the same pattern as SayHello.
 	  HelloRequest request;
 	  request.set_command(command);
@@ -37,6 +39,8 @@ class GreeterClient {
 	  request.set_node_b_id(node_b_id);
     request.set_node_a_exists(node_a_exists);
     request.set_node_b_exists(node_b_exists);
+    request.set_node_a_has_b(node_a_has_b);
+    request.set_node_b_has_a(node_b_has_a);
 	  HelloReply reply;
 	  ClientContext context;
 
@@ -45,14 +49,20 @@ class GreeterClient {
 	  if(status.ok()){
       if(command == 1){
         unsigned int existence = reply.node_exists();
-        return (int) existence;
+        unsigned int has_neighbor = reply.has_neighbor();
+        std::vector<unsigned int> result(0, existence, has_neighbor);
+        return result;
       }
       //for command 2 or 3, always return 0
-	    return 0;
-	  } else {
+      std::vector<unsigned int> result(0, 0, 0);
+	    return result;
+	  } 
+    else {
 	    std::cout << status.error_code() << ": " << status.error_message()
 	              << std::endl;
-	    return -1;
+
+      std::vector<unsigned int> result(666, 666, 666);
+	    return result;
 	  }
 	}
  private:
@@ -61,26 +71,27 @@ class GreeterClient {
 
 
 //Send request to partition number
-int RunClient(char * rpc_address, uint64_t command, uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists){
+std::vector<unsigned int> RunClient(char * rpc_address, uint64_t command, uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists){
   std::string ipaddress(rpc_address);
 
   GreeterClient greeter(grpc::CreateChannel(
       ipaddress, grpc::InsecureChannelCredentials()));
 
-  int reply = greeter.SayHelloAgain(command, node_a_id, node_b_id, node_a_exists, node_b_exists);
-  std::cout << "Greeter received: " << reply << std::endl;
+  std::vector<unsigned int> reply = greeter.SayHelloAgain(command, node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
+  std::cout << "Greeter received: " << reply[0] << reply[1] << reply[2] << std::endl;
 
   //after receiving ack, ...
   if(command == 1){
     //if client asked for node existence
-    printf("Client side, for node_id %lu, existence %d\n", node_a_id, reply);
+    printf("Client side, for node_id %lu, existence %u\n", node_a_id, reply[1]);
+    printf("Client side, has neighbor %u\n", reply[2]);
     printf("Returned to Greeter after get_node\n");
     return reply;
   }
   //else, for command 2 or 3, return 0
   printf("Returned to Greeter after add_edge or remove_edge");
 
-  return 0;
+  return reply;
 }
 
 #endif

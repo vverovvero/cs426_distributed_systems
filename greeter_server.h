@@ -41,6 +41,8 @@ class GreeterServiceImpl final : public Greeter::Service {
     uint64_t node_b_id = request->node_b_id();
     uint64_t node_a_exists = request->node_a_exists();
     uint64_t node_b_exists = request->node_b_exists();
+    uint64_t node_a_has_b = request->node_a_has_b();
+    uint64_t node_b_has_a = request->node_b_has_a();
 
     //Server always executes what client asks for
     if(command == 1){
@@ -48,45 +50,42 @@ class GreeterServiceImpl final : public Greeter::Service {
       unsigned int existence = graph.get_node(node_a_id);
       reply->set_node_exists(existence);
       printf("server side, get_node for %lu, existence %u\n", node_a_id, existence);
+
+      //Check for neighbor if node exists
+      unsigned int has_neighbor = 0;
+      if(existence == 1){
+        pair<int, set<uint64_t> > result = (*graph).get_neighbors(node_id);
+        if(result.first == 1){
+          set<uint64_t> neighbors = result.second;
+          //Look through neighbors
+          set<uint64_t>::iterator it;
+          it = neighbors.find(node_b_id);
+          if(it != neighbors.end()){
+            has_neighbor = 1;
+          }
+        }
+      }
+
+      reply->set_node_has_neighbor(has_neighbor);
+      printf("server side, has_neighbor: %u\n", has_neighbor);
+    }
+
+    if(command == 2){
+      //lock and add edge
+      partition_mtx.lock();
+      graph.add_edge(node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
+      partition_mtx.unlock();
+
+    }
+
+    if(command == 3){
+      //remove_edge
+      partition_mtx.lock();
+      graph.remove_edge(node_a_id, node_b_id, node_a_exists, node_b_exists, node_a_has_b, node_b_has_a);
+      partition_mtx.unlock();
     }
 
     return Status::OK;
-
-    // //when server receives client request, server either forwards or acks
-    // if(server_node == 9000){
-    //   // std::cout << "Server is tail, send ack" << std::endl;
-    //   //server modifies the graph here
-    //   // std::cout << "Tail server should modify the graph" << std::endl;
-    //   if(command == 1){
-    //     // std::cout << "Graph add node!" << std::endl;
-    //     graph.add_node(node_a_id);
-    //   }
-    //   else if(command == 2){
-    //       // std::cout << "Graph add edge!" << std::endl;
-    //     graph.add_edge(node_a_id, node_b_id);
-    //   }
-    //   else if(command == 3){
-    //       // std::cout << "Graph remove node!" << std::endl;
-    //     // graph.remove_node(node_a_id);
-    //   }
-    //   else if (command == 4){
-    //       // std::cout << "Graph remove edge!" << std::endl;
-    //     graph.remove_edge(node_a_id, node_b_id);
-    //   }
-    //   else{
-    //     // std::cout << "Graph faulty command "<< std::endl;
-    //   }
-    //   return Status::OK;
-    // }
-    // else{
-    //   // std::cout << "Server is not tail, forward client request" << std::endl;
-    //   //forward client request
-    //   if(RunClient(server_node, command, node_a_id, node_b_id) == 0){
-    //     //when client request returns successfully, server sends ack
-    //     return Status::OK;
-    //   }
-    // }
-  }
 
 };
 
