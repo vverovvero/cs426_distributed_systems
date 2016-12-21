@@ -71,7 +71,7 @@ class GreeterClient {
 
 
 //Send request to partition number
-std::vector<unsigned int> RunClient(char * rpc_address, uint64_t command, uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists){
+std::vector<unsigned int> RunClient(char * rpc_address, uint64_t command, uint64_t node_a_id, uint64_t node_b_id, uint64_t node_a_exists, uint64_t node_b_exists, uint64_t node_a_has_b, uint64_t node_b_has_a){
   std::string ipaddress(rpc_address);
 
   GreeterClient greeter(grpc::CreateChannel(
