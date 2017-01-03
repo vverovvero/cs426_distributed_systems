@@ -227,7 +227,7 @@ int event_get_neighbors(Graph *graph, struct mg_connection *nc, uint64_t node_id
 	}
 	else{
 		mg_send_head(nc, 400, -1, NULL);
-        mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 400, "No Content\n");
+        mg_printf_http_chunk(nc, "%s %d %s", "HTTP/1.1 ", 400, "Bad Request\n");
         mg_send_http_chunk(nc, "", 0); // Tell the client we're finished
 	}
 

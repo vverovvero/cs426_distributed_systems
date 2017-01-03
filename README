@@ -1,0 +1,15 @@
+Local in-memory graph store.
+
+
+Invoke the server:
+./cs426_graph_server <port>
+
+Example:
+./cs426_graph_server 8000
+
+
+Run the test script to build a demo graph:
+./test.sh
+
+Example of a request:
+curl -H "Content-Type: application/json" -X POST -d '{"node_id": 0}' http://127.0.0.1:8000/api/v1/add_node
