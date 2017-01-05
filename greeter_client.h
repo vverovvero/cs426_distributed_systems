@@ -94,7 +94,7 @@ int RunClient(unsigned int rpc_port, uint64_t command, uint64_t node_a_id, uint6
   else if(rpc_port == 8090){
     client_node = 8090;
     server_node = 9000;
-    ipaddress = "104.154.145.208:9000";
+    ipaddress = "104.155.131.47:9000";
     // std::cout << "Forward request to: " << ipaddress << std::endl;
   }
   else if(rpc_port == 9000){
