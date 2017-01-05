@@ -19,46 +19,46 @@ echo "Beginning read test script 7080"
 #Get good nodes
 for i in {1..11}
 do
-	curl -H "Content-Type: application/json" -X POST -d '{"node_id":'$i'}' http://104.154.145.208:8000/api/v1/get_node
+	curl -H "Content-Type: application/json" -X POST -d '{"node_id":'$i'}' http://104.155.131.47:8000/api/v1/get_node
 done
 
 #Get bad nodes (nonexistent)
 for i in {12..13}
 do
-	curl -H "Content-Type: application/json" -X POST -d '{"node_id":'$i'}' http://104.154.145.208:8000/api/v1/get_node
+	curl -H "Content-Type: application/json" -X POST -d '{"node_id":'$i'}' http://104.155.131.47:8000/api/v1/get_node
 done
 
 #Get edges (some)
-curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 1, "node_b_id": 2}' http://104.154.145.208:8000/api/v1/get_edge
-curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 2, "node_b_id": 3}' http://104.154.145.208:8000/api/v1/get_edge
-curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 7, "node_b_id": 4}' http://104.154.145.208:8000/api/v1/get_edge
-curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 9, "node_b_id": 10}' http://104.154.145.208:8000/api/v1/get_edge
+curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 1, "node_b_id": 2}' http://104.155.131.47:8000/api/v1/get_edge
+curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 2, "node_b_id": 3}' http://104.155.131.47:8000/api/v1/get_edge
+curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 7, "node_b_id": 4}' http://104.155.131.47:8000/api/v1/get_edge
+curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 9, "node_b_id": 10}' http://104.155.131.47:8000/api/v1/get_edge
 
 
 #Get bad edges (ie, nonexistent ones, edge to itself)
-curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 1, "node_b_id": 1}' http://104.154.145.208:8000/api/v1/get_edge
-curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 1, "node_b_id": 21}' http://104.154.145.208:8000/api/v1/get_edge
-curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 12, "node_b_id": 13}' http://104.154.145.208:8000/api/v1/get_edge
+curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 1, "node_b_id": 1}' http://104.155.131.47:8000/api/v1/get_edge
+curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 1, "node_b_id": 21}' http://104.155.131.47:8000/api/v1/get_edge
+curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 12, "node_b_id": 13}' http://104.155.131.47:8000/api/v1/get_edge
 
 
 #get_neighbors
 for i in {1..11}
 do
-	curl -H "Content-Type: application/json" -X POST -d '{"node_id":'$i'}' http://104.154.145.208:8000/api/v1/get_neighbors
+	curl -H "Content-Type: application/json" -X POST -d '{"node_id":'$i'}' http://104.155.131.47:8000/api/v1/get_neighbors
 done
 
 #get_bad neighbors
 for i in {12..13}
 do
-	curl -H "Content-Type: application/json" -X POST -d '{"node_id":'$i'}' http://104.154.145.208:8000/api/v1/get_neighbors
+	curl -H "Content-Type: application/json" -X POST -d '{"node_id":'$i'}' http://104.155.131.47:8000/api/v1/get_neighbors
 done
 
 #Shortest path good
-curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 1, "node_b_id": 10}' http://104.154.145.208:8000/api/v1/shortest_path
-curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 3, "node_b_id": 6}' http://104.154.145.208:8000/api/v1/shortest_path
+curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 1, "node_b_id": 10}' http://104.155.131.47:8000/api/v1/shortest_path
+curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 3, "node_b_id": 6}' http://104.155.131.47:8000/api/v1/shortest_path
 
 #shortst path bad (self, nonexistent)
-curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 1, "node_b_id": 1}' http://104.154.145.208:8000/api/v1/shortest_path
-curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 1, "node_b_id": 21}' http://104.154.145.208:8000/api/v1/shortest_path
-curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 12, "node_b_id": 13}' http://104.154.145.208:8000/api/v1/shortest_path
+curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 1, "node_b_id": 1}' http://104.155.131.47:8000/api/v1/shortest_path
+curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 1, "node_b_id": 21}' http://104.155.131.47:8000/api/v1/shortest_path
+curl -H "Content-Type: application/json" -X POST -d '{"node_a_id": 12, "node_b_id": 13}' http://104.155.131.47:8000/api/v1/shortest_path
 

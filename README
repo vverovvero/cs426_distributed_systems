@@ -12,10 +12,9 @@ In this lab, a chain of vm nodes has been set up:
 
 Chain Position	| VM name	| External IP 	| http port 	| grpc port 	|
 -----------------------------------------------------------------------------
-head			instance-1	104.198.165.44	 7080			  8080
+head			instance-1	104.154.145.208	 7080			  8080
 middle			instance-2  104.154.198.82   7090			  8090
-tail			instance-3  104.154.145.208  8000			  9000
-
+tail			instance-3  104.155.131.47   8000			  9000
 
 On each node, all executables have been made.  If not made, just run 'make clean',
 then run 'make' in the directory: /lab3
@@ -33,12 +32,12 @@ instance-3:
 
 
 Write requests should only be made to instance-1.
-e.g. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.198.165.44:7080/api/v1/add_node
+e.g. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.154.145.208:7080/api/v1/add_node
 
 Read requests can be made to any of the instances:
-eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.198.165.44:7080/api/v1/get_node
+eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.154.145.208:7080/api/v1/get_node
 eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.154.198.82:7090/api/v1/get_node
-eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.154.145.208:8000/api/v1/get_node
+eg. curl -H "Content-Type: application/json" -X POST -d '{"node_id":1}' http://104.155.131.47:8000/api/v1/get_node
 
 For an example run, I have provided some shell scripts.
 On instance-1, run ./mywritetest7080.sh
