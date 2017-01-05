@@ -1,0 +1,27 @@
+Lab2, Wendy Chen
+10/2016
+
+Durable on-disk graph store.
+
+The durable disk used is: /dev/sdb
+Flag for formatting disk: -f
+Flag for randomizing/erasing disk: -r
+
+Make sure permissions of /dev/sdb are readable and writable.
+
+Invoke server:
+$ ./cs426_graph_server -f <port> <devfile>
+or
+$ ./cs426_graph_server <port> <devfile>
+
+Example:
+./cs426_graph_server -f 8000 /dev/sdb
+./cs426_graph_server -r 8000 /dev/sdb
+
+New request command: checkpoint
+ie. curl -H "Content-Type: application/json" -X POST -d '' http://127.0.0.1:8000/api/v1/checkpoint
+
+
+The test script demonstrates that the logging works over multiple blocks.
+To test durability, stop the server and restart.  Query the graph to see it exists still.
+
