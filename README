@@ -15,9 +15,9 @@ We expect the command line invocation to always be of form:
 $ ./cs426_graph_server <graph_server_port> -p <partnum> -l <partlist> 
 
 Example:
-$ ./cs426_graph_server 7080 -p 1 -l 104.154.145.208:8080 104.154.198.82:8090 104.197.167.77:9000
-$ ./cs426_graph_server 7090 -p 2 -l 104.154.145.208:8080 104.154.198.82:8090 104.197.167.77:9000
-$ ./cs426_graph_server 8000 -p 3 -l 104.154.145.208:8080 104.154.198.82:8090 104.197.167.77:9000
+$ ./cs426_graph_server 7080 -p 1 -l 104.154.145.208:8080 104.154.198.82:8090 104.155.131.47:9000
+$ ./cs426_graph_server 7090 -p 2 -l 104.154.145.208:8080 104.154.198.82:8090 104.155.131.47:9000
+$ ./cs426_graph_server 8000 -p 3 -l 104.154.145.208:8080 104.154.198.82:8090 104.155.131.47:9000
 
 Partition checking happens in add_edge and get_edge, as specified by spec.
 Although it is noted that illegal requests will not be made, to be safe, we also
